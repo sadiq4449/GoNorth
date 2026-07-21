@@ -1,0 +1,5394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gilgit-Baltistan Official Travel Registry & Tourism Portal</title>
+  <meta name="description"
+    content="BaltiTour - AI Dynamic Trip Builder. Official Government of Gilgit-Baltistan Tourism Portal for visitor registry, transport booking, and safety services.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --gov-navy: #0B2545;
+      --gov-blue: #134074;
+      --gov-accent: #0F62FE;
+      --gov-accent-hover: #0043CE;
+      --gov-light-blue: #EEF4F8;
+      --gov-border: #D0DBE5;
+      --gov-border-focus: #0F62FE;
+      --text-main: #1F2E44;
+      --text-muted: #5A6E85;
+      --white: #ffffff;
+      --success: #198754;
+      --success-bg: #EAF7F0;
+      --warning: #D97706;
+      --warning-bg: #FFFBEB;
+      --danger: #D11A2A;
+      --danger-bg: #FDF2F2;
+      --shadow-sm: 0 2px 8px rgba(11, 37, 69, 0.04);
+      --shadow-md: 0 12px 24px -4px rgba(11, 37, 69, 0.06), 0 4px 12px -2px rgba(11, 37, 69, 0.03);
+      --shadow-lg: 0 24px 48px -12px rgba(11, 37, 69, 0.08), 0 8px 16px -4px rgba(11, 37, 69, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --max-width: 1340px;
+    }
+
+    /* NEW FEATURE STYLES */
+    .badge-solo { background: #E0F2FE !important; color: #0369A1 !important; border: 1px solid #BAE6FD !important; }
+    .badge-women { background: #FCE7F3 !important; color: #9D174D !important; border: 1px solid #FBCFE8 !important; }
+    .terrain-warning {
+      display: none;
+      background: var(--danger-bg);
+      color: var(--danger);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(209, 26, 42, 0.2);
+    }
+    .scom-status {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(25, 135, 84, 0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-right: 8px;
+    }
+    .vibe-selector {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-sm);
+      height: 42px;
+      display: flex;
+      padding: 3px;
+      gap: 2px;
+    }
+    .vibe-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: var(--transition-smooth);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .vibe-btn.active {
+      background: var(--white);
+      color: var(--gov-navy);
+    }
+    .multi-leg-badge {
+      background: var(--gov-accent);
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+    .featured-badge {
+      background: linear-gradient(135deg, #FACC15, #EAB308) !important;
+      color: var(--gov-navy) !important;
+      font-weight: 800 !important;
+      border: 1px solid #CA8A04 !important;
+    }
+    .photo-reviews-link {
+      font-size: 0.75rem;
+      color: var(--gov-accent);
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .review-thumbnails {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .review-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: #E2E8F0;
+      border: 1px solid var(--gov-border);
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+    }
+
+    /* DETAILED STAY CARDS */
+    .detailed-stay-card {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--white);
+      transition: var(--transition-smooth);
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .detailed-stay-card:hover {
+      border-color: var(--gov-accent);
+      box-shadow: var(--shadow-md);
+    }
+    .detailed-stay-card.selected {
+      border-color: var(--gov-accent);
+      box-shadow: 0 0 0 2px var(--gov-accent);
+    }
+    .stay-image-large {
+      width: 100%;
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .stay-content-wrap {
+      padding: 20px;
+    }
+    .stay-feature-icons {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .feature-icon-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .feature-icon-item svg {
+      width: 14px;
+      height: 14px;
+      color: var(--gov-accent);
+    }
+    .stay-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gov-light-blue);
+    }
+
+    /* VENDOR ROOM MANAGER */
+    .room-manager-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .room-admin-card {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: #F8FAFC;
+    }
+    .btn-add-room {
+      background: var(--gov-navy);
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .room-form-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      place-items: center;
+      padding: 20px;
+    }
+    .room-form-card {
+      background: white;
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    /* TRIP TIMELINE STYLES */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 10px 0;
+    }
+    .timeline-day {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      position: relative;
+    }
+    .timeline-day::before {
+      content: "";
+      position: absolute;
+      left: 39px;
+      top: 40px;
+      bottom: -24px;
+      width: 2px;
+      background: var(--gov-border);
+    }
+    .timeline-day:last-child::before { display: none; }
+    .day-marker {
+      width: 80px;
+      text-align: center;
+    }
+    .day-num {
+      width: 40px;
+      height: 40px;
+      background: var(--gov-navy);
+      color: white;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 8px;
+      font-weight: 800;
+      font-family: 'Outfit';
+    }
+    .day-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .day-content {
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .timeline-event {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .timeline-event:last-child { margin-bottom: 0; }
+    .event-icon { font-size: 1.2rem; }
+    .event-text { font-size: 0.85rem; font-weight: 600; color: var(--gov-navy); }
+    .advisory-badge-small {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(25, 135, 84, 0.2);
+    }
+
+    /* CHAT UI */
+    .chat-bubble-fixed {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--gov-accent);
+      color: white;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      transition: var(--transition-smooth);
+    }
+    .chat-bubble-fixed:hover { transform: scale(1.1); background: var(--gov-accent-hover); }
+    .chat-window-overlay {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 320px;
+      height: 450px;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 1001;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--gov-border);
+    }
+    .chat-header {
+      background: var(--gov-navy);
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-body { flex: 1; padding: 16px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 10px; }
+    .msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 0.82rem; line-height: 1.4; }
+    .msg.vendor { background: white; align-self: flex-start; border: 1px solid var(--gov-border); color: var(--text-main); }
+    .msg.user { background: var(--gov-accent); color: white; align-self: flex-end; }
+    .chat-footer { padding: 12px; border-top: 1px solid var(--gov-border); display: flex; gap: 8px; }
+    .chat-input { flex: 1; border: 1px solid var(--gov-border); border-radius: 4px; padding: 0 10px; font-size: 0.85rem; }
+
+    /* FLEET ADMIN */
+    .fleet-manager-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .vehicle-admin-card {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 0;
+      background: white;
+      overflow: hidden;
+    }
+    .vehicle-img-thumb { width: 100%; height: 120px; background: #E2E8F0; display: grid; place-items: center; font-size: 2rem; background-size: cover; background-position: center; }
+    .vehicle-info-panel { padding: 16px; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-main);
+      background: var(--gov-light-blue);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    /* TOP OFFICIAL BANNER */
+    .gov-banner {
+      background: #061424;
+      color: #A3B5CC;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .gov-banner-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .gov-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gov-flag {
+      width: 16px;
+      height: 11px;
+      background: linear-gradient(to right, #ffffff 30%, #004d26 30%);
+      border-radius: 1px;
+      display: inline-block;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gov-banner-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .gov-secure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #4ADE80;
+    }
+
+    .gov-secure-badge svg {
+      width: 10px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* ROLE SWITCHER */
+    .role-switcher-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 3px;
+    }
+
+    .role-btn {
+      background: none;
+      border: none;
+      color: #A3B5CC;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    .role-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .role-btn.active {
+      background: var(--gov-accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(15, 98, 254, 0.3);
+    }
+
+    /* HEADER */
+    .header-wrapper {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--gov-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--gov-navy);
+    }
+
+    .brand-crest {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--gov-navy), var(--gov-blue));
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-crest svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition-smooth);
+    }
+
+    .nav-link:hover {
+      color: var(--gov-navy);
+      background: rgba(19, 64, 116, 0.04);
+    }
+
+    .nav-link.active {
+      color: var(--gov-accent);
+      background: var(--gov-light-blue);
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-sos {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(209, 26, 42, 0.15);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-sos:hover {
+      background: var(--danger);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(209, 26, 42, 0.15);
+    }
+
+    .nav-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: 999px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--gov-light-blue);
+      color: var(--gov-blue);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .nav-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 2px var(--white);
+    }
+
+    /* ADVISORY BAR */
+    .advisory-bar {
+      background: var(--warning-bg);
+      border-bottom: 1px solid rgba(217, 119, 6, 0.15);
+      padding: 10px 0;
+      overflow: hidden;
+    }
+
+    .advisory-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #92400E;
+    }
+
+    .advisory-badge {
+      background: var(--warning);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .advisory-ticker {
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+      padding-left: 20px;
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    /* HERO SECTION */
+    .hero {
+      position: relative;
+      background-image: linear-gradient(180deg, rgba(11, 37, 69, 0.85) 0%, rgba(11, 37, 69, 0.65) 100%), url('mountains_hero_banner.png');
+      background-size: cover;
+      background-position: center 35%;
+      border-radius: var(--radius-xl);
+      padding: 60px 48px;
+      color: var(--white);
+      margin-top: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 20%, rgba(15, 98, 254, 0.2), transparent 45%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+      margin-bottom: 32px;
+      max-width: 680px;
+    }
+
+    /* QUICK SEARCH BAR */
+    .quick-search {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      box-shadow: 0 8px 32px rgba(11, 37, 69, 0.15);
+    }
+
+    .quick-search-row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    .quick-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quick-field label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .quick-field input,
+    .quick-field select {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-sm);
+      height: 42px;
+      padding: 0 12px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .quick-field select option {
+      background: var(--gov-navy);
+      color: var(--white);
+    }
+
+    .quick-field input:focus,
+    .quick-field select:focus {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-quick {
+      background: var(--gov-accent);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      height: 42px;
+      padding: 0 24px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-quick:hover {
+      background: var(--gov-accent-hover);
+      box-shadow: 0 4px 12px rgba(15, 98, 254, 0.3);
+    }
+
+    .btn-ai-suggest {
+      background: linear-gradient(135deg, #7C3AED, #6D28D9);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      height: 42px;
+      padding: 0 20px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-ai-suggest:hover {
+      background: linear-gradient(135deg, #6D28D9, #5B21B6);
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* KPI METRIC CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: var(--transition-smooth);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(15, 98, 254, 0.2);
+    }
+
+    .kpi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--gov-light-blue);
+      color: var(--gov-accent);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .kpi-icon-wrap svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .kpi-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .kpi-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--gov-navy);
+      line-height: 1.15;
+    }
+
+    .kpi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      align-self: flex-start;
+    }
+
+    .kpi-badge.success {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .kpi-badge.warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    /* DASHBOARD TABS NAVIGATION */
+    .tab-nav-wrapper {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--gov-border);
+    }
+
+    .tab-nav-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 16px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      white-space: nowrap;
+    }
+
+    .tab-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .tab-btn:hover {
+      color: var(--gov-navy);
+      background: rgba(19, 64, 116, 0.03);
+    }
+
+    .tab-btn.active {
+      color: var(--gov-accent);
+      font-weight: 700;
+    }
+
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gov-accent);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* MAIN CONTENT LAYOUT */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(340px, 0.9fr);
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 56px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ROLE WORKSPACES */
+    .role-workspace {
+      display: none;
+    }
+
+    .role-workspace.active {
+      display: block;
+    }
+
+    /* CARD STRUCTURE */
+    .panel-card {
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .panel-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .panel-head {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .panel-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title svg {
+      width: 20px;
+      height: 20px;
+      color: var(--gov-accent);
+      fill: currentColor;
+    }
+
+    .panel-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* OPTION CARD LISTING */
+    .option-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .option-card {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      background: var(--white);
+    }
+
+    .option-card:hover {
+      border-color: rgba(15, 98, 254, 0.3);
+      background: var(--gov-light-blue);
+    }
+
+    .option-card.selected {
+      border-color: var(--gov-accent);
+      background: rgba(15, 98, 254, 0.03);
+      box-shadow: 0 0 0 1px var(--gov-accent);
+    }
+
+    .option-card.capacity-warn {
+      border-color: var(--warning);
+      opacity: 0.65;
+    }
+
+    .option-radio {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gov-accent);
+      cursor: pointer;
+    }
+
+    .option-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .option-details h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .option-details p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .option-badge-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .option-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #E2E8F0;
+      color: var(--text-main);
+    }
+
+    .option-badge.verified {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(25, 135, 84, 0.15);
+    }
+
+    .option-badge.gov-tier {
+      background: rgba(15, 98, 254, 0.08);
+      color: var(--gov-accent);
+      border: 1px solid rgba(15, 98, 254, 0.15);
+    }
+
+    .option-badge.warn-badge {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+
+    .option-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gov-navy);
+      text-align: right;
+    }
+
+    .option-price small {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    /* RIDE SHARING */
+    .sharing-toggle-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: #F8FAFC;
+      border: 1px dashed var(--gov-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .sharing-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gov-accent);
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .sharing-text label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      cursor: pointer;
+      display: block;
+    }
+
+    .sharing-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    /* GUIDE MULTI-SELECT GRID */
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .guide-action-card {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      background: var(--white);
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .guide-action-card:hover {
+      border-color: var(--gov-accent);
+      background: var(--gov-light-blue);
+    }
+
+    .guide-action-card.added {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .guide-icon-round {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gov-light-blue);
+      color: var(--gov-accent);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 12px;
+      font-size: 1.4rem;
+      transition: var(--transition-smooth);
+    }
+
+    .guide-action-card.added .guide-icon-round {
+      background: var(--success);
+      color: var(--white);
+    }
+
+    .guide-action-card h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      margin-bottom: 4px;
+    }
+
+    .guide-action-card p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .btn-guide-toggle {
+      border: 1px solid var(--gov-accent);
+      background: var(--white);
+      color: var(--gov-accent);
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .guide-action-card.added .btn-guide-toggle {
+      background: var(--success);
+      color: var(--white);
+      border-color: var(--success);
+    }
+
+    .btn-guide-toggle:hover {
+      background: var(--gov-accent);
+      color: var(--white);
+    }
+
+    .guide-action-card.added .btn-guide-toggle:hover {
+      background: #146c43;
+      border-color: #146c43;
+    }
+
+    /* FORM STYLES */
+    .registry-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      height: 42px;
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .form-group textarea {
+      height: 80px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gov-border-focus);
+      box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.12);
+    }
+
+    .form-tip {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .btn-submit-registry {
+      background: var(--gov-accent);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      height: 46px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition-smooth);
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .btn-submit-registry:hover {
+      background: var(--gov-accent-hover);
+      box-shadow: 0 4px 12px rgba(15, 98, 254, 0.2);
+    }
+
+    /* CARPOOL */
+    .pool-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pool-item {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      background: var(--white);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      transition: var(--transition-smooth);
+    }
+
+    .pool-item:hover {
+      border-color: rgba(15, 98, 254, 0.25);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pool-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pool-route {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pool-route span.arrow {
+      color: var(--gov-accent);
+    }
+
+    .pool-driver {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pool-meta-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .pool-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--gov-light-blue);
+      color: var(--gov-blue);
+      border: 1px solid rgba(19, 64, 116, 0.08);
+    }
+
+    .pool-pill.seats {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: rgba(217, 119, 6, 0.15);
+    }
+
+    .pool-fare-math {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-style: italic;
+      padding: 6px 10px;
+      background: #F8FAFC;
+      border-radius: 6px;
+      border: 1px dashed var(--gov-border);
+    }
+
+    .pool-side {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .pool-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--gov-accent);
+    }
+
+    .pool-price small {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .btn-pool-join {
+      background: var(--gov-navy);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-pool-join:hover {
+      background: var(--gov-accent);
+    }
+
+    .btn-pool-join.joined {
+      background: var(--success);
+      color: var(--white);
+    }
+
+    /* OFFLINE PASS */
+    .offline-notice-box {
+      background: rgba(15, 98, 254, 0.04);
+      border: 1px solid rgba(15, 98, 254, 0.15);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .offline-notice-box svg {
+      width: 20px;
+      height: 20px;
+      color: var(--gov-accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .offline-notice-text h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+    }
+
+    .offline-notice-text p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .pass-card-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      border: 2px solid var(--gov-navy);
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .pass-card-grid::before {
+      content: "GOVERNMENT OF GILGIT-BALTISTAN";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: rgba(11, 37, 69, 0.02);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .pass-card-left {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .pass-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(25, 135, 84, 0.15);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      align-self: flex-start;
+    }
+
+    .pass-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--gov-navy);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .pass-details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .pass-field-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pass-field-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .pass-field-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .pass-card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-left: 1px dashed var(--gov-border);
+      padding-left: 20px;
+    }
+
+    .pass-qr-frame {
+      width: 110px;
+      height: 110px;
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      padding: 6px;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pass-qr-canvas {
+      width: 96px;
+      height: 96px;
+    }
+
+    .pass-id-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--gov-navy);
+      letter-spacing: 0.05em;
+    }
+
+    .pass-actions-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-pass-action {
+      flex: 1;
+      border: 1px solid var(--gov-border);
+      background: var(--white);
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-pass-action:hover {
+      border-color: var(--gov-accent);
+      color: var(--gov-accent);
+      background: rgba(15, 98, 254, 0.03);
+    }
+
+    .btn-pass-action.primary {
+      background: var(--gov-navy);
+      color: var(--white);
+      border-color: var(--gov-navy);
+    }
+
+    .btn-pass-action.primary:hover {
+      background: var(--gov-blue);
+      border-color: var(--gov-blue);
+      color: var(--white);
+    }
+
+    /* HELPLINES */
+    .helpline-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .helpline-item {
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .helpline-info h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+    }
+
+    .helpline-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .btn-helpline-call {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      text-decoration: none;
+    }
+
+    .btn-helpline-call:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    /* SIDEBAR INVOICE */
+    .sidebar {
+      position: sticky;
+      top: 104px;
+    }
+
+    .invoice-card {
+      background: var(--gov-navy);
+      color: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invoice-card::after {
+      content: "";
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 98, 254, 0.2) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .invoice-head {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+
+    .invoice-head h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .invoice-head p {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .invoice-item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .invoice-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .invoice-item span.title {
+      font-weight: 500;
+    }
+
+    .invoice-item span.val {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .invoice-item.tax-line {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.78rem;
+    }
+
+    .invoice-item.tax-line span.val {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .invoice-total-box {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .invoice-total-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 4px;
+    }
+
+    .invoice-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .invoice-total-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #93C5FD;
+      line-height: 1;
+    }
+
+    .invoice-total-badge {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .btn-invoice-action {
+      width: 100%;
+      border: none;
+      background: var(--gov-accent);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: var(--transition-smooth);
+      box-shadow: 0 8px 24px rgba(15, 98, 254, 0.2);
+    }
+
+    .btn-invoice-action:hover {
+      background: var(--gov-accent-hover);
+      box-shadow: 0 12px 28px rgba(15, 98, 254, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-security-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-security-badge svg {
+      width: 24px;
+      height: 24px;
+      color: var(--gov-accent);
+      flex-shrink: 0;
+    }
+
+    .sidebar-security-text h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+    }
+
+    .sidebar-security-text p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    /* VENDOR PORTAL STYLES */
+    .vendor-sub-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .vendor-sub-btn {
+      padding: 10px 18px;
+      border: 1px solid var(--gov-border);
+      background: var(--white);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .vendor-sub-btn.active {
+      background: var(--gov-accent);
+      color: #fff;
+      border-color: var(--gov-accent);
+    }
+
+    .vendor-sub-btn:hover:not(.active) {
+      border-color: var(--gov-accent);
+      color: var(--gov-accent);
+    }
+
+    .vendor-sub-content {
+      display: none;
+    }
+
+    .vendor-sub-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* Calendar Grid */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: 100px repeat(7, 1fr);
+      gap: 2px;
+      font-size: 0.75rem;
+      margin-top: 12px;
+    }
+
+    .cal-header {
+      background: var(--gov-navy);
+      color: #fff;
+      padding: 8px 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .cal-room-label {
+      background: var(--gov-light-blue);
+      padding: 8px 6px;
+      font-weight: 700;
+      color: var(--gov-navy);
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .cal-cell {
+      padding: 10px 6px;
+      text-align: center;
+      border: 1px solid var(--gov-border);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      font-weight: 600;
+      font-size: 0.72rem;
+      background: var(--white);
+    }
+
+    .cal-cell:hover {
+      background: var(--gov-light-blue);
+    }
+
+    .cal-cell.blocked {
+      background: var(--danger-bg);
+      color: var(--danger);
+      text-decoration: line-through;
+    }
+
+    .cal-cell.booked {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    /* Pricing Controls */
+    .pricing-control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    /* Tariff Matrix */
+    .tariff-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+
+    .tariff-table th {
+      background: var(--gov-navy);
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .tariff-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gov-border);
+    }
+
+    .tariff-table tr:hover {
+      background: var(--gov-light-blue);
+    }
+
+    .tariff-input {
+      width: 120px;
+      height: 34px;
+      border: 1px solid var(--gov-border);
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .tariff-input:focus {
+      border-color: var(--gov-accent);
+      box-shadow: 0 0 0 2px rgba(15, 98, 254, 0.1);
+    }
+
+    /* Trip Sync Checklist */
+    .sync-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .sync-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .sync-item:hover {
+      border-color: var(--gov-accent);
+    }
+
+    .sync-item.done {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .sync-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+    }
+
+    .sync-item label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .sync-item .sync-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--warning);
+    }
+
+    .sync-item.done .sync-status {
+      color: var(--success);
+    }
+
+    .btn-sync-push {
+      margin-top: 16px;
+      background: var(--gov-accent);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-sync-push:hover {
+      background: var(--gov-accent-hover);
+    }
+
+    /* KYC Upload */
+    .kyc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .kyc-card {
+      border: 2px dashed var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      background: #FAFBFC;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .kyc-card:hover {
+      border-color: var(--gov-accent);
+      background: var(--gov-light-blue);
+    }
+
+    .kyc-card.uploaded {
+      border-color: var(--success);
+      border-style: solid;
+      background: var(--success-bg);
+    }
+
+    .kyc-card.verified {
+      border-color: var(--success);
+      border-style: solid;
+      background: var(--success-bg);
+    }
+
+    .kyc-card h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      margin-bottom: 4px;
+    }
+
+    .kyc-card p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .kyc-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .kyc-status.pending {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .kyc-status.verified {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .verified-badge-display {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--success-bg);
+      border: 1px solid rgba(25, 135, 84, 0.15);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    /* ADMIN PORTAL STYLES */
+    .admin-sub-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .admin-sub-btn {
+      padding: 10px 18px;
+      border: 1px solid var(--gov-border);
+      background: var(--white);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .admin-sub-btn.active {
+      background: var(--gov-navy);
+      color: #fff;
+      border-color: var(--gov-navy);
+    }
+
+    .admin-sub-btn:hover:not(.active) {
+      border-color: var(--gov-navy);
+      color: var(--gov-navy);
+    }
+
+    .admin-sub-content {
+      display: none;
+    }
+
+    .admin-sub-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* Admin KPI Row */
+    .admin-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .admin-kpi {
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .admin-kpi .kpi-label {
+      margin-bottom: 6px;
+    }
+
+    .admin-kpi .kpi-value {
+      font-size: 1.6rem;
+    }
+
+    /* Ledger Table */
+    .ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 16px;
+    }
+
+    .ledger-table th {
+      background: var(--gov-navy);
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .ledger-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gov-border);
+      vertical-align: middle;
+    }
+
+    .ledger-table tr:hover {
+      background: var(--gov-light-blue);
+    }
+
+    .status-chip {
+      display: inline-flex;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .status-chip.settled {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .status-chip.pending {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    /* Canvas Map */
+    .map-canvas-wrap {
+      position: relative;
+      border: 2px solid var(--gov-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: #0d1b2a;
+      height: 420px;
+    }
+
+    #fleet-map-canvas {
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .map-legend {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Dispute Cards */
+    .dispute-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dispute-card {
+      border: 1px solid var(--gov-border);
+      border-left: 4px solid var(--warning);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--white);
+      transition: var(--transition-smooth);
+    }
+
+    .dispute-card.resolved {
+      border-left-color: var(--success);
+      opacity: 0.6;
+    }
+
+    .dispute-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .dispute-header h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+    }
+
+    .dispute-rating {
+      display: flex;
+      gap: 2px;
+      font-size: 0.85rem;
+      color: var(--warning);
+    }
+
+    .dispute-body {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .dispute-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-dispute {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--gov-border);
+      background: var(--white);
+      color: var(--text-main);
+      transition: var(--transition-smooth);
+    }
+
+    .btn-dispute:hover {
+      border-color: var(--gov-accent);
+      color: var(--gov-accent);
+    }
+
+    .btn-dispute.warn {
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    .btn-dispute.warn:hover {
+      background: var(--warning);
+      color: #fff;
+    }
+
+    .btn-dispute.suspend {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .btn-dispute.suspend:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-dispute.dismiss {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .btn-dispute.dismiss:hover {
+      background: var(--success);
+      color: #fff;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 37, 69, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--gov-border);
+      box-shadow: var(--shadow-lg);
+      max-width: 580px;
+      width: 100%;
+      overflow: hidden;
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-head {
+      background: var(--danger-bg);
+      border-bottom: 1px solid rgba(209, 26, 42, 0.1);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .btn-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .btn-modal-close:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-body p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .modal-coordinate-box {
+      background: var(--gov-light-blue);
+      border: 1px solid var(--gov-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .coordinate-field label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .coordinate-field div {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+      margin-top: 2px;
+    }
+
+    /* TOASTER */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--white);
+      border: 1px solid var(--gov-border);
+      border-left: 4px solid var(--gov-accent);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 320px;
+      max-width: 420px;
+      pointer-events: all;
+      animation: toastSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: var(--transition-smooth);
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast.info {
+      border-left-color: var(--gov-accent);
+    }
+
+    .toast-icon {
+      flex-shrink: 0;
+    }
+
+    .toast-icon.success {
+      color: var(--success);
+    }
+
+    .toast-icon.info {
+      color: var(--gov-accent);
+    }
+
+    .toast-content h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gov-navy);
+    }
+
+    .toast-content p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        transform: translateY(20px) scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #0B2545;
+      color: #A3B5CC;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 48px 0 24px;
+      margin-top: auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .footer-brand h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      max-width: 320px;
+    }
+
+    .footer-col h5 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col a {
+      color: #A3B5CC;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: var(--transition-smooth);
+    }
+
+    .footer-col a:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.75rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1120px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        top: auto;
+      }
+
+      .quick-search {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick-search-row2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-quick,
+      .btn-ai-suggest {
+        grid-column: 1 / -1;
+      }
+
+      .guide-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .pass-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pass-card-right {
+        border-left: none;
+        border-top: 1px dashed var(--gov-border);
+        padding-left: 0;
+        padding-top: 20px;
+      }
+
+      .admin-kpi-row {
+        grid-template-columns: 1fr;
+      }
+
+      .kyc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cal-grid {
+        overflow-x: auto;
+        min-width: 600px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .nav {
+        height: auto;
+        padding: 16px 0;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        justify-content: space-between;
+      }
+
+      .quick-search {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-search-row2 {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .registry-form {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero {
+        padding: 32px 20px;
+      }
+
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .role-switcher-wrap {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP OFFICIAL BANNER -->
+  <div class="gov-banner">
+    <div class="container gov-banner-content">
+      <div class="gov-banner-left">
+        <span class="gov-flag"></span>
+        <span>An official digital portal of the Government of Gilgit-Baltistan</span>
+      </div>
+      <div class="gov-banner-right">
+        <!-- ROLE SWITCHER -->
+        <div class="role-switcher-wrap" id="role-switcher">
+          <button class="role-btn active" data-role="tourist" onclick="switchRole('tourist')">🗺️ Tourist</button>
+          <button class="role-btn" data-role="vendor" onclick="switchRole('vendor')">💼 Vendor</button>
+          <button class="role-btn" data-role="admin" onclick="switchRole('admin')">👑 Super Admin</button>
+        </div>
+        <span>ENGLISH | اردو</span>
+        <span class="gov-secure-badge">
+          <svg viewBox="0 0 448 512" width="10" height="12">
+            <path
+              d="M400 224h-24v-64C376 71.6 304.4 0 216 0S56 71.6 56 160v64H32c-17.7 0-32 14.3-32 32v192c0 17.7 14.3 32 32 32h368c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32zm-264-64c0-53 43-96 96-96s96 43 96 96v64H136v-64zm112 251.1V440c0 13.3-10.7 24-24 24s-24-10.7-24-24v-28.9c-11.5-6.8-19.1-19.1-19.1-33.1 0-21.5 17.5-39 39.1-39s39.1 17.5 39.1 39c0 14-7.6 26.3-19.1 33.1z" />
+          </svg>
+          Secure Connection (gov.pk)
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER & NAVIGATION -->
+  <div class="header-wrapper">
+    <header class="container nav">
+      <a href="#" class="brand">
+        <div class="brand-crest">
+          <svg viewBox="0 0 512 512">
+            <path
+              d="M256 0c141.385 0 256 114.615 256 256S397.385 512 256 512 0 397.385 0 256 114.615 0 256 0zm0 48C141.125 48 48 141.125 48 256s93.125 208 208 208 208-93.125 208-208S370.875 48 256 48zm0 72c13.255 0 24 10.745 24 24v24c0 13.255-10.745 24-24 24s-24-10.745-24-24v-24c0-13.255 10.745-24 24-24zm0 136c48.601 0 88 39.399 88 88s-39.399 88-88 88-88-39.399-88-88 39.399-88 88-88zm0 32c-30.928 0-56 25.072-56 56s25.072 56 56 56 56-25.072 56-56-25.072-56-56-56z" />
+          </svg>
+        </div>
+        <div class="brand-meta">
+          <span class="brand-title">GB-Tourism</span>
+          <span class="brand-subtitle" id="brand-subtitle-role">State Visitor Registry</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="nav-links-tourist">
+        <a href="#" class="nav-link active" onclick="switchTab('builder')" data-tab="builder">Itinerary Builder</a>
+        <a href="#" class="nav-link" onclick="switchTab('timeline')" data-tab="timeline">📅 Trip Flow</a>
+        <a href="#" class="nav-link" onclick="switchTab('registry')" data-tab="registry">Visitor Registry</a>
+        <a href="#" class="nav-link" onclick="switchTab('carpool')" data-tab="carpool">Ride Sharing</a>
+        <a href="#" class="nav-link" onclick="switchTab('pass')" data-tab="pass">Security Pass</a>
+      </nav>
+
+
+      <div class="nav-actions">
+        <div class="scom-status">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+            <circle cx="4" cy="4" r="3" />
+          </svg>
+          Network: SCOM 3G
+        </div>
+        <div class="nav-profile">
+          <div class="nav-avatar" id="nav-avatar-text">AH</div>
+          <span class="nav-status-dot"></span>
+        </div>
+        <button class="btn-sos" id="btn-sos-main" onclick="openEmergencyModal()">
+          <svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
+            <path
+              d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h76c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z" />
+          </svg>
+          Emergency SOS
+        </button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ADVISORY TICKER -->
+  <div class="advisory-bar" id="advisory-bar">
+    <div class="container advisory-content">
+      <span class="advisory-badge">Advisory</span>
+      <div style="overflow: hidden; width: 100%;">
+        <div class="advisory-ticker">
+          WEATHER ALERT: High winds expected near Khunjerab Pass. Babusar Pass is open for 4x4 vehicles. Official
+          Visitor Permits are now mandatory at Skardu & Gilgit checkpoints. State emergency helplines are standing by at
+          1422.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <main class="container" style="flex: 1; padding: 0 0 40px 0;">
+
+    <!-- =========================================================== -->
+    <!-- ROLE: TOURIST WORKSPACE -->
+    <!-- =========================================================== -->
+    <div id="workspace-tourist" class="role-workspace active">
+
+      <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <svg viewBox="0 0 512 512" width="12" height="12" fill="currentColor">
+              <path
+                d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zm0 464c-114.7 0-208-93.3-208-208S141.3 48 256 48s208 93.3 208 208s-93.3 208-208 208zm-96-270.5v133c0 10 8.1 18.1 18.1 18.1H256v42.4c0 10.7 13 16.1 20.5 8.5l90.5-90.5c4.7-4.7 4.7-12.3 0-17l-90.5-90.5c-7.6-7.6-20.5-2.2-20.5 8.5V250H178.1c-10 0-18.1-8.1-18.1-18.1v-62.4c0-6.6-5.4-12-12-12h-12c-6.6 0-12 5.4-12 12z" />
+            </svg>
+            Official Government Travel Registry & Safety Network
+          </div>
+          <h1>Secure Your Journey Across Gilgit-Baltistan</h1>
+          <p>
+            Register your visit for search and rescue operations, secure required travel permits, book vetted,
+            state-verified transportation options, and design customized itineraries with accredited local mountain
+            guides.
+          </p>
+        </div>
+
+        <!-- Quick Registry Search -->
+        <div class="quick-search">
+          <div class="quick-field">
+            <label for="quick-dest">Primary Destination</label>
+            <select id="quick-dest" onchange="state.destination = this.value; syncDestinationChange(this.value)">
+              <option value="Skardu">Skardu District</option>
+              <option value="Hunza">Hunza District</option>
+              <option value="Shigar">Shigar Valley</option>
+              <option value="Khaplu">Khaplu Valley</option>
+              <option value="Deosai">Deosai Plains</option>
+              <option value="Basho">Basho Valley</option>
+            </select>
+          </div>
+          <div class="quick-field">
+            <label for="quick-checkin">Check-In Date</label>
+            <input type="date" id="quick-checkin" value="2026-08-12" onchange="updateDatesFromPicker()">
+          </div>
+          <div class="quick-field">
+            <label for="quick-checkout">Check-Out Date</label>
+            <input type="date" id="quick-checkout" value="2026-08-17" onchange="updateDatesFromPicker()">
+          </div>
+        </div>
+        <div class="quick-search-row2"
+          style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 12px 16px; margin-top: 10px;">
+          <div class="quick-field">
+            <label for="quick-guests">Total Visitors</label>
+            <input type="number" id="quick-guests" value="2" min="1" max="20"
+              onchange="state.guests = parseInt(this.value); checkCapacity(); updateInvoice()">
+          </div>
+          <div class="quick-field">
+            <label for="quick-budget">Max Budget (PKR)</label>
+            <input type="number" id="quick-budget" value="" placeholder="e.g. 60000" min="5000" step="1000">
+          </div>
+          <div class="quick-field">
+            <label>Trip Vibe</label>
+            <div class="vibe-selector">
+              <button class="vibe-btn active" onclick="setVibe('backpacker', this)">🎒 B.Packer</button>
+              <button class="vibe-btn" onclick="setVibe('adventure', this)">🏔️ Adv.</button>
+              <button class="vibe-btn" onclick="setVibe('luxury', this)">💎 Luxury</button>
+            </div>
+          </div>
+          <div class="quick-field">
+            <label>Multi-Leg Trip</label>
+            <button class="btn-guide-toggle" style="height: 42px; border-color: rgba(255,255,255,0.3); color: white;" onclick="toggleMultiLeg()">Add Stop +</button>
+          </div>
+          <button class="btn-ai-suggest" onclick="aiRecommendPackage()">✨ AI Magic Build</button>
+        </div>
+      </section>
+
+      <!-- METRICS GRID -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 640 512">
+              <path
+                d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h74.7c18.3 0 35 4.6 49.6 12.7c-17.9 22.8-28.7 51.5-28.7 82.6c0 6.6 .5 13 1.4 19.3c-2.9-.3-5.8-.6-8.9-.6H106.7C47.8 304 0 351.8 0 410.7V464c0 26.5 21.5 48 48 48H187.3C182.2 496.5 179.3 480.6 179.3 464c0-75.1 60.9-136 136-136H320c15 0 29.4 2.4 42.9 6.9c-2.9-14.1-4.9-28.5-4.9-43.3c0-31.1-10.8-59.9-28.7-82.6c14.6-8.1 31.3-12.7 49.6-12.7h74.7C592.2 192 640 239.8 640 298.7V410.7c0 58.9-47.8 106.7-106.7 106.7H512c0 26.5-21.5 48-48 48H352c-26.5 0-48-21.5-48-48V464 410.7z" />
+            </svg>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Active Registered Visitors</span>
+            <span class="kpi-value">14,204</span>
+            <span class="kpi-badge success">● Real-time Sync</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 512 512">
+              <path
+                d="M256 0c141.4 0 256 114.6 256 256S397.4 512 256 512S0 397.4 0 256S114.6 0 256 0zM382.9 178.9c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L202.7 268.5l-57-57c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l79.6 79.6c12.5 12.5 32.8 12.5 45.3 0L382.9 178.9z" />
+            </svg>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Regional Safety Status</span>
+            <span class="kpi-value">Normal</span>
+            <span class="kpi-badge success">Verified Secure</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 640 512">
+              <path
+                d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H322.8c-3.1-9.9-4.8-20.4-4.8-31.3c0-60.6 49.1-109.7 109.7-109.7c33.2 0 63.1 14.7 83.5 37.9c13.7-27.1 26.8-63.5 28.5-98.3c.7-14.7-10.3-27.5-25.1-28.5c-42.3-2.9-88-12-124.9-38.3c-23.5 17-52.2 27-83.3 27H178.3zm363.3 48A109.7 109.7 0 1 0 428 512a109.7 109.7 0 1 0 113.6-160z" />
+            </svg>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Accredited Local Guides</span>
+            <span class="kpi-value">342 Active</span>
+            <span class="kpi-badge success">Certified Guides</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon-wrap">
+            <svg viewBox="0 0 512 512">
+              <path
+                d="M256 32C171.3 32 102.4 100.9 102.4 185.6c0 80.6 137.5 277 146.9 290c1.7 2.4 4.5 3.9 7.6 3.9s5.9-1.5 7.6-3.9c9.4-13 146.9-209.4 146.9-290C409.6 100.9 340.7 32 256 32zm0 201.6c-27.3 0-49.4-22.1-49.4-49.4s22.1-49.4 49.4-49.4s49.4 22.1 49.4 49.4s-22.1 49.4-49.4 49.4z" />
+            </svg>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Tourist Checkpoints</span>
+            <span class="kpi-value">12 Stations</span>
+            <span class="kpi-badge warning">RFID & Scan Ready</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB NAVIGATION BAR -->
+      <div class="tab-nav-wrapper">
+        <div class="tab-nav-container">
+          <button class="tab-btn active" data-tab="builder">
+            <svg viewBox="0 0 512 512">
+              <path
+                d="M490.1 268.5C490.1 285.3 476.5 299 459.7 299H360.3V461.7c0 16.8-13.7 30.3-30.3 30.3H268.5v-92.4h-25v92.4H182c-16.6 0-30.3-13.5-30.3-30.3V299H52.3c-16.8 0-30.3-13.7-30.3-30.5c0-16.6 13.5-30.3 30.3-30.3h99.4V148.3h-44c-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5h44V32.3C151.7 15.5 165.2 2 182 2h61.5v92.4h25V2h61.5c16.6 0 30.3 13.5 30.3 30.3v66.9h44c13.5 0 24.5 11 24.5 24.5s-11 24.5-24.5 24.5h-44v90h99.4c16.8 .1 30.4 13.7 30.4 30.3z" />
+            </svg>
+            State Trip Planner
+          </button>
+          <button class="tab-btn" data-tab="registry">
+            <svg viewBox="0 0 512 512">
+              <path
+                d="M464 64H48C21.5 64 0 85.5 0 112v288c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm-16 320H64V128h384v256zM112 176h160v32H112zm0 64h288v32H112zm0 64h288v32H112z" />
+            </svg>
+            Mandatory Visitor Registry
+          </button>
+          <button class="tab-btn" data-tab="carpool">
+            <svg viewBox="0 0 640 512">
+              <path
+                d="M112 128a64 64 0 1 1 128 0A64 64 0 1 1 112 128zM320 128a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zM177.3 256C196 219.8 233.6 192 288 192h64c54.4 0 92 27.8 110.7 64h-385.4zm346 0H592c26.5 0 48 21.5 48 48V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V304c0-26.5 21.5-48 48-48H116.7C105.8 274.6 96 298.1 96 324v24c0 13.3 10.7 24 24 24h400c13.3 0 24-10.7 24-24v-24c0-25.9-9.8-49.4-20.7-68z" />
+            </svg>
+            Accredited Carpools
+          </button>
+          <button class="tab-btn" data-tab="pass">
+            <svg viewBox="0 0 448 512">
+              <path
+                d="M0 64C0 28.7 28.7 0 64 0H288L448 160V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 128V64H64V448H384V192zM128 128h128v32H128V128zm0 96h192v32H128V224zm0 96h192v32H128V320z" />
+            </svg>
+            Digital Pass & QR Kit
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN DASHBOARD CONTENT GRID -->
+      <div class="dashboard-layout">
+
+        <!-- LEFT WORKSPACE COLUMN -->
+        <div class="workspace-left">
+
+          <!-- TAB 1: TRIP PLANNER & BUILDER -->
+          <div id="tab-builder" class="tab-content active">
+...
+          </div>
+
+          <!-- TAB 1.5: TRIP FLOW TIMELINE -->
+          <div id="tab-timeline" class="tab-content">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">📅 Trip Flow & Logistics Timeline</h3>
+                  <p class="panel-subtitle">Day-by-day visualization of your confirmed activities and transport.</p>
+                </div>
+              </div>
+              
+              <div class="timeline-container">
+                <div class="timeline-day">
+                  <div class="day-marker">
+                    <div class="day-num">01</div>
+                    <div class="day-label">Arrival</div>
+                  </div>
+                  <div class="day-content">
+                    <div class="timeline-event">
+                      <span class="event-icon">🏨</span>
+                      <div class="event-text">Check-in: Skardu Backpackers Hostel</div>
+                    </div>
+                    <div class="timeline-event">
+                      <span class="event-icon">🚗</span>
+                      <div class="event-text">Pickup from Airport (Toyota Prado TX 4x4)</div>
+                    </div>
+                    <div class="advisory-badge-small">✅ Road Clear: Skardu Airport Rd</div>
+                  </div>
+                </div>
+
+                <div class="timeline-day">
+                  <div class="day-marker">
+                    <div class="day-num">02</div>
+                    <div class="day-label">Excursion</div>
+                  </div>
+                  <div class="day-content">
+                    <div class="timeline-event">
+                      <span class="event-icon">🏔️</span>
+                      <div class="event-text">Deosai Plains Trek with Guide Karim Shah</div>
+                    </div>
+                    <div class="timeline-event">
+                      <span class="event-icon">🚗</span>
+                      <div class="event-text">Mountain Transit: Prado TX 4x4 (Full Day)</div>
+                    </div>
+                    <div class="advisory-badge-small" style="background: var(--warning-bg); color: var(--warning); border-color: rgba(217, 119, 6, 0.2);">⚠️ Rain Alert: Possible closures near Sheosar Lake</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <!-- STEP 1: CHOOSE STAY -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 576 512">
+                      <path
+                        d="M576 287.6c0-15.9-14.3-28.2-30-26.2l-237.6 30.6-237.6-30.6c-15.7-2-30 10.3-30 26.2V448c0 17.7 14.3 32 32 32h503.6c17.7 0 32-14.3 32-32V287.6zM288 384c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z" />
+                    </svg>
+                    1. Choose Stay Accommodations
+                  </h3>
+                  <p class="panel-subtitle">Select a verified local hospitality vendor. Rates are standard set by the
+                    department.</p>
+                </div>
+              </div>
+
+              <div class="option-card-list" id="stay-card-list">
+                <!-- DETAILED CARD 1 -->
+                <div class="detailed-stay-card selected" id="stay-hostel" onclick="selectStay('hostel', 4000, 'Skardu Backpackers Hostel', 6)">
+                  <div class="stay-image-large" style="background-image: url('https://images.unsplash.com/photo-1555854817-5b2260d1164a?auto=format&fit=crop&q=80&w=1000');">
+                    <span class="option-badge featured-badge" style="position: absolute; top: 12px; left: 12px;">✨ FEATURED</span>
+                  </div>
+                  <div class="stay-content-wrap">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <h4 style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 800; color: var(--gov-navy);">Skardu Backpackers Hostel</h4>
+                      <span class="option-badge verified">✓ State Verified</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">Premium social hostel in central Skardu. Perfect for trekking groups and solo backpackers.</p>
+                    
+                    <div class="stay-feature-icons">
+                      <div class="feature-icon-item">📶 WiFi</div>
+                      <div class="feature-icon-item">🚿 Hot Shower</div>
+                      <div class="feature-icon-item">🍳 Breakfast</div>
+                      <div class="feature-icon-item">🏔️ K2 View</div>
+                    </div>
+
+                    <div class="photo-reviews-link" onclick="event.stopPropagation(); showToast('Community Feed', 'Loading 42 community photos...', 'info')">
+                      📸 Community Reviews (42 Photos)
+                    </div>
+
+                    <div class="stay-price-row">
+                      <div class="option-badge-row">
+                        <span class="option-badge badge-solo">Safe for Solo</span>
+                        <span class="option-badge badge-women">Women-Friendly</span>
+                      </div>
+                      <div class="option-price">Rs. 4,000<small>/ Night</small></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- DETAILED CARD 2 -->
+                <div class="detailed-stay-card" id="stay-resort" onclick="selectStay('resort', 25000, 'Shangrila Resort Skardu', 4)">
+                  <div class="stay-image-large" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1000');"></div>
+                  <div class="stay-content-wrap">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <h4 style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 800; color: var(--gov-navy);">Shangrila Resort (Premium)</h4>
+                      <span class="option-badge gov-tier">Gov Preferred</span>
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">Luxurious suites alongside Lower Kachura Lake. The heart of Baltistan's natural beauty.</p>
+                    
+                    <div class="stay-feature-icons">
+                      <div class="feature-icon-item">🏊 Pool</div>
+                      <div class="feature-icon-item">🍽️ Fine Dine</div>
+                      <div class="feature-icon-item">🛶 Boating</div>
+                    </div>
+
+                    <div class="stay-price-row">
+                      <span class="option-badge verified">✓ Safe Profile</span>
+                      <div class="option-price">Rs. 25,000<small>/ Night</small></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+                  </div>
+                  <div class="option-price">
+                    Rs. 4,000
+                    <small>/ Night</small>
+                  </div>
+                </div>
+
+                <div class="option-card" id="stay-resort"
+                  onclick="selectStay('resort', 25000, 'Shangrila Resort Skardu', 4)">
+                  <input type="radio" name="stay" class="option-radio">
+                  <div class="option-details">
+                    <h4>Shangrila Resort Skardu (Premium)</h4>
+                    <p>World-famous resort set alongside the pristine heart-shaped Lower Kachura Lake. Deluxe executive
+                      suites with panoramic mountain views.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge verified">✓ State Verified</span>
+                      <span class="option-badge gov-tier">Gov Preferred Tier</span>
+                      <span class="option-badge">⭐ 4.8 (850 reviews)</span>
+                      <span class="option-badge">Capacity: 4 guests</span>
+                    </div>
+                  </div>
+                  <div class="option-price">
+                    Rs. 25,000
+                    <small>/ Night</small>
+                  </div>
+                </div>
+
+                <div class="option-card" id="stay-palace"
+                  onclick="selectStay('palace', 35000, 'Khaplu Palace Heritage Hotel', 3)">
+                  <input type="radio" name="stay" class="option-radio">
+                  <div class="option-details">
+                    <h4>Khaplu Palace Heritage Hotel (Luxury)</h4>
+                    <p>A restored 19th-century royal palace overlooking the Chaqchan Valley. Heritage suites with
+                      handcrafted Balti woodwork and curated cultural immersions.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge verified">✓ State Verified</span>
+                      <span class="option-badge gov-tier">Heritage Listed</span>
+                      <span class="option-badge">⭐ 4.7 (310 reviews)</span>
+                      <span class="option-badge">Capacity: 3 guests</span>
+                    </div>
+                  </div>
+                  <div class="option-price">
+                    Rs. 35,000
+                    <small>/ Night</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2: SELECT TRANSPORT RIDE -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 640 512">
+                      <path
+                        d="M608 320h-8c-17.7 0-32-14.3-32-32v-64c0-35.3-28.7-64-64-64H320c-35.3 0-64 28.7-64 64v64c0 17.7-14.3 32-32 32h-8c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h503.6c17.7 0 32-14.3 32-32V352c.1-17.7-14.2-32-32-32zM128 320a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zm320 0a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z" />
+                    </svg>
+                    2. Select Transport Registry Vehicle
+                  </h3>
+                  <p class="panel-subtitle">Official licensed drivers only. All vehicles have fitted satellite safety
+                    trackers and cellular radios.</p>
+                </div>
+              </div>
+
+              <div id="terrain-warning" class="terrain-warning">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01" />
+                </svg>
+                <span>TERRAIN ALERT: 4x4 Vehicle Mandatory for the selected destination (Deosai/Basho).</span>
+              </div>
+
+              <div class="option-card-list">
+                <div class="option-card selected" onclick="selectRide('prado', 15000, 'Toyota Prado TX 4x4')">
+                  <input type="radio" name="ride" class="option-radio" checked>
+                  <div class="option-details">
+                    <h4>Toyota Prado TX 4x4</h4>
+                    <p>Recommended for Deosai Plains, Shigar sand dunes, and high-elevation valleys. Capable in all
+                      weather conditions.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge featured-badge">✨ FEATURED RIDE</span>
+                      <span class="option-badge verified">✓ Operator Tracked</span>
+                      <span class="option-badge badge-solo">Safe for Solo</span>
+                      <span class="option-badge">All-Terrain Certified</span>
+                      <span class="option-badge">Driver: Karim Shah ⭐4.9</span>
+                    </div>
+                  </div>
+                  <div class="option-price">Rs. 15,000<small>/ Day</small></div>
+                </div>
+
+                <div class="option-card" onclick="selectRide('cabin', 12000, 'Toyota HiAce Grand Cabin')">
+                  <input type="radio" name="ride" class="option-radio">
+                  <div class="option-details">
+                    <h4>Toyota HiAce Grand Cabin</h4>
+                    <p>Ideal for larger groups travelling along the Karakoram Highway. Premium passenger comfort with
+                      extra space for expedition gear.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge verified">✓ Operator Tracked</span>
+                      <span class="option-badge">Capacity: 12 Guests</span>
+                      <span class="option-badge">Driver: Junaid Ali ⭐4.8</span>
+                    </div>
+                  </div>
+                  <div class="option-price">Rs. 12,000<small>/ Day</small></div>
+                </div>
+
+                <div class="option-card" onclick="selectRide('corolla', 7000, 'Toyota Corolla GLI')">
+                  <input type="radio" name="ride" class="option-radio">
+                  <div class="option-details">
+                    <h4>Toyota Corolla GLI</h4>
+                    <p>Comfortable sedan for highway travel between Skardu, Gilgit and KKH routes. AC equipped,
+                      economical option for couples and small groups.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge verified">✓ Operator Tracked</span>
+                      <span class="option-badge">Highway Certified</span>
+                      <span class="option-badge">Driver: Raza Haider ⭐4.7</span>
+                    </div>
+                  </div>
+                  <div class="option-price">Rs. 7,000<small>/ Day</small></div>
+                </div>
+
+                <div class="option-card" onclick="selectRide('alto', 4500, 'Suzuki Alto')">
+                  <input type="radio" name="ride" class="option-radio">
+                  <div class="option-details">
+                    <h4>Suzuki Alto</h4>
+                    <p>Budget-friendly compact car. Best for solo travelers and couples on short-distance city hops
+                      within Skardu and Gilgit regions.</p>
+                    <div class="option-badge-row">
+                      <span class="option-badge verified">✓ Operator Tracked</span>
+                      <span class="option-badge">Budget Friendly</span>
+                      <span class="option-badge">Driver: Imran Balti ⭐4.6</span>
+                    </div>
+                  </div>
+                  <div class="option-price">Rs. 4,500<small>/ Day</small></div>
+                </div>
+              </div>
+
+              <!-- Ride Sharing -->
+              <div class="sharing-toggle-box">
+                <input type="checkbox" id="pooling-opt" class="sharing-checkbox" checked
+                  onchange="togglePooling(this.checked)">
+                <div class="sharing-text">
+                  <label for="pooling-opt">Share seats on this ride with other backpackers to split costs</label>
+                  <p>Register vehicle seats for sharing with other verified tourists. Saves up to 20% on total
+                    transportation rates when matching active routes.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: ADD-ON ACTIVITY GUIDE GRID -->
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 640 512">
+                      <path
+                        d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C79.8 288 0 367.8 0 466.3V512h448v-45.7c0-98.5-79.8-178.3-178.4-178.3z" />
+                    </svg>
+                    3. Add-On Activity Guides
+                  </h3>
+                  <p class="panel-subtitle">Select one or more certified local guides. Multi-select allowed. All guides
+                    are background-verified by the Department of Adventure Travel.</p>
+                </div>
+              </div>
+
+              <div class="guide-grid">
+                <div class="guide-action-card" id="guide-k2" onclick="toggleGuide('k2')">
+                  <div class="guide-icon-round">🥾</div>
+                  <h4>K2 Basecamp Expedition</h4>
+                  <p>Professional rescue training, Concordia trek mastery, altitude medicine certified.</p>
+                  <button class="btn-guide-toggle" id="guide-btn-k2">Add Guide (+Rs. 8,000/day)</button>
+                </div>
+                <div class="guide-action-card" id="guide-deosai" onclick="toggleGuide('deosai')">
+                  <div class="guide-icon-round">⛺</div>
+                  <h4>Deosai Wilderness Camping</h4>
+                  <p>Brown bear territory expert, camping logistics, Sheosar Lake navigation specialist.</p>
+                  <button class="btn-guide-toggle" id="guide-btn-deosai">Add Guide (+Rs. 6,000/day)</button>
+                </div>
+                <div class="guide-action-card" id="guide-cultural" onclick="toggleGuide('cultural')">
+                  <div class="guide-icon-round">🏛️</div>
+                  <h4>Balti Cultural Heritage</h4>
+                  <p>Local language proficiency (Balti/Urdu), historical fort tours, traditional cuisine experiences.
+                  </p>
+                  <button class="btn-guide-toggle" id="guide-btn-cultural">Add Guide (+Rs. 4,000/day)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: VISITOR REGISTRY & PERMITS -->
+          <div id="tab-registry" class="tab-content">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 384 512">
+                      <path
+                        d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H256c-17.7 0-32-14.3-32-32zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8z" />
+                    </svg>
+                    State Visitor Registry Registration
+                  </h3>
+                  <p class="panel-subtitle">This registry is legally mandatory for tracking visitors in mountainous
+                    zones and issuing safety clearances.</p>
+                </div>
+              </div>
+
+              <form class="registry-form" onsubmit="handleRegistrySubmit(event)">
+                <div class="form-group">
+                  <label for="reg-name">Primary Traveler Name</label>
+                  <input type="text" id="reg-name" required value="Akbar Hussain">
+                </div>
+                <div class="form-group">
+                  <label for="reg-cnic">CNIC / Passport Number</label>
+                  <input type="text" id="reg-cnic" required placeholder="e.g. 37405-1234567-1" value="37405-1234567-1">
+                  <span class="form-tip">Must match official identification at checkpoints.</span>
+                </div>
+                <div class="form-group">
+                  <label for="reg-phone">Cellular Number (Active SIM)</label>
+                  <input type="text" id="reg-phone" required value="+92 300 1234567">
+                </div>
+                <div class="form-group">
+                  <label for="reg-blood">Blood Group</label>
+                  <select id="reg-blood">
+                    <option value="A+">A Positive (A+)</option>
+                    <option value="A-">A Negative (A-)</option>
+                    <option value="B+">B Positive (B+)</option>
+                    <option value="B-">B Negative (B-)</option>
+                    <option value="O+" selected>O Positive (O+)</option>
+                    <option value="O-">O Negative (O-)</option>
+                    <option value="AB+">AB Positive (AB+)</option>
+                    <option value="AB-">AB Negative (AB-)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="reg-emergency">Emergency Hotline Contact (Relative)</label>
+                  <input type="text" id="reg-emergency" required value="+92 312 9876543">
+                </div>
+                <div class="form-group">
+                  <label for="reg-dest-sync">Declared Entry Valley</label>
+                  <select id="reg-dest-sync"
+                    onchange="state.destination = this.value; syncDestinationChange(this.value)">
+                    <option value="Skardu">Skardu District</option>
+                    <option value="Hunza">Hunza District</option>
+                    <option value="Shigar">Shigar Valley</option>
+                    <option value="Khaplu">Khaplu Valley</option>
+                    <option value="Deosai">Deosai Plains</option>
+                    <option value="Basho">Basho Valley</option>
+                  </select>
+                </div>
+                <div class="form-group form-full">
+                  <label>Safety & Adventure Declaration</label>
+                  <div style="display: flex; gap: 8px; margin-top: 6px;">
+                    <input type="checkbox" id="reg-declaration" required checked
+                      style="height: auto; width: auto; cursor: pointer;">
+                    <span class="form-tip" style="margin-top: 0; cursor: pointer;"
+                      onclick="document.getElementById('reg-declaration').click()">
+                      I hereby declare that I will follow designated trails, register with checkposts, and notify the
+                      rescue desk when changing itineraries.
+                    </span>
+                  </div>
+                </div>
+                <div class="form-full">
+                  <button type="submit" class="btn-submit-registry">
+                    <svg viewBox="0 0 512 512" width="16" height="16" fill="currentColor">
+                      <path
+                        d="M480 32H32C14.3 32 0 46.3 0 64v384c0 17.7 14.3 32 32 32h448c17.7 0 32-14.3 32-32V64c0-17.7-14.3-32-32-32zM384 416H128v-48h256v48zm0-96H128v-48h256v48zm0-96H128v-48h256v48z" />
+                    </svg>
+                    Submit Official Security Registry
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 3: CARPOOL MATCHING -->
+          <div id="tab-carpool" class="tab-content">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 640 512">
+                      <path
+                        d="M592 256H528v-64c0-35.3-28.7-64-64-64H320c-35.3 0-64 28.7-64 64v64H192c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h400c17.7 0 32-14.3 32-32V288c0-17.7-14.3-32-32-32z" />
+                    </svg>
+                    Verified Shared Transport Exchange
+                  </h3>
+                  <p class="panel-subtitle">Share vehicles with other registered travelers along official routes. Fares
+                    split dynamically based on actual passenger count.</p>
+                </div>
+              </div>
+
+              <div class="pool-list">
+                <!-- POOL ITEM 1 -->
+                <div class="pool-item">
+                  <div class="pool-info">
+                    <div class="pool-route">Skardu Center <span class="arrow">→</span> Deosai Plains</div>
+                    <div class="pool-driver">
+                      <span>Driver: Ali Murad</span>
+                      <span style="color: var(--success); font-weight: 700;">● Accredited</span>
+                    </div>
+                    <div class="pool-meta-row">
+                      <span class="pool-pill seats" id="seats-pool1">Seats Left: 3</span>
+                      <span class="pool-pill">Departure: 07:30 AM</span>
+                      <span class="pool-pill">Toyota Prado</span>
+                    </div>
+                    <div class="pool-fare-math" id="fare-math-pool1">Vehicle Rent: Rs. 15,000 ÷ 4 passengers =
+                      <strong>Rs. 3,750/seat</strong>
+                    </div>
+                  </div>
+                  <div class="pool-side">
+                    <div class="pool-price" id="price-pool1">Rs. 3,750 <small>/ seat</small></div>
+                    <button class="btn-pool-join" id="btn-pool1" onclick="joinPool(1)">Join Carpool</button>
+                  </div>
+                </div>
+
+                <!-- POOL ITEM 2 -->
+                <div class="pool-item">
+                  <div class="pool-info">
+                    <div class="pool-route">Skardu Center <span class="arrow">→</span> Shigar Cold Desert</div>
+                    <div class="pool-driver">
+                      <span>Driver: Junaid Khan</span>
+                      <span style="color: var(--success); font-weight: 700;">● Accredited</span>
+                    </div>
+                    <div class="pool-meta-row">
+                      <span class="pool-pill seats" id="seats-pool2">Seats Left: 5</span>
+                      <span class="pool-pill">Departure: 09:00 AM</span>
+                      <span class="pool-pill">HiAce Grand Cabin</span>
+                    </div>
+                    <div class="pool-fare-math" id="fare-math-pool2">Vehicle Rent: Rs. 12,000 ÷ 7 passengers =
+                      <strong>Rs. 1,714/seat</strong>
+                    </div>
+                  </div>
+                  <div class="pool-side">
+                    <div class="pool-price" id="price-pool2">Rs. 1,714 <small>/ seat</small></div>
+                    <button class="btn-pool-join" id="btn-pool2" onclick="joinPool(2)">Join Carpool</button>
+                  </div>
+                </div>
+
+                <!-- POOL ITEM 3 -->
+                <div class="pool-item">
+                  <div class="pool-info">
+                    <div class="pool-route">Gilgit <span class="arrow">→</span> Hunza Valley</div>
+                    <div class="pool-driver">
+                      <span>Driver: Hassan Mir</span>
+                      <span style="color: var(--success); font-weight: 700;">● Accredited</span>
+                    </div>
+                    <div class="pool-meta-row">
+                      <span class="pool-pill seats" id="seats-pool3">Seats Left: 2</span>
+                      <span class="pool-pill">Departure: 06:00 AM</span>
+                      <span class="pool-pill">Toyota Corolla</span>
+                    </div>
+                    <div class="pool-fare-math" id="fare-math-pool3">Vehicle Rent: Rs. 7,000 ÷ 2 passengers =
+                      <strong>Rs. 3,500/seat</strong>
+                    </div>
+                  </div>
+                  <div class="pool-side">
+                    <div class="pool-price" id="price-pool3">Rs. 3,500 <small>/ seat</small></div>
+                    <button class="btn-pool-join" id="btn-pool3" onclick="joinPool(3)">Join Carpool</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: OFFLINE PASS & SURVIVAL KIT -->
+          <div id="tab-pass" class="tab-content">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3 class="panel-title">
+                    <svg viewBox="0 0 448 512">
+                      <path
+                        d="M0 64C0 28.7 28.7 0 64 0H288L448 160V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 128V64H64V448H384V192zM128 128h128v32H128V128zm0 96h192v32H128V224zm0 96h192v32H128V320z" />
+                    </svg>
+                    Official Digital Travel Pass
+                  </h3>
+                  <p class="panel-subtitle">This card contains essential security access codes. Always keep it cached or
+                    downloaded on your device.</p>
+                </div>
+              </div>
+
+              <div class="offline-notice-box">
+                <svg viewBox="0 0 512 512">
+                  <path
+                    d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h76c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z" />
+                </svg>
+                <div class="offline-notice-text">
+                  <h4>Offline Enabled (📶 Cached Locally)</h4>
+                  <p>This pass has been securely compiled into your local browser database. It remains active and
+                    scannable even if cellular and satellite internet connections fail.</p>
+                </div>
+              </div>
+
+              <!-- OFFICIAL PASS CARD -->
+              <div class="pass-card-grid">
+                <div class="pass-card-left">
+                  <span class="pass-badge" id="pass-status-badge">ACCED & VERIFIED</span>
+                  <div class="pass-title">GILGIT-BALTISTAN DISTRICT TRAVEL PASS</div>
+                  <div class="pass-details-grid">
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">Primary Holder</span>
+                      <span class="pass-field-value" id="pass-holder-name">Akbar Hussain</span>
+                    </div>
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">Registry Card ID</span>
+                      <span class="pass-field-value" id="pass-registry-id">GB-TR-2026-8941</span>
+                    </div>
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">CNIC / Passport</span>
+                      <span class="pass-field-value" id="pass-holder-cnic">37405-1234567-1</span>
+                    </div>
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">Entry Valley</span>
+                      <span class="pass-field-value" id="pass-holder-dest">Skardu District</span>
+                    </div>
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">Dates Registered</span>
+                      <span class="pass-field-value" id="pass-holder-dates">12 Aug - 17 Aug</span>
+                    </div>
+                    <div class="pass-field-group">
+                      <span class="pass-field-label">Security Clearance</span>
+                      <span class="pass-field-value" style="color: var(--success); font-weight: 700;">APPROVED</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="pass-card-right">
+                  <div class="pass-qr-frame">
+                    <canvas class="pass-qr-canvas" id="pass-qr-canvas" width="96" height="96"></canvas>
+                  </div>
+                  <span class="pass-id-text" id="pass-qr-id">GB-TR-8941</span>
+                </div>
+              </div>
+
+              <div class="pass-actions-row">
+                <button class="btn-pass-action primary" onclick="downloadPass()">Download PDF Permit</button>
+                <button class="btn-pass-action" onclick="cacheOfflineData()">📶 Cache Offline Package</button>
+                <button class="btn-pass-action" onclick="printPass()">Print Hardcopy</button>
+              </div>
+            </div>
+
+            <!-- SAFETY HELPLINE PANEL -->
+            <div class="panel-card">
+              <div class="panel-head" style="margin-bottom: 12px;">
+                <div>
+                  <h3 class="panel-title" style="color: var(--danger);">
+                    <svg viewBox="0 0 512 512" fill="currentColor">
+                      <path
+                        d="M436 124H12c-6.6 0-12-5.4-12-12V80c0-6.6 5.4-12 12-12h424c6.6 0 12 5.4 12 12v32c0 6.6-5.4 12-12 12zm0 160H12c-6.6 0-12-5.4-12-12v-32c0-6.6 5.4-12 12-12h424c6.6 0 12 5.4 12 12v32c0 6.6-5.4 12-12 12zm0 160H12c-6.6 0-12-5.4-12-12v-32c0-6.6 5.4-12 12-12h424c6.6 0 12 5.4 12 12v32c0 6.6-5.4 12-12 12z" />
+                    </svg>
+                    Accredited Safety & Search Advisories
+                  </h3>
+                  <p class="panel-subtitle">Direct cellular connection. These functions do not require internet data and
+                    connect via cellular tower relay.</p>
+                </div>
+              </div>
+
+              <div class="helpline-grid">
+                <div class="helpline-item">
+                  <div class="helpline-info">
+                    <h5>Department Safety Desk</h5>
+                    <p>Accredited Advisory desk</p>
+                  </div>
+                  <a href="tel:1422" class="btn-helpline-call" onclick="callNumber('1422')">Call 1422</a>
+                </div>
+                <div class="helpline-item">
+                  <div class="helpline-info">
+                    <h5>Rescue 1122 Alpine</h5>
+                    <p>Search & Rescue teams</p>
+                  </div>
+                  <a href="tel:1122" class="btn-helpline-call" onclick="callNumber('1122')">Call 1122</a>
+                </div>
+                <div class="helpline-item">
+                  <div class="helpline-info">
+                    <h5>Skardu Central HQ</h5>
+                    <p>Security & Permits Office</p>
+                  </div>
+                  <a href="tel:05815920101" class="btn-helpline-call" onclick="callNumber('05815-920101')">Call HQ</a>
+                </div>
+                <div class="helpline-item">
+                  <div class="helpline-info">
+                    <h5>Adventure Medical Unit</h5>
+                    <p>Skardu Basecamp Hospital</p>
+                  </div>
+                  <a href="tel:05815920115" class="btn-helpline-call" onclick="callNumber('05815-920115')">Call
+                    Medical</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR COLUMN -->
+        <aside class="sidebar">
+          <div class="invoice-card">
+            <div class="invoice-head">
+              <p id="invoice-sidebar-type">Registry Package Builder</p>
+              <h3 id="invoice-sidebar-title">Trip Invoice Estimate</h3>
+            </div>
+            <div class="invoice-item-list" id="invoice-items"></div>
+            <div class="invoice-total-box">
+              <div class="invoice-total-label">Government Fee Estimate</div>
+              <div class="invoice-total-row">
+                <div class="invoice-total-val" id="invoice-total">Rs. 0</div>
+                <span class="invoice-total-badge" id="invoice-rate-badge">Synced Live</span>
+              </div>
+            </div>
+            <button class="btn-invoice-action" id="invoice-main-btn" onclick="handleInvoiceAction()">Proceed to Visitor
+              Registry</button>
+          </div>
+          <div class="sidebar-security-badge">
+            <svg viewBox="0 0 448 512">
+              <path
+                d="M400 224h-24v-64C376 71.6 304.4 0 216 0S56 71.6 56 160v64H32c-17.7 0-32 14.3-32 32v192c0 17.7 14.3 32 32 32h368c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32zm-264-64c0-53 43-96 96-96s96 43 96 96v64H136v-64z" />
+            </svg>
+            <div class="sidebar-security-text">
+              <h5>Encrypted Govt Gateway</h5>
+              <p>SSL Encryption verified. Personal information registered under state travel ordinances is strictly
+                private and deleted 30 days post-travel.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- =========================================================== -->
+    <!-- ROLE: VENDOR WORKSPACE -->
+    <!-- =========================================================== -->
+    <div id="workspace-vendor" class="role-workspace">
+      <section class="hero" style="padding: 40px 48px;">
+        <div class="hero-content">
+          <div class="hero-tag">💼 Vendor Management System</div>
+          <h1>Vendor Operations Portal</h1>
+          <p>Manage your hotel inventory, fleet pricing, and compliance documents. All data syncs to the central tourism
+            administration.</p>
+        </div>
+      </section>
+
+      <div class="vendor-sub-tabs">
+        <button class="vendor-sub-btn active" onclick="switchVendorTab('hotel')">🏨 Hotel / Hostel Operators</button>
+        <button class="vendor-sub-btn" onclick="switchVendorTab('driver')">🚗 Drivers & Fleet</button>
+        <button class="vendor-sub-btn" onclick="switchVendorTab('kyc')">🛡️ KYC Verification</button>
+      </div>
+
+      <!-- VENDOR SUB-TAB: HOTEL OPERATORS -->
+      <div id="vendor-tab-hotel" class="vendor-sub-content active">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🏨 My Properties & Rooms</h3>
+              <p class="panel-subtitle">Manage your room types, pricing, and specific amenities for each unit.</p>
+            </div>
+            <button class="btn-add-room" onclick="openRoomForm()">➕ Add New Room</button>
+          </div>
+          
+          <div class="room-manager-grid">
+            <div class="room-admin-card">
+              <div style="font-weight: 800; color: var(--gov-navy); margin-bottom: 8px;">Standard Dorm (Mixed)</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">6 Beds • WiFi • Hot Shower</div>
+              <div style="margin-top: 12px; font-weight: 700; color: var(--gov-accent);">Rs. 4,000 / Night</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn-dispute" style="flex: 1;">Edit</button>
+                <button class="btn-dispute warn" style="flex: 1;">Hide</button>
+              </div>
+            </div>
+            <div class="room-admin-card">
+              <div style="font-weight: 800; color: var(--gov-navy); margin-bottom: 8px;">Executive Private Suite</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Double Bed • Balcony • K2 View</div>
+              <div style="margin-top: 12px; font-weight: 700; color: var(--gov-accent);">Rs. 12,000 / Night</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn-dispute" style="flex: 1;">Edit</button>
+                <button class="btn-dispute warn" style="flex: 1;">Hide</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">📅 Room Inventory Calendar</h3>
+              <p class="panel-subtitle">Click any cell to toggle room availability. Blocked rooms will not appear for
+                online app users.</p>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <div class="cal-grid" id="room-calendar"></div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">💰 Dynamic Seasonal Pricing</h3>
+              <p class="panel-subtitle">Set seasonal price surges for peak tourism months or discounts for off-season
+                visitors.</p>
+            </div>
+          </div>
+          <div class="pricing-control-row">
+            <div class="form-group">
+              <label>Season Period</label>
+              <select id="season-select">
+                <option value="high">High Season (July - Cherry Blossom)</option>
+                <option value="mid">Mid Season (June, August)</option>
+                <option value="low">Low Season (October - March)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price Multiplier</label>
+              <select id="season-multiplier">
+                <option value="1.5">+50% Surge</option>
+                <option value="1.3">+30% Surge</option>
+                <option value="1.0" selected>Standard Rate</option>
+                <option value="0.8">-20% Discount</option>
+                <option value="0.7">-30% Discount</option>
+              </select>
+            </div>
+            <button class="btn-quick" onclick="applySeasonPricing()" style="height: 42px;">Apply Pricing</button>
+          </div>
+          <div id="season-pricing-result" style="font-size: 0.82rem; color: var(--text-muted);"></div>
+        </div>
+      </div>
+
+      <!-- VENDOR SUB-TAB: DRIVERS -->
+      <div id="vendor-tab-driver" class="vendor-sub-content">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🚗 My Fleet & Registered Vehicles</h3>
+              <p class="panel-subtitle">Manage your asset inventory, model years, and technical certifications.</p>
+            </div>
+            <button class="btn-add-room" style="background: var(--gov-navy);" onclick="showToast('Fleet Manager', 'Opening New Vehicle Registration...', 'info')">➕ Add New Vehicle</button>
+          </div>
+
+          <div class="fleet-manager-grid">
+            <div class="vehicle-admin-card">
+              <div class="vehicle-img-thumb" style="background-image: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1000');"></div>
+              <div class="vehicle-info-panel">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <h4 style="font-weight: 800; color: var(--gov-navy);">Toyota Prado (2021)</h4>
+                  <span class="option-badge verified">✓ 4x4 Ready</span>
+                </div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 12px;">PLATE: SKD-8821 | AC + Heater</div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;">
+                  <span class="pool-pill">Roof Rack</span>
+                  <span class="pool-pill">High-Altitude Certified</span>
+                </div>
+                <button class="btn-dispute" style="width: 100%;">Manage Maintenance Log</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🛡️ Driver Professional Profile</h3>
+              <p class="panel-subtitle">Experience, languages, and technical certifications for high-altitude treks.</p>
+            </div>
+          </div>
+          <div class="registry-form">
+            <div class="form-group">
+              <label>Mountain Experience (Years)</label>
+              <input type="number" value="12">
+            </div>
+            <div class="form-group">
+              <label>Languages Spoken</label>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <label style="font-size: 0.8rem;"><input type="checkbox" checked> Balti</label>
+                <label style="font-size: 0.8rem;"><input type="checkbox" checked> Urdu</label>
+                <label style="font-size: 0.8rem;"><input type="checkbox" checked> English</label>
+                <label style="font-size: 0.8rem;"><input type="checkbox"> Shina</label>
+              </div>
+            </div>
+            <div class="form-group form-full">
+              <label>Specialized Route Knowledge</label>
+              <textarea placeholder="e.g. K2 Basecamp road, Deosai wilderness, Upper Shigar valleys...">12 years of experience driving tourists to K2 Basecamp (Jhola), Deosai plains, and Basho Valley. First-aid certified.</textarea>
+            </div>
+            <button class="btn-quick" style="width: 200px;">Save Profile</button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🗺️ Route-Based Tariff Matrix</h3>
+              <p class="panel-subtitle">Customize flat rates per route. These rates will appear to tourists as the
+                default transport cost for that segment.</p>
+            </div>
+          </div>
+          <table class="tariff-table">
+            <thead>
+              <tr>
+                <th>Route Segment</th>
+                <th>Terrain Type</th>
+                <th>Daily Rate (PKR)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Skardu → Khaplu</strong></td>
+                <td>Mountain Road (Paved)</td>
+                <td><input class="tariff-input" type="number" value="8000" id="tariff-khaplu"></td>
+                <td><span class="status-chip settled">Active</span></td>
+              </tr>
+              <tr>
+                <td><strong>Skardu → Deosai Plains</strong></td>
+                <td>Off-Road (Steep Elevation)</td>
+                <td><input class="tariff-input" type="number" value="15000" id="tariff-deosai"></td>
+                <td><span class="status-chip settled">Active</span></td>
+              </tr>
+              <tr>
+                <td><strong>Skardu → Shigar Fort</strong></td>
+                <td>Valley Road (Mixed)</td>
+                <td><input class="tariff-input" type="number" value="5000" id="tariff-shigar"></td>
+                <td><span class="status-chip settled">Active</span></td>
+              </tr>
+              <tr>
+                <td><strong>Skardu → Basho Valley</strong></td>
+                <td>Off-Road (Forest Track)</td>
+                <td><input class="tariff-input" type="number" value="10000" id="tariff-basho"></td>
+                <td><span class="status-chip settled">Active</span></td>
+              </tr>
+              <tr>
+                <td><strong>Gilgit → Hunza (KKH)</strong></td>
+                <td>Highway (Karakoram)</td>
+                <td><input class="tariff-input" type="number" value="7000" id="tariff-hunza"></td>
+                <td><span class="status-chip settled">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-quick" style="margin-top: 16px;" onclick="saveTariffMatrix()">Save All Tariffs</button>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">📡 Offline Trip Completion Sync</h3>
+              <p class="panel-subtitle">Mark checkpoints as completed even without signal. Data auto-syncs when
+                connectivity returns.</p>
+            </div>
+          </div>
+          <div class="sync-checklist" id="sync-checklist">
+            <div class="sync-item" onclick="toggleSyncItem(this)">
+              <input type="checkbox"><label>✓ Passenger Pickup - Skardu Airport</label><span class="sync-status">⏳
+                Pending Sync</span>
+            </div>
+            <div class="sync-item" onclick="toggleSyncItem(this)">
+              <input type="checkbox"><label>✓ Checkpoint: Skardu → Shigar Bridge</label><span class="sync-status">⏳
+                Pending Sync</span>
+            </div>
+            <div class="sync-item" onclick="toggleSyncItem(this)">
+              <input type="checkbox"><label>✓ Checkpoint: Shigar → Deosai Entry Gate</label><span class="sync-status">⏳
+                Pending Sync</span>
+            </div>
+            <div class="sync-item" onclick="toggleSyncItem(this)">
+              <input type="checkbox"><label>✓ Arrival: Deosai Sheosar Lake Camp</label><span class="sync-status">⏳
+                Pending Sync</span>
+            </div>
+            <div class="sync-item" onclick="toggleSyncItem(this)">
+              <input type="checkbox"><label>✓ Return: Drop-off at Skardu City</label><span class="sync-status">⏳ Pending
+                Sync</span>
+            </div>
+          </div>
+          <button class="btn-sync-push" onclick="pushSyncData()">📡 Restore Signal & Push Sync</button>
+        </div>
+      </div>
+
+      <!-- VENDOR SUB-TAB: KYC -->
+      <div id="vendor-tab-kyc" class="vendor-sub-content">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🛡️ Document Upload & Verification Portal</h3>
+              <p class="panel-subtitle">Upload mandatory documents for verification. All vendors must pass KYC checks
+                before listings go live.</p>
+            </div>
+          </div>
+          <div class="kyc-grid">
+            <div class="kyc-card" id="kyc-cnic" onclick="uploadKYC('cnic')">
+              <h5>📄 CNIC Copy</h5>
+              <p>National Identity Card (front & back)</p>
+              <span class="kyc-status pending" id="kyc-status-cnic">Click to Upload</span>
+            </div>
+            <div class="kyc-card" id="kyc-license" onclick="uploadKYC('license')">
+              <h5>🪪 Driver's License</h5>
+              <p>Valid driving license issued by authorities</p>
+              <span class="kyc-status pending" id="kyc-status-license">Click to Upload</span>
+            </div>
+            <div class="kyc-card" id="kyc-vehicle" onclick="uploadKYC('vehicle')">
+              <h5>🚗 Vehicle Registration</h5>
+              <p>Excise & Taxation registration document</p>
+              <span class="kyc-status pending" id="kyc-status-vehicle">Click to Upload</span>
+            </div>
+          </div>
+          <div id="verified-badge-area" style="display: none;">
+            <div class="verified-badge-display">
+              <span style="font-size: 1.4rem;">🛡️</span>
+              <div>
+                <div>Safe Profile Badge — VERIFIED</div>
+                <div style="font-weight: 500; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">All KYC
+                  documents have been verified by the admin. Your badge is now visible to tourists.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================== -->
+    <!-- ROLE: SUPER ADMIN WORKSPACE -->
+    <!-- =========================================================== -->
+    <div id="workspace-admin" class="role-workspace">
+      <section class="hero"
+        style="padding: 40px 48px; background-image: linear-gradient(180deg, rgba(11,37,69,0.92) 0%, rgba(11,37,69,0.78) 100%), url('mountains_hero_banner.png');">
+        <div class="hero-content">
+          <div class="hero-tag">👑 Super Admin Control Tower</div>
+          <h1>Platform Administration Dashboard</h1>
+          <p>Monitor fleet operations, manage financial escrow settlements, and resolve disputes across the entire
+            Baltistan tourism network.</p>
+        </div>
+      </section>
+
+      <div class="admin-sub-tabs">
+        <button class="admin-sub-btn active" onclick="switchAdminTab('escrow')">💰 Financial Escrow</button>
+        <button class="admin-sub-btn" onclick="switchAdminTab('fleet')">🗺️ Fleet Operations Map</button>
+        <button class="admin-sub-btn" onclick="switchAdminTab('disputes')">⚠️ Dispute Resolution</button>
+        <button class="admin-sub-btn" onclick="switchAdminTab('inventory')">🛠️ Global Inventory & Registry</button>
+      </div>
+
+      <!-- ADMIN SUB: FINANCIAL ESCROW -->
+      <div id="admin-tab-escrow" class="admin-sub-content active">
+        <div class="admin-kpi-row">
+          <div class="admin-kpi">
+            <span class="kpi-label">Total Booking Volume</span>
+            <span class="kpi-value">Rs. 4,821,000</span>
+            <span class="kpi-badge success">+18% This Month</span>
+          </div>
+          <div class="admin-kpi">
+            <span class="kpi-label">Platform Commission (10%)</span>
+            <span class="kpi-value">Rs. 482,100</span>
+            <span class="kpi-badge success">Auto-Deducted</span>
+          </div>
+          <div class="admin-kpi">
+            <span class="kpi-label">Vendor Wallet Payouts</span>
+            <span class="kpi-value">Rs. 4,338,900</span>
+            <span class="kpi-badge warning">3 Pending</span>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">📊 Payout Settlement Ledger</h3>
+              <p class="panel-subtitle">Complete cash flow distribution history for all vendor settlements.</p>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th>Tour ID</th>
+                  <th>Vendor</th>
+                  <th>Total Paid</th>
+                  <th>Platform Fee (10%)</th>
+                  <th>Vendor Share</th>
+                  <th>Payout Channel</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>GB-TR-8941</strong></td>
+                  <td>Skardu Backpackers Hostel</td>
+                  <td>Rs. 20,000</td>
+                  <td>Rs. 2,000</td>
+                  <td>Rs. 18,000</td>
+                  <td>EasyPaisa</td>
+                  <td><span class="status-chip settled">Settled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>GB-TR-7223</strong></td>
+                  <td>Driver: Ali Murad (Prado)</td>
+                  <td>Rs. 75,000</td>
+                  <td>Rs. 7,500</td>
+                  <td>Rs. 67,500</td>
+                  <td>JazzCash</td>
+                  <td><span class="status-chip settled">Settled</span></td>
+                </tr>
+                <tr>
+                  <td><strong>GB-TR-6104</strong></td>
+                  <td>Shangrila Resort Skardu</td>
+                  <td>Rs. 125,000</td>
+                  <td>Rs. 12,500</td>
+                  <td>Rs. 112,500</td>
+                  <td>Bank Transfer (HBL)</td>
+                  <td><span class="status-chip pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td><strong>GB-TR-5589</strong></td>
+                  <td>Driver: Junaid Khan (HiAce)</td>
+                  <td>Rs. 60,000</td>
+                  <td>Rs. 6,000</td>
+                  <td>Rs. 54,000</td>
+                  <td>EasyPaisa</td>
+                  <td><span class="status-chip pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td><strong>GB-TR-4201</strong></td>
+                  <td>K2 Alpine Guide: Karim</td>
+                  <td>Rs. 40,000</td>
+                  <td>Rs. 4,000</td>
+                  <td>Rs. 36,000</td>
+                  <td>JazzCash</td>
+                  <td><span class="status-chip settled">Settled</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn-quick" style="margin-top: 16px;"
+            onclick="showToast('Settlement Initiated', 'Processing pending payouts to vendor wallets via gateway...', 'success')">💸
+            Execute Pending Settlements</button>
+        </div>
+      </div>
+
+      <!-- ADMIN SUB: FLEET MAP -->
+      <div id="admin-tab-fleet" class="admin-sub-content">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🗺️ Live Fleet Tracker — Baltistan Region</h3>
+              <p class="panel-subtitle">Real-time geospatial monitoring based on last-known network pings. Click on a
+                vehicle node for details.</p>
+            </div>
+          </div>
+          <div class="map-canvas-wrap">
+            <canvas id="fleet-map-canvas"></canvas>
+            <div class="map-legend">
+              <div class="map-legend-item">
+                <div class="legend-dot" style="background: #4ADE80;"></div> Active Vehicle
+              </div>
+              <div class="map-legend-item">
+                <div class="legend-dot" style="background: #FACC15;"></div> Idle / Parked
+              </div>
+              <div class="map-legend-item">
+                <div class="legend-dot" style="background: #EF4444;"></div> SOS Beacon
+              </div>
+              <div class="map-legend-item">
+                <div class="legend-dot" style="background: #60A5FA;"></div> Checkpoint
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN SUB: DISPUTES -->
+      <div id="admin-tab-disputes" class="admin-sub-content">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">⚠️ Dispute & Review Resolution Center</h3>
+              <p class="panel-subtitle">Review low ratings (1-3 stars) and take administrative action on flagged
+                profiles.</p>
+            </div>
+          </div>
+          <div class="dispute-list" id="dispute-list">
+            <div class="dispute-card" id="dispute-1">
+              <div class="dispute-header">
+                <h4>Driver: Imran Balti — Suzuki Alto</h4>
+                <div class="dispute-rating">★★☆☆☆ <span
+                    style="color: var(--text-muted); font-size: 0.75rem; margin-left: 4px;">2.0</span></div>
+              </div>
+              <div class="dispute-body">"The driver was 2 hours late to the airport pickup and the vehicle had no
+                heating system. Unacceptable for high-altitude travel in October."</div>
+              <div class="dispute-actions">
+                <button class="btn-dispute warn" onclick="resolveDispute('dispute-1', 'warn')">⚠️ Issue Warning</button>
+                <button class="btn-dispute suspend" onclick="resolveDispute('dispute-1', 'suspend')">🚫 Suspend
+                  Profile</button>
+                <button class="btn-dispute dismiss" onclick="resolveDispute('dispute-1', 'dismiss')">✓ Dismiss
+                  Flag</button>
+              </div>
+            </div>
+            <div class="dispute-card" id="dispute-2">
+              <div class="dispute-header">
+                <h4>Shangrila Resort Skardu — Room 204</h4>
+                <div class="dispute-rating">★☆☆☆☆ <span
+                    style="color: var(--text-muted); font-size: 0.75rem; margin-left: 4px;">1.0</span></div>
+              </div>
+              <div class="dispute-body">"Room was completely different from photos. No hot water despite premium
+                pricing. Staff was unresponsive to complaints for the entire stay duration."</div>
+              <div class="dispute-actions">
+                <button class="btn-dispute warn" onclick="resolveDispute('dispute-2', 'warn')">⚠️ Issue Warning</button>
+                <button class="btn-dispute suspend" onclick="resolveDispute('dispute-2', 'suspend')">🚫 Suspend
+                  Profile</button>
+                <button class="btn-dispute dismiss" onclick="resolveDispute('dispute-2', 'dismiss')">✓ Dismiss
+                  Flag</button>
+              </div>
+            </div>
+            <div class="dispute-card" id="dispute-3">
+              <div class="dispute-header">
+                <h4>Guide: Rashid Alam — Deosai Camping</h4>
+                <div class="dispute-rating">★★★☆☆ <span
+                    style="color: var(--text-muted); font-size: 0.75rem; margin-left: 4px;">3.0</span></div>
+              </div>
+              <div class="dispute-body">"Guide seemed inexperienced with the western Deosai trail. Missed the Bara Pani
+                viewpoint. Would benefit from additional route training."</div>
+              <div class="dispute-actions">
+                <button class="btn-dispute warn" onclick="resolveDispute('dispute-3', 'warn')">⚠️ Issue Warning</button>
+                <button class="btn-dispute suspend" onclick="resolveDispute('dispute-3', 'suspend')">🚫 Suspend
+                  Profile</button>
+                <button class="btn-dispute dismiss" onclick="resolveDispute('dispute-3', 'dismiss')">✓ Dismiss
+                  Flag</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN SUB: GLOBAL INVENTORY (POWER SUITE) -->
+      <div id="admin-tab-inventory" class="admin-sub-content">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">🛠️ Manual Asset & Vendor Manager</h3>
+              <p class="panel-subtitle">Absolute override control to add, modify, or remove any asset from the registry.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-quick" onclick="showToast('Admin Action', 'Opening New Hostel Registry Wizard...', 'info')">➕ Add New Hostel</button>
+            <button class="btn-quick" onclick="showToast('Admin Action', 'Opening Driver/Vehicle Onboarding...', 'info')">➕ Add New Driver</button>
+            <button class="btn-quick" onclick="showToast('Admin Action', 'Opening Guide Certification Panel...', 'info')">➕ Add New Guide</button>
+            <button class="btn-dispute suspend" style="padding: 10px 20px; font-size: 0.85rem;" onclick="showToast('Security Action', 'Searching registry for blacklist target...', 'danger')">🚫 Blacklist Vendor</button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <h3 class="panel-title">💰 Global Pricing Override Engine</h3>
+              <p class="panel-subtitle">Set mandatory floor/ceiling rates and apply platform-wide market adjustments.</p>
+            </div>
+          </div>
+          <div class="pricing-control-row" style="grid-template-columns: 1fr 1fr 1fr auto;">
+            <div class="form-group">
+              <label>Asset Category</label>
+              <select>
+                <option>All 4x4 Vehicles (Prado/Pajero)</option>
+                <option>All Luxury Resorts</option>
+                <option>All Standard Hostels</option>
+                <option>All High-Altitude Guides</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Mandatory Base Rate (PKR)</label>
+              <input type="number" placeholder="e.g. 15000">
+            </div>
+            <div class="form-group">
+              <label>Platform-Wide Surge %</label>
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
+                <input type="range" min="0" max="100" value="0" style="flex: 1; height: 6px; accent-color: var(--gov-accent);" oninput="document.getElementById('surge-val').innerText = this.value + '%'">
+                <span id="surge-val" style="font-size: 0.85rem; font-weight: 800; color: var(--gov-accent); min-width: 40px;">0%</span>
+              </div>
+            </div>
+            <button class="btn-quick" style="background: var(--gov-navy); height: 42px;" onclick="showToast('Global Update', 'Applying mandatory pricing overrides across 412 vendors...', 'success')">Apply Global Override</button>
+          </div>
+          <p class="form-tip">Note: Global overrides bypass individual vendor settings and are logged for state audit.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- EMERGENCY SOS MODAL -->
+  <div class="modal-backdrop" id="emergency-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 class="modal-title">
+          <svg viewBox="0 0 512 512">
+            <path
+              d="M256 0c141.4 0 256 114.6 256 256S397.4 512 256 512S0 397.4 0 256S114.6 0 256 0zm0 312c13.3 0 24-10.7 24-24v-128c0-13.3-10.7-24-24-24s-24 10.7-24 24v128c0 13.3 10.7 24 24 24zm0 80c17.7 0 32-14.3 32-32s-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32z" />
+          </svg>
+          Emergency SOS Signal Trigger
+        </h3>
+        <button class="btn-modal-close" onclick="closeEmergencyModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>If you are in immediate danger or stranded in high altitude terrain, activate cellular emergency signals.
+          Your GPS coordinates are being fetched via satellite receiver:</p>
+        <div class="modal-coordinate-box">
+          <div class="coordinate-field"><label>Estimated Latitude</label>
+            <div id="sos-lat">35.3021° N</div>
+          </div>
+          <div class="coordinate-field"><label>Estimated Longitude</label>
+            <div id="sos-lng">75.6264° E</div>
+          </div>
+          <div class="coordinate-field"><label>District Sector</label>
+            <div>Skardu - Karakoram Buffer</div>
+          </div>
+          <div class="coordinate-field"><label>RFID Active Pass</label>
+            <div id="modal-pass-id">GB-TR-2026-8941</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn-submit-registry" style="background: var(--danger);" onclick="triggerSOS()">Broadcast SOS
+            Beacon to Rescue Desks</button>
+          <button class="btn-pass-action" style="width: 100%;" onclick="closeEmergencyModal()">Cancel & Return to
+            Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOM ONBOARDING OVERLAY -->
+  <div id="room-form-overlay" class="room-form-overlay">
+    <div class="room-form-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="font-family: 'Outfit'; font-weight: 800; color: var(--gov-navy);">🏨 Add New Room Asset</h3>
+        <button class="btn-modal-close" onclick="closeRoomForm()">&times;</button>
+      </div>
+      <form class="registry-form" onsubmit="event.preventDefault(); showToast('Room Added', 'Asset saved to central registry.', 'success'); closeRoomForm();">
+        <div class="form-group form-full">
+          <label>Room Category Name</label>
+          <input type="text" placeholder="e.g. Deluxe Triple Suite">
+        </div>
+        <div class="form-group">
+          <label>Base Price / Night (PKR)</label>
+          <input type="number" placeholder="5000">
+        </div>
+        <div class="form-group">
+          <label>Max Guests</label>
+          <input type="number" value="2">
+        </div>
+        <div class="form-group form-full">
+          <label>Amenities</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px;">
+            <label style="font-weight: 400;"><input type="checkbox"> WiFi Access</label>
+            <label style="font-weight: 400;"><input type="checkbox"> Hot Shower</label>
+            <label style="font-weight: 400;"><input type="checkbox"> K2 View</label>
+            <label style="font-weight: 400;"><input type="checkbox"> Heater</label>
+          </div>
+        </div>
+        <div class="form-group form-full">
+          <label>Room Image</label>
+          <div style="border: 2px dashed var(--gov-border); padding: 20px; text-align: center; border-radius: 8px; font-size: 0.8rem; color: var(--text-muted);">
+            Click to upload room photos
+          </div>
+        </div>
+        <button type="submit" class="btn-submit-registry">Register Room Asset</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOASTER CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h4>DEPARTMENT OF TOURISM & SAFETY</h4>
+          <p>Official administrative workspace for registration, tracking, permit issuing, and logistics management
+            across the Northern Areas of Pakistan.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Security & Rules</h5>
+          <ul>
+            <li><a href="#">Mandatory Registries</a></li>
+            <li><a href="#">Travel Restrictions</a></li>
+            <li><a href="#">Trekking Rules</a></li>
+            <li><a href="#">Security Bulletins</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Districts</h5>
+          <ul>
+            <li><a href="#">Skardu Valley</a></li>
+            <li><a href="#">Hunza Valley</a></li>
+            <li><a href="#">Gilgit District</a></li>
+            <li><a href="#">Astore Sector</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Emergency Guides</a></li>
+            <li><a href="#">Offline QR Pack</a></li>
+            <li><a href="#">Registered Operators</a></li>
+            <li><a href="#">Verified Drivers</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Government of Gilgit-Baltistan • Tourism and Safety Administration Desk</span>
+        <span>Secure Gateway Node: GBL-TRX-09</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ================================================================
+    // PORTAL STATE MANAGEMENT
+    // ================================================================
+    const state = {
+      activeRole: "tourist",
+      activeTab: "builder",
+      destination: "Skardu",
+      vibe: "backpacker",
+      isMultiLeg: false,
+      dates: "12 Aug - 17 Aug",
+      nights: 5,
+      guests: 2,
+      stay: { selected: true, id: 'hostel', name: "Skardu Backpackers Hostel", price: 4000, capacity: 6 },
+      ride: { selected: "prado", price: 15000, name: "Toyota Prado TX 4x4" },
+      poolingEnabled: true,
+      guides: { k2: false, deosai: false, cultural: false },
+      guidePrices: { k2: 8000, deosai: 6000, cultural: 4000 },
+      joinedPools: [],
+      poolData: {
+        1: { totalRent: 15000, basePassengers: 4, currentPassengers: 4, seats: 3, route: "Skardu → Deosai Plains" },
+        2: { totalRent: 12000, basePassengers: 7, currentPassengers: 7, seats: 5, route: "Skardu → Shigar" },
+        3: { totalRent: 7000, basePassengers: 2, currentPassengers: 2, seats: 2, route: "Gilgit → Hunza" }
+      },
+      registry: {
+        submitted: false,
+        name: "Akbar Hussain",
+        cnic: "37405-1234567-1",
+        phone: "+92 300 1234567",
+        bloodGroup: "O+",
+        emergency: "+92 312 9876543",
+        id: "GB-TR-2026-8941"
+      },
+      vendor: { kycUploaded: { cnic: false, license: false, vehicle: false } },
+      stayOptions: {
+        hostel: { price: 4000, name: "Skardu Backpackers Hostel", capacity: 6 },
+        resort: { price: 25000, name: "Shangrila Resort Skardu", capacity: 4 },
+        palace: { price: 35000, name: "Khaplu Palace Heritage Hotel", capacity: 3 }
+      }
+    };
+
+    // ================================================================
+    // INITIALIZATION
+    // ================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".nav-link, .tab-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const tab = btn.getAttribute("data-tab");
+          if (tab) switchTab(tab);
+        });
+      });
+      updateInvoice();
+      updateDatesFromPicker();
+      renderRoomCalendar();
+      drawQRCode(state.registry.id);
+      // Attempt geolocation for SOS
+      fetchGeolocation();
+    });
+
+    // ================================================================
+    // ROLE SWITCHING
+    // ================================================================
+    function switchRole(role) {
+      state.activeRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+      document.querySelectorAll('.role-workspace').forEach(w => w.classList.remove('active'));
+      document.getElementById(`workspace-${role}`).classList.add('active');
+
+      const subtitle = document.getElementById('brand-subtitle-role');
+      const avatar = document.getElementById('nav-avatar-text');
+      const navLinks = document.getElementById('nav-links-tourist');
+      const sosBtn = document.getElementById('btn-sos-main');
+      const advisory = document.getElementById('advisory-bar');
+
+      if (role === 'tourist') {
+        subtitle.textContent = 'State Visitor Registry';
+        avatar.textContent = 'AH';
+        navLinks.style.display = 'flex';
+        sosBtn.style.display = 'inline-flex';
+        advisory.style.display = 'block';
+      } else if (role === 'vendor') {
+        subtitle.textContent = 'Vendor Management Portal';
+        avatar.textContent = 'VN';
+        navLinks.style.display = 'none';
+        sosBtn.style.display = 'none';
+        advisory.style.display = 'none';
+      } else       if (role === 'admin') {
+        subtitle.textContent = 'Super Admin Control Tower';
+        avatar.textContent = 'SA';
+        navLinks.style.display = 'none';
+        sosBtn.style.display = 'none';
+        advisory.style.display = 'none';
+        setTimeout(() => initFleetMap(), 100);
+      }
+    }
+
+    function setVibe(vibe, el) {
+      state.vibe = vibe;
+      document.querySelectorAll('.vibe-btn').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+      showToast("Trip Vibe Set", `Optimizing for ${vibe.toUpperCase()} experience.`, "info");
+    }
+
+    function toggleMultiLeg() {
+      state.isMultiLeg = !state.isMultiLeg;
+      showToast(state.isMultiLeg ? "Multi-Leg Active" : "Single Destination", 
+        state.isMultiLeg ? "System now supports transport transitions between valleys." : "Reset to single point destination.", 
+        state.isMultiLeg ? "success" : "info");
+      updateInvoice();
+    }
+
+
+    // ================================================================
+    // TAB NAVIGATION
+    // ================================================================
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      document.querySelectorAll(".nav-link, .tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
+      });
+      document.querySelectorAll(".tab-content").forEach(content => {
+        content.classList.toggle("active", content.id === `tab-${tabId}`);
+      });
+      const sidebarTitle = document.getElementById("invoice-sidebar-title");
+      const sidebarType = document.getElementById("invoice-sidebar-type");
+      const sidebarBtn = document.getElementById("invoice-main-btn");
+
+      if (tabId === "builder") {
+        sidebarType.innerText = "Registry Package Builder";
+        sidebarTitle.innerText = "Trip Invoice Estimate";
+        sidebarBtn.innerText = "Proceed to Visitor Registry";
+        sidebarBtn.style.display = "block";
+      } else if (tabId === "registry") {
+        sidebarType.innerText = "Accreditation Portal";
+        sidebarTitle.innerText = "Registry Progress";
+        sidebarBtn.style.display = "none";
+      } else if (tabId === "carpool") {
+        sidebarType.innerText = "Ride Share Exchange";
+        sidebarTitle.innerText = "Active Pooled Seats";
+        sidebarBtn.innerText = "Proceed to Digital Pass";
+        sidebarBtn.style.display = "block";
+      } else if (tabId === "pass") {
+        sidebarType.innerText = "State Digital Pass";
+        sidebarTitle.innerText = "Active Tourist Pass";
+        sidebarBtn.innerText = "Sync & Save Pass Offline";
+        sidebarBtn.style.display = "block";
+      }
+      window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+
+    // ================================================================
+    // DATE PICKER & NIGHTS CALCULATION
+    // ================================================================
+    function updateDatesFromPicker() {
+      const checkin = document.getElementById('quick-checkin').value;
+      const checkout = document.getElementById('quick-checkout').value;
+      if (checkin && checkout) {
+        const d1 = new Date(checkin);
+        const d2 = new Date(checkout);
+        const diff = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+        state.nights = diff;
+        const opts = { day: 'numeric', month: 'short' };
+        state.dates = `${d1.toLocaleDateString('en-US', opts)} - ${d2.toLocaleDateString('en-US', opts)}`;
+        document.getElementById('pass-holder-dates').innerText = state.dates;
+      }
+      updateInvoice();
+    }
+
+    // ================================================================
+    // STAY SELECTION
+    // ================================================================
+    function selectStay(id, price, name, capacity) {
+      state.stay = { selected: true, id, price, name, capacity };
+      document.querySelectorAll('.detailed-stay-card').forEach(card => {
+        const isThis = card.id === `stay-${id}`;
+        card.classList.toggle('selected', isThis);
+      });
+      checkCapacity();
+      updateInvoice();
+      showToast("Hospitality updated", `Stay accommodation changed to ${name}.`, "info");
+    }
+
+    function checkCapacity() {
+      const guests = state.guests;
+      document.querySelectorAll('.detailed-stay-card').forEach(card => {
+        card.classList.remove('capacity-warn');
+        const existingWarn = card.querySelector('.warn-badge');
+        if (existingWarn) existingWarn.remove();
+      });
+      Object.entries(state.stayOptions).forEach(([id, opt]) => {
+        if (guests > opt.capacity) {
+          const card = document.getElementById(`stay-${id}`);
+          if (card) {
+            card.classList.add('capacity-warn');
+            const badgeRow = card.querySelector('.option-badge-row');
+            if (badgeRow && !badgeRow.querySelector('.warn-badge')) {
+              const badge = document.createElement('span');
+              badge.className = 'option-badge warn-badge';
+              badge.textContent = '⚠ Exceeds Capacity';
+              badgeRow.appendChild(badge);
+            }
+          }
+        }
+      });
+    }
+
+    // ================================================================
+    // VENDOR ROOM MANAGEMENT
+    // ================================================================
+    function openRoomForm() {
+      document.getElementById('room-form-overlay').style.display = 'grid';
+    }
+    function closeRoomForm() {
+      document.getElementById('room-form-overlay').style.display = 'none';
+    }
+
+    // ================================================================
+    // RIDE SELECTION
+    // ================================================================
+    function selectRide(id, price, name) {
+      state.ride = { selected: id, price, name };
+      document.querySelectorAll("[onclick^='selectRide']").forEach(card => {
+        const isThis = card.outerHTML.includes(`'${id}'`);
+        card.classList.toggle('selected', isThis);
+        card.querySelector('input').checked = isThis;
+      });
+      updateInvoice();
+      showToast("Transport updated", `Vehicle set to ${name}.`, "info");
+    }
+
+    // ================================================================
+    // POOLING TOGGLE
+    // ================================================================
+    function togglePooling(isChecked) {
+      state.poolingEnabled = isChecked;
+      updateInvoice();
+      if (isChecked) {
+        showToast("Shared Pooling Active", "You are registered for seat-sharing discount.", "success");
+      } else {
+        showToast("Standard Rate Active", "Sharing disabled. Full standard transit rates apply.", "info");
+      }
+    }
+
+    // ================================================================
+    // MULTI-SELECT GUIDE TOGGLE
+    // ================================================================
+    function toggleGuide(guideId) {
+      state.guides[guideId] = !state.guides[guideId];
+      const card = document.getElementById(`guide-${guideId}`);
+      const btn = document.getElementById(`guide-btn-${guideId}`);
+      const isAdded = state.guides[guideId];
+      card.classList.toggle('added', isAdded);
+      const price = state.guidePrices[guideId].toLocaleString();
+      btn.innerText = isAdded ? `Guide Added ✓` : `Add Guide (+Rs. ${price}/day)`;
+      if (isAdded) {
+        showToast("Guide Added", `${guideId.toUpperCase()} specialist guide added to your itinerary.`, "success");
+      } else {
+        showToast("Guide Removed", `${guideId.toUpperCase()} guide removed from invoice.`, "info");
+      }
+      updateInvoice();
+    }
+
+    // ================================================================
+    // DESTINATION SYNC
+    // ================================================================
+    function syncDestinationChange(val) {
+      document.getElementById("quick-dest").value = val;
+      document.getElementById("reg-dest-sync").value = val;
+      state.destination = val;
+
+      const warning = document.getElementById("terrain-warning");
+      if (val === "Deosai" || val === "Basho") {
+        warning.style.display = "flex";
+      } else {
+        warning.style.display = "none";
+      }
+
+      showToast("Destination Synced", `Core destination set to ${val}.`, "info");
+    }
+
+    // ================================================================
+    // INVOICE CALCULATION — WITH TAX & COMMISSION SPLITS
+    // ================================================================
+    function updateInvoice() {
+      const itemsList = document.getElementById("invoice-items");
+      itemsList.innerHTML = "";
+      let subtotal = 0;
+
+      // Stay
+      if (state.stay.selected) {
+        const stayTotal = state.stay.price * state.nights;
+        subtotal += stayTotal;
+        itemsList.innerHTML += `<div class="invoice-item"><span class="title">${state.stay.name} (${state.nights}N)</span><span class="val">Rs. ${stayTotal.toLocaleString()}</span></div>`;
+      }
+
+      // Transport
+      let rideTotal = 0;
+      if (state.ride.selected) {
+        let baseFare = state.ride.price;
+        let poolLabel = "";
+        
+        if (state.poolingEnabled) {
+          // 120% Base Fare model for pooling (driver earns more, passengers split cost)
+          // User pays 40% of the 120% fare (assuming 3-way split average)
+          const premiumBase = baseFare * 1.2;
+          rideTotal = Math.round((premiumBase / 3) * state.nights);
+          poolLabel = " [Shared Premium]";
+        } else {
+          rideTotal = baseFare * state.nights;
+        }
+        
+        subtotal += rideTotal;
+        const multiLegPrefix = state.isMultiLeg ? `<span class="multi-leg-badge">MULTI-STOP</span> ` : "";
+        itemsList.innerHTML += `<div class="invoice-item"><span class="title">${multiLegPrefix}${state.ride.name} (${state.nights}D)${poolLabel}</span><span class="val">Rs. ${rideTotal.toLocaleString()}</span></div>`;
+      }
+
+      // Guides
+      Object.entries(state.guides).forEach(([id, added]) => {
+        if (added) {
+          const guideTotal = state.guidePrices[id] * state.nights;
+          subtotal += guideTotal;
+          const labels = { k2: 'K2 Expedition Guide', deosai: 'Deosai Camping Guide', cultural: 'Heritage Guide' };
+          itemsList.innerHTML += `<div class="invoice-item"><span class="title">${labels[id]} (${state.nights}D)</span><span class="val">Rs. ${guideTotal.toLocaleString()}</span></div>`;
+        }
+      });
+
+      // Joined Pools
+      state.joinedPools.forEach(pool => {
+        subtotal += pool.price;
+        itemsList.innerHTML += `<div class="invoice-item" style="color: #93C5FD;"><span class="title">Pool: ${pool.route}</span><span class="val">Rs. ${pool.price.toLocaleString()}</span></div>`;
+      });
+
+      // Tax & Commission
+      const gst = Math.round(subtotal * 0.15);
+      const commission = Math.round(subtotal * 0.10);
+      const grandTotal = subtotal + gst;
+
+      itemsList.innerHTML += `<div class="invoice-item tax-line"><span class="title">GB Tourism GST (15%)</span><span class="val">Rs. ${gst.toLocaleString()}</span></div>`;
+      itemsList.innerHTML += `<div class="invoice-item tax-line"><span class="title">Platform Admin Fee (10%)</span><span class="val">Rs. ${commission.toLocaleString()}</span></div>`;
+
+      document.getElementById("invoice-total").innerText = `Rs. ${grandTotal.toLocaleString()}`;
+      
+      // Calculate BaltiPoints (1 point per 100 PKR)
+      const points = Math.floor(grandTotal / 100);
+      document.getElementById("balti-points-earned").innerText = points.toLocaleString();
+    }
+
+    // ================================================================
+    // SIDEBAR BUTTON ORCHESTRATOR
+    // ================================================================
+    function handleInvoiceAction() {
+      if (state.activeTab === "builder") switchTab("registry");
+      else if (state.activeTab === "carpool") switchTab("pass");
+      else if (state.activeTab === "pass") {
+        cacheOfflineData();
+      }
+    }
+
+    // ================================================================
+    // CARPOOL — DYNAMIC FARE DIVISION
+    // ================================================================
+    function joinPool(id) {
+      const btn = document.getElementById(`btn-pool${id}`);
+      const seatsPill = document.getElementById(`seats-pool${id}`);
+      const fareMath = document.getElementById(`fare-math-pool${id}`);
+      const priceDisplay = document.getElementById(`price-pool${id}`);
+      const pool = state.poolData[id];
+      const existsIdx = state.joinedPools.findIndex(p => p.id === id);
+
+      if (existsIdx === -1) {
+        pool.currentPassengers++;
+        pool.seats--;
+        state.joinedPools.push({ id, price: Math.round(pool.totalRent / pool.currentPassengers), route: pool.route });
+        btn.innerText = "Joined ✓";
+        btn.classList.add("joined");
+        showToast("Joined Carpool", `Seat allocated for ${pool.route}.`, "success");
+      } else {
+        pool.currentPassengers--;
+        pool.seats++;
+        state.joinedPools.splice(existsIdx, 1);
+        btn.innerText = "Join Carpool";
+        btn.classList.remove("joined");
+        showToast("Left Carpool", `Cancelled seat for ${pool.route}.`, "info");
+      }
+
+      const perSeat = Math.round(pool.totalRent / pool.currentPassengers);
+      seatsPill.innerText = `Seats Left: ${pool.seats}`;
+      fareMath.innerHTML = `Vehicle Rent: Rs. ${pool.totalRent.toLocaleString()} ÷ ${pool.currentPassengers} passengers = <strong>Rs. ${perSeat.toLocaleString()}/seat</strong>`;
+      priceDisplay.innerHTML = `Rs. ${perSeat.toLocaleString()} <small>/ seat</small>`;
+
+      // Update joined pool price
+      const joined = state.joinedPools.find(p => p.id === id);
+      if (joined) joined.price = perSeat;
+
+      updateInvoice();
+    }
+
+    // ================================================================
+    // AI PACKAGE RECOMMENDER
+    // ================================================================
+    async function aiRecommendPackage() {
+      const budgetInput = document.getElementById('quick-budget');
+      const maxBudget = parseInt(budgetInput.value);
+      const destination = document.getElementById('quick-dest').value;
+      const nights = state.nights;
+
+      if (!maxBudget || maxBudget < 5000) {
+        showToast("Budget Required", "Please enter a valid maximum budget (min. PKR 5,000) to receive AI recommendations.", "info");
+        budgetInput.focus();
+        return;
+      }
+
+      showToast("AI Processing", "Consulting NVIDIA NIM for best package...", "info");
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/recommend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            destination: destination,
+            nights: nights,
+            budget: maxBudget,
+            vibe: state.vibe
+          })
+        });
+
+        if (!response.ok) {
+          let errMsg = `Server returned status: ${response.status}`;
+          try {
+            const errData = await response.json();
+            if (errData && errData.detail) {
+              errMsg = errData.detail;
+            }
+          } catch (e) { }
+          throw new Error(errMsg);
+        }
+
+        const recommendation = await response.json();
+
+        if (recommendation.stay && recommendation.ride) {
+          // Select stay
+          const stayObj = state.stayOptions[recommendation.stay];
+          selectStay(recommendation.stay, stayObj.price, stayObj.name, stayObj.capacity);
+
+          // Select ride
+          const ridePrices = { alto: 4500, corolla: 7000, cabin: 12000, prado: 15000 };
+          const rideNames = {
+            alto: 'Suzuki Alto',
+            corolla: 'Toyota Corolla GLI',
+            cabin: 'Toyota HiAce Grand Cabin',
+            prado: 'Toyota Prado TX 4x4'
+          };
+          selectRide(recommendation.ride, ridePrices[recommendation.ride], rideNames[recommendation.ride]);
+
+          showToast("✨ AI Selected", recommendation.reason, "success");
+        } else {
+          showToast("No Match Found", "AI couldn't find a package matching your requirements.", "info");
+        }
+      } catch (error) {
+        console.error("AI Recommendation failed:", error);
+        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError") || error.name === "TypeError") {
+          showToast("Connection Error", "Could not connect to FastAPI server. Make sure it is running on port 8000.", "danger");
+        } else {
+          showToast("AI Error", error.message, "danger");
+        }
+      }
+    }
+
+    // ================================================================
+    // REGISTRY FORM SUBMISSION
+    // ================================================================
+    function handleRegistrySubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("reg-name").value;
+      const cnic = document.getElementById("reg-cnic").value;
+      const dest = document.getElementById("reg-dest-sync").value;
+
+      showToast("Verifying Credentials", "Connecting to Department Database for validation...", "info");
+
+      setTimeout(() => {
+        state.registry.submitted = true;
+        state.registry.name = name;
+        state.registry.cnic = cnic;
+        const randomId = `GB-TR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        state.registry.id = randomId;
+
+        document.getElementById("pass-holder-name").innerText = name;
+        document.getElementById("pass-holder-cnic").innerText = cnic;
+        document.getElementById("pass-registry-id").innerText = randomId;
+        document.getElementById("pass-holder-dest").innerText = dest + " District";
+        document.getElementById("pass-holder-dates").innerText = state.dates;
+        document.getElementById("pass-qr-id").innerText = randomId.substring(6);
+        document.getElementById("modal-pass-id").innerText = randomId;
+
+        const badge = document.getElementById("pass-status-badge");
+        badge.innerText = "ACTIVE REGISTRATION APPROVED";
+        badge.style.background = "var(--success-bg)";
+        badge.style.color = "var(--success)";
+
+        drawQRCode(randomId);
+        showToast("Registry Cleared", "Mandatory travel permit verified. ID generated successfully.", "success");
+        setTimeout(() => switchTab("pass"), 1000);
+      }, 1200);
+    }
+
+    // ================================================================
+    // QR CODE — SVG-based dynamic generation on Canvas
+    // ================================================================
+    function drawQRCode(text) {
+      const canvas = document.getElementById('pass-qr-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const size = 96;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, size, size);
+      // Generate a deterministic pattern from the text
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) { hash = ((hash << 5) - hash) + text.charCodeAt(i); hash |= 0; }
+      const cellSize = 4;
+      const grid = size / cellSize;
+      const halfGrid = Math.floor(grid / 2);
+      ctx.fillStyle = '#0B2545';
+      // Position detection patterns (corners)
+      const drawFinder = (x, y) => {
+        ctx.fillRect(x * cellSize, y * cellSize, 7 * cellSize, 7 * cellSize);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect((x + 1) * cellSize, (y + 1) * cellSize, 5 * cellSize, 5 * cellSize);
+        ctx.fillStyle = '#0B2545';
+        ctx.fillRect((x + 2) * cellSize, (y + 2) * cellSize, 3 * cellSize, 3 * cellSize);
+      };
+      drawFinder(0, 0);
+      ctx.fillStyle = '#0B2545';
+      drawFinder(grid - 7, 0);
+      ctx.fillStyle = '#0B2545';
+      drawFinder(0, grid - 7);
+      // Data modules
+      ctx.fillStyle = '#0B2545';
+      let seed = Math.abs(hash);
+      for (let y = 0; y < grid; y++) {
+        for (let x = 0; x < grid; x++) {
+          // Skip finder patterns
+          if ((x < 8 && y < 8) || (x >= grid - 8 && y < 8) || (x < 8 && y >= grid - 8)) continue;
+          seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+          if (seed % 3 === 0) {
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+    }
+
+    // ================================================================
+    // OFFLINE CACHE
+    // ================================================================
+    function cacheOfflineData() {
+      const cacheData = {
+        registry: state.registry,
+        stay: state.stay,
+        ride: state.ride,
+        destination: state.destination,
+        dates: state.dates,
+        nights: state.nights,
+        cachedAt: new Date().toISOString()
+      };
+      try {
+        localStorage.setItem('baltitour_offline_cache', JSON.stringify(cacheData));
+        showToast("Offline Cache Saved", "All permit codes, itinerary details, and emergency contacts stored in browser cache. Accessible without internet.", "success");
+      } catch (e) {
+        showToast("Cache Error", "Unable to save to local storage.", "info");
+      }
+    }
+
+    // ================================================================
+    // GEOLOCATION — SOS ENHANCEMENT
+    // ================================================================
+    function fetchGeolocation() {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            document.getElementById('sos-lat').textContent = pos.coords.latitude.toFixed(4) + '° N';
+            document.getElementById('sos-lng').textContent = pos.coords.longitude.toFixed(4) + '° E';
+          },
+          () => { /* Use defaults */ }
+        );
+      }
+    }
+
+    // ================================================================
+    // EMERGENCY FUNCTIONS
+    // ================================================================
+    function openEmergencyModal() { document.getElementById("emergency-modal").classList.add("active"); }
+    function closeEmergencyModal() { document.getElementById("emergency-modal").classList.remove("active"); }
+
+    function triggerSOS() {
+      showToast("📡 Broadcasting SOS", "Transmitting GPS coordinates via cellular SMS to rescue stations...", "info");
+      setTimeout(() => {
+        showToast("✅ SOS Confirmed", "Emergency beacon received by 1122 Rescue & Skardu HQ. Response units dispatched.", "success");
+        closeEmergencyModal();
+      }, 2000);
+    }
+
+    function callNumber(num) {
+      showToast("Cellular Call Initiated", `Dialing ${num} via GSM network...`, "info");
+    }
+
+    function downloadPass() {
+      showToast("Generating PDF", "Compiling official permit voucher...", "info");
+      setTimeout(() => showToast("PDF Ready", "Travel Pass voucher saved successfully.", "success"), 1000);
+    }
+
+    function printPass() { window.print(); }
+
+    // ================================================================
+    // VENDOR: SUB-TAB SWITCHING
+    // ================================================================
+    function switchVendorTab(tab) {
+      document.querySelectorAll('.vendor-sub-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(tab)));
+      document.querySelectorAll('.vendor-sub-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`vendor-tab-${tab}`).classList.add('active');
+    }
+
+    // ================================================================
+    // VENDOR: ROOM INVENTORY CALENDAR
+    // ================================================================
+    function renderRoomCalendar() {
+      const grid = document.getElementById('room-calendar');
+      if (!grid) return;
+      grid.innerHTML = '';
+      const rooms = ['Room 101', 'Room 102', 'Room 103', 'Dorm A', 'Dorm B'];
+      const days = [];
+      const today = new Date();
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        days.push(d);
+      }
+
+      // Headers
+      grid.innerHTML += `<div class="cal-header">Room</div>`;
+      days.forEach(d => {
+        grid.innerHTML += `<div class="cal-header">${d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}</div>`;
+      });
+
+      // Room Rows
+      rooms.forEach(room => {
+        grid.innerHTML += `<div class="cal-room-label">${room}</div>`;
+        days.forEach((d, di) => {
+          const cellId = `cal-${room.replace(/\s/g, '')}-${di}`;
+          const isBooked = Math.random() > 0.7;
+          grid.innerHTML += `<div class="cal-cell ${isBooked ? 'booked' : ''}" id="${cellId}" onclick="toggleCalCell('${cellId}')">${isBooked ? 'Booked' : 'Open'}</div>`;
+        });
+      });
+    }
+
+    function toggleCalCell(id) {
+      const cell = document.getElementById(id);
+      if (cell.classList.contains('blocked')) {
+        cell.classList.remove('blocked');
+        cell.classList.remove('booked');
+        cell.textContent = 'Open';
+        showToast("Room Unblocked", "Slot opened for online bookings.", "success");
+      } else if (cell.classList.contains('booked')) {
+        showToast("Already Booked", "This slot has a confirmed reservation.", "info");
+      } else {
+        cell.classList.add('blocked');
+        cell.textContent = 'Blocked';
+        showToast("Room Blocked", "Slot reserved for walk-in guests.", "info");
+      }
+    }
+
+    // ================================================================
+    // VENDOR: SEASONAL PRICING
+    // ================================================================
+    function applySeasonPricing() {
+      const season = document.getElementById('season-select').value;
+      const multiplier = parseFloat(document.getElementById('season-multiplier').value);
+      const baseRates = { hostel: 4000, resort: 25000, palace: 35000 };
+      const result = document.getElementById('season-pricing-result');
+      let html = `<strong>Updated Rates (${season === 'high' ? 'High Season' : season === 'mid' ? 'Mid Season' : 'Low Season'}, ×${multiplier}):</strong><br>`;
+      Object.entries(baseRates).forEach(([k, v]) => {
+        const newRate = Math.round(v * multiplier);
+        const names = { hostel: 'Backpackers Hostel', resort: 'Shangrila Resort', palace: 'Khaplu Palace' };
+        html += `${names[k]}: Rs. ${v.toLocaleString()} → <strong>Rs. ${newRate.toLocaleString()}</strong>/night<br>`;
+      });
+      result.innerHTML = html;
+      showToast("Pricing Updated", `Seasonal multiplier ×${multiplier} applied successfully.`, "success");
+    }
+
+    // ================================================================
+    // VENDOR: DRIVER TARIFFS
+    // ================================================================
+    function saveTariffMatrix() {
+      showToast("Tariffs Saved", "All route-based tariff rates have been updated in the central registry.", "success");
+    }
+
+    // ================================================================
+    // VENDOR: TRIP SYNC
+    // ================================================================
+    function toggleSyncItem(el) {
+      const cb = el.querySelector('input[type="checkbox"]');
+      cb.checked = !cb.checked;
+      el.classList.toggle('done', cb.checked);
+      el.querySelector('.sync-status').textContent = cb.checked ? '✅ Completed (Cached)' : '⏳ Pending Sync';
+    }
+
+    function pushSyncData() {
+      showToast("📡 Restoring Signal", "Connecting to cellular network...", "info");
+      setTimeout(() => {
+        const items = document.querySelectorAll('.sync-item.done');
+        showToast("Sync Complete", `${items.length} checkpoint(s) pushed to central server successfully.`, "success");
+        items.forEach(item => {
+          item.querySelector('.sync-status').textContent = '✅ Synced to Server';
+        });
+      }, 1500);
+    }
+
+    // ================================================================
+    // VENDOR: KYC UPLOAD
+    // ================================================================
+    function uploadKYC(type) {
+      const card = document.getElementById(`kyc-${type}`);
+      const status = document.getElementById(`kyc-status-${type}`);
+      if (state.vendor.kycUploaded[type]) return;
+
+      card.classList.add('uploaded');
+      status.textContent = '📎 Uploaded — Pending Admin Review';
+      status.className = 'kyc-status pending';
+      state.vendor.kycUploaded[type] = true;
+
+      showToast("Document Uploaded", `${type.toUpperCase()} document submitted for verification.`, "success");
+
+      // Simulate admin approval after delay
+      setTimeout(() => {
+        status.textContent = '✓ Verified by Admin';
+        status.className = 'kyc-status verified';
+        card.classList.add('verified');
+        checkAllKYCVerified();
+      }, 3000);
+    }
+
+    function checkAllKYCVerified() {
+      const allVerified = Object.values(state.vendor.kycUploaded).every(v => v);
+      if (allVerified) {
+        document.getElementById('verified-badge-area').style.display = 'block';
+        showToast("🛡️ Profile Verified", "All KYC documents approved. 'Safe Profile' badge is now visible to tourists.", "success");
+      }
+    }
+
+    // ================================================================
+    // ADMIN: SUB-TAB SWITCHING
+    // ================================================================
+    function switchAdminTab(tab) {
+      document.querySelectorAll('.admin-sub-btn').forEach(b => {
+        const t = b.textContent.toLowerCase();
+        b.classList.toggle('active', t.includes(tab.substring(0, 4)));
+      });
+      document.querySelectorAll('.admin-sub-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`admin-tab-${tab}`).classList.add('active');
+      if (tab === 'fleet') setTimeout(() => initFleetMap(), 100);
+    }
+
+    // ================================================================
+    // ADMIN: FLEET MAP — HTML5 CANVAS
+    // ================================================================
+    let fleetMapInitialized = false;
+    function initFleetMap() {
+      const canvas = document.getElementById('fleet-map-canvas');
+      if (!canvas || fleetMapInitialized) return;
+      fleetMapInitialized = true;
+
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const W = canvas.width, H = canvas.height;
+
+      // Checkpoint locations (relative to canvas)
+      const checkpoints = [
+        { name: 'Skardu', x: W * 0.35, y: H * 0.45 },
+        { name: 'Shigar', x: W * 0.25, y: H * 0.35 },
+        { name: 'Khaplu', x: W * 0.55, y: H * 0.55 },
+        { name: 'Deosai', x: W * 0.45, y: H * 0.25 },
+        { name: 'Hunza', x: W * 0.15, y: H * 0.2 },
+        { name: 'Gilgit', x: W * 0.1, y: H * 0.45 },
+        { name: 'Basho', x: W * 0.6, y: H * 0.35 },
+        { name: 'K2 BC', x: W * 0.75, y: H * 0.15 },
+      ];
+
+      // Vehicles
+      const vehicles = [
+        { name: 'Prado — Ali Murad', x: W * 0.3, y: H * 0.4, dx: 0.3, dy: -0.15, color: '#4ADE80', status: 'active' },
+        { name: 'HiAce — Junaid Khan', x: W * 0.2, y: H * 0.3, dx: 0.2, dy: 0.1, color: '#4ADE80', status: 'active' },
+        { name: 'Corolla — Raza', x: W * 0.5, y: H * 0.5, dx: -0.15, dy: -0.2, color: '#FACC15', status: 'idle' },
+        { name: 'Alto — Imran (SOS)', x: W * 0.7, y: H * 0.3, dx: 0, dy: 0, color: '#EF4444', status: 'sos' },
+      ];
+
+      let frame = 0;
+
+      function drawFrame() {
+        ctx.fillStyle = '#0d1b2a';
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw terrain lines
+        ctx.strokeStyle = 'rgba(96, 165, 250, 0.12)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 20; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, H * 0.1 + i * (H / 15));
+          for (let x = 0; x < W; x += 5) {
+            ctx.lineTo(x, H * 0.1 + i * (H / 15) + Math.sin(x * 0.01 + i) * 8);
+          }
+          ctx.stroke();
+        }
+
+        // Draw routes between checkpoints
+        ctx.strokeStyle = 'rgba(96, 165, 250, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        const routes = [[0, 1], [0, 2], [0, 3], [0, 5], [4, 5], [1, 6], [6, 7], [3, 7]];
+        routes.forEach(([a, b]) => {
+          ctx.beginPath();
+          ctx.moveTo(checkpoints[a].x, checkpoints[a].y);
+          ctx.lineTo(checkpoints[b].x, checkpoints[b].y);
+          ctx.stroke();
+        });
+        ctx.setLineDash([]);
+
+        // Draw checkpoints
+        checkpoints.forEach(cp => {
+          ctx.fillStyle = '#60A5FA';
+          ctx.beginPath();
+          ctx.arc(cp.x, cp.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = 'rgba(96, 165, 250, 0.15)';
+          ctx.beginPath();
+          ctx.arc(cp.x, cp.y, 14, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#E2E8F0';
+          ctx.font = '600 11px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText(cp.name, cp.x, cp.y - 16);
+        });
+
+        // Animate vehicles
+        vehicles.forEach(v => {
+          v.x += v.dx;
+          v.y += v.dy;
+          // Bounce off edges
+          if (v.x < 30 || v.x > W - 30) v.dx *= -1;
+          if (v.y < 30 || v.y > H - 30) v.dy *= -1;
+
+          // Glow effect
+          const glowR = v.status === 'sos' ? 18 + Math.sin(frame * 0.15) * 8 : 10;
+          ctx.fillStyle = v.color + '30';
+          ctx.beginPath();
+          ctx.arc(v.x, v.y, glowR, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Vehicle dot
+          ctx.fillStyle = v.color;
+          ctx.beginPath();
+          ctx.arc(v.x, v.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Label
+          ctx.fillStyle = '#E2E8F0';
+          ctx.font = '500 9px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText(v.name, v.x, v.y + 18);
+        });
+
+        frame++;
+        requestAnimationFrame(drawFrame);
+      }
+
+      drawFrame();
+
+      // Click handler for vehicle tooltips
+      canvas.addEventListener('click', (e) => {
+        const canvasRect = canvas.getBoundingClientRect();
+        const mx = e.clientX - canvasRect.left;
+        const my = e.clientY - canvasRect.top;
+        vehicles.forEach(v => {
+          const dist = Math.sqrt((mx - v.x) ** 2 + (my - v.y) ** 2);
+          if (dist < 20) {
+            showToast(`🚗 ${v.name}`, `Status: ${v.status.toUpperCase()} | Speed: ${v.status === 'idle' ? '0' : Math.floor(Math.random() * 40 + 20)} km/h | Last Ping: ${Math.floor(Math.random() * 10 + 1)} min ago`, v.status === 'sos' ? 'info' : 'success');
+          }
+        });
+      });
+    }
+
+    // ================================================================
+    // ADMIN: DISPUTE RESOLUTION
+    // ================================================================
+    function resolveDispute(id, action) {
+      const card = document.getElementById(id);
+      if (!card) return;
+
+      const actions = {
+        warn: { label: 'Warning Issued', msg: 'Official warning ticket sent to vendor. They must respond within 48 hours.' },
+        suspend: { label: 'Profile Suspended', msg: 'Vendor profile has been temporarily suspended from the marketplace.' },
+        dismiss: { label: 'Flag Dismissed', msg: 'This dispute has been reviewed and dismissed as resolved.' }
+      };
+
+      card.classList.add('resolved');
+      card.querySelector('.dispute-actions').innerHTML = `<span style="font-size: 0.82rem; font-weight: 700; color: var(--success);">✓ ${actions[action].label}</span>`;
+      showToast(`Dispute Resolved`, actions[action].msg, 'success');
+    }
+
+    // ================================================================
+    // NOTIFICATION TOASTER UTILITY
+    // ================================================================
+    function showToast(title, message, type = "info") {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      const iconSVG = type === "success"
+        ? `<svg viewBox="0 0 512 512" class="toast-icon success" width="16" height="16" fill="currentColor"><path d="M256 0c141.4 0 256 114.6 256 256S397.4 512 256 512 0 397.4 0 256 114.6 0 256 0zm119 193c-9.4-9.4-24.6-9.4-33.9 0L224 310.1l-57-57c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l74 74c9.4 9.4 24.6 9.4 33.9 0l132-132c9.4-9.4 9.4-24.6 0-33.9z"/></svg>`
+        : `<svg viewBox="0 0 512 512" class="toast-icon info" width="16" height="16" fill="currentColor"><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h76c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>`;
+      toast.innerHTML = `${iconSVG}<div class="toast-content"><h4>${title}</h4><p>${message}</p></div>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(20px) scale(0.9)";
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>373-12-12v-24c0-6.627 5.373-12 12-12h76c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>`;
+      toast.innerHTML = `${iconSVG}<div class="toast-content"><h4>${title}</h4><p>${message}</p></div>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(20px) scale(0.9)";
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>

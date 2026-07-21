@@ -1,0 +1,17 @@
+{
+  "name": "BaltiTour",
+  "short_name": "BaltiTour",
+  "description": "AI trip builder for Baltistan — works offline in valleys",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b2545",
+  "theme_color": "#0b2545",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
