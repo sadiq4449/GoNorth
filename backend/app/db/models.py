@@ -555,12 +555,20 @@ class SmsVendorLead(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
-engine = create_engine(settings.database_url, connect_args={"check_same_thread": False})
+engine = create_engine(
+    settings.resolved_database_url,
+    **(
+        {"connect_args": {"check_same_thread": False}}
+        if settings.resolved_database_url.startswith("sqlite")
+        else {"pool_pre_ping": True}
+    ),
+)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
 def init_db() -> None:
-    Base.metadata.create_all(bind=engine)
+    if not settings.using_supabase_db:
+        Base.metadata.create_all(bind=engine)
     _migrate_sqlite(engine)
 
 

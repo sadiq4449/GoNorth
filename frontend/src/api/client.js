@@ -1,3 +1,5 @@
+import { isSupabaseConfigured, uploadVendorAsset } from '../lib/supabase.js'
+
 const API_BASE = import.meta.env.VITE_API_URL || ''
 const TOKEN_KEY = 'baltitour_token'
 const USER_KEY = 'baltitour_user'
@@ -292,6 +294,10 @@ export async function createFleetDriver(payload) {
 }
 
 export async function uploadVendorImage(file) {
+  if (isSupabaseConfigured()) {
+    const url = await uploadVendorAsset(file, 'vendor')
+    return { url }
+  }
   const form = new FormData()
   form.append('file', file)
   const token = getToken()

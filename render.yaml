@@ -16,7 +16,13 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///./baltitour.db
+        sync: false
+      - key: SUPABASE_URL
+        value: https://rcvdlcnfkpeotwmxcnai.supabase.co
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_DB_PASSWORD
+        sync: false
       - key: CORS_ORIGINS
         sync: false
       - key: PUBLIC_API_URL
@@ -50,4 +56,8 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
+        sync: false
+      - key: VITE_SUPABASE_URL
+        value: https://rcvdlcnfkpeotwmxcnai.supabase.co
+      - key: VITE_SUPABASE_ANON_KEY
         sync: false

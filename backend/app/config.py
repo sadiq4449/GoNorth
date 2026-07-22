@@ -8,10 +8,27 @@ class Settings(BaseSettings):
     jwt_secret: str = "change-me-in-production-baltitour-dev-secret"
     jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
 
-    # Supabase (optional — use schema.sql when migrating to production)
+    # Supabase (production Postgres + optional client auth)
     supabase_url: str = ""
     supabase_service_key: str = ""
     supabase_jwt_secret: str = ""
+    supabase_db_password: str = ""
+
+    @property
+    def resolved_database_url(self) -> str:
+        if self.database_url and not self.database_url.startswith("sqlite"):
+            return self.database_url
+        if self.supabase_url and self.supabase_db_password:
+            ref = self.supabase_url.rstrip("/").split("//")[-1].split(".")[0]
+            return (
+                f"postgresql+psycopg2://postgres:{self.supabase_db_password}"
+                f"@db.{ref}.supabase.co:5432/postgres"
+            )
+        return self.database_url
+
+    @property
+    def using_supabase_db(self) -> bool:
+        return self.resolved_database_url.startswith("postgresql")
 
     # SMS gateway (Twilio or local PK provider — mock when empty)
     sms_api_url: str = ""
