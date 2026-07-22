@@ -2,7 +2,7 @@
 
 services:
   - type: web
-    name: baltitour-api
+    name: gonorth-api
     runtime: python
     region: oregon
     plan: free

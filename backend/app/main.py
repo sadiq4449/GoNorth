@@ -17,6 +17,8 @@ from app.services.safety import ensure_default_advisories
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from app.seed import seed
+
     init_db()
     db = SessionLocal()
     try:
@@ -27,6 +29,7 @@ async def lifespan(app: FastAPI):
         process_due_escrows(db)
     finally:
         db.close()
+    seed()
     yield
 
 
