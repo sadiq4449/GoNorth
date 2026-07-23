@@ -12,6 +12,7 @@ import TerrainWarning from '../components/TerrainWarning'
 import SafetyProfileModal from '../components/SafetyProfileModal'
 import PaymentMethodModal from '../components/PaymentMethodModal'
 import PageHeader from '../components/PageHeader'
+import PromoBanner from '../components/PromoBanner'
 import { VEHICLE_CATEGORIES } from '../lib/vehicleCategories'
 
 const DESTINATIONS = ['Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
