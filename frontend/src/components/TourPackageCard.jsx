@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AppIcon from './AppIcon'
 
 function formatPrice(amount) {
@@ -71,7 +71,14 @@ export default function TourPackageCard({ pkg, booking = false, onBook }) {
       </div>
 
       <div className="tour-package-body">
-        <h3 className="tour-package-title">{pkg.title}</h3>
+        {pkg.operator_name && <span className="tour-package-operator">{pkg.operator_name}</span>}
+        <h3 className="tour-package-title">
+          {pkg.slug ? (
+            <Link to={`/packages/${pkg.slug}`}>{pkg.title}</Link>
+          ) : (
+            pkg.title
+          )}
+        </h3>
 
         <div className="tour-package-meta">
           <span className="tour-package-rating">
@@ -89,14 +96,21 @@ export default function TourPackageCard({ pkg, booking = false, onBook }) {
           <strong className="tour-package-price-value">PKR {formatPrice(pkg.starting_price)}</strong>
         </div>
 
-        <button
-          type="button"
-          className="tour-package-book-btn"
-          onClick={handleBook}
-          disabled={booking}
-        >
-          {booking ? 'Loading…' : 'Book Now'}
-        </button>
+        <div className="tour-package-actions">
+          {pkg.slug && (
+            <Link to={`/packages/${pkg.slug}`} className="tour-package-details-link">
+              View details
+            </Link>
+          )}
+          <button
+            type="button"
+            className="tour-package-book-btn"
+            onClick={handleBook}
+            disabled={booking || !pkg.bookable}
+          >
+            {booking ? 'Loading…' : 'Book Now'}
+          </button>
+        </div>
       </div>
     </article>
   )

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { fetchFeaturedPackages } from '../api/client'
 import TourPackageCard from './TourPackageCard'
@@ -34,8 +35,11 @@ export default function TourPackagesSection() {
   return (
     <section className="tour-packages-section container" aria-label="Tour packages">
       <header className="tour-packages-header">
-        <h2>Explore Our Gilgit-Baltistan Tour Packages</h2>
-        <p>Discover amazing destinations</p>
+        <div>
+          <h2>Explore Our Gilgit-Baltistan Tour Packages</h2>
+          <p>Discover amazing destinations</p>
+        </div>
+        <Link to="/packages" className="btn-secondary-link">View all packages →</Link>
       </header>
       <div className="tour-packages-grid">
         {packages.map((pkg) => (

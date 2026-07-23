@@ -120,8 +120,10 @@ class RecommendResponse(BaseModel):
 
 class TourPackageOut(BaseModel):
     id: str
+    slug: str = ""
     title: str
     destination: str
+    valley: str = ""
     nights: int
     duration_label: str
     vibe: str
@@ -135,7 +137,32 @@ class TourPackageOut(BaseModel):
     vehicle_id: str
     guide_ids: list[str] = []
     reason: str = ""
-    quote: CartQuoteResponse
+    quote: CartQuoteResponse | None = None
+    operator_name: str = "GoNorth Curated"
+    bookable: bool = True
+    featured: bool = False
+
+
+class TourPackageDetailOut(TourPackageOut):
+    description: str = ""
+    highlights: list[str] = []
+    inclusions: list[str] = []
+    exclusions: list[str] = []
+    itinerary: list[dict] = []
+
+
+class PackageInquiryRequest(BaseModel):
+    name: str = Field(min_length=2)
+    email: EmailStr
+    phone: str | None = None
+    message: str | None = None
+    travel_date: str | None = None
+    guests: int = Field(default=2, ge=1, le=20)
+
+
+class PackageInquiryResponse(BaseModel):
+    id: str
+    message: str
 
 
 class RoomSearchOut(RoomOut):

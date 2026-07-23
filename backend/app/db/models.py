@@ -559,6 +559,78 @@ class SmsVendorLead(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
+class TourPackage(Base):
+    """Operator-authored or platform-curated tour package SKU."""
+
+    __tablename__ = "marketplace_packages"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    vendor_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("vendors.id"), nullable=True)
+    slug: Mapped[str] = mapped_column(String(120), unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(255))
+    destination: Mapped[str] = mapped_column(String(100))
+    valley: Mapped[str] = mapped_column(String(100))
+    nights: Mapped[int] = mapped_column(Integer, default=5)
+    vibe: Mapped[str] = mapped_column(String(32), default="backpacker")
+    badge: Mapped[str] = mapped_column(String(32), default="")
+    badge_style: Mapped[str] = mapped_column(String(32), default="trending")
+    rating: Mapped[float] = mapped_column(default=4.8)
+    starting_price: Mapped[int] = mapped_column(Integer, default=0)
+    description: Mapped[str] = mapped_column(Text, default="")
+    highlights_json: Mapped[str] = mapped_column(Text, default="[]")
+    inclusions_json: Mapped[str] = mapped_column(Text, default="[]")
+    exclusions_json: Mapped[str] = mapped_column(Text, default="[]")
+    itinerary_json: Mapped[str] = mapped_column(Text, default="[]")
+    image_layout: Mapped[str] = mapped_column(String(20), default="single")
+    image_colors_json: Mapped[str] = mapped_column(Text, default="[]")
+    room_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    vehicle_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    guide_ids_json: Mapped[str] = mapped_column(Text, default="[]")
+    listing_valley: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    budget_hint: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    featured: Mapped[bool] = mapped_column(Boolean, default=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    vendor: Mapped["Vendor | None"] = relationship()
+
+    def get_highlights(self) -> list[str]:
+        return json.loads(self.highlights_json or "[]")
+
+    def get_inclusions(self) -> list[str]:
+        return json.loads(self.inclusions_json or "[]")
+
+    def get_exclusions(self) -> list[str]:
+        return json.loads(self.exclusions_json or "[]")
+
+    def get_itinerary(self) -> list[dict]:
+        return json.loads(self.itinerary_json or "[]")
+
+    def get_image_colors(self) -> list[str]:
+        return json.loads(self.image_colors_json or "[]")
+
+    def get_guide_ids(self) -> list[str]:
+        return json.loads(self.guide_ids_json or "[]")
+
+
+class PackageInquiry(Base):
+    __tablename__ = "package_inquiries"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    package_id: Mapped[str] = mapped_column(String(36), ForeignKey("marketplace_packages.id"))
+    name: Mapped[str] = mapped_column(String(255))
+    email: Mapped[str] = mapped_column(String(255))
+    phone: Mapped[str] = mapped_column(String(32), default="")
+    message: Mapped[str] = mapped_column(Text, default="")
+    travel_date: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    guests: Mapped[int] = mapped_column(Integer, default=2)
+    status: Mapped[str] = mapped_column(String(20), default="new")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    package: Mapped["TourPackage"] = relationship()
+
+
 class PromoCampaign(Base):
     __tablename__ = "promo_campaigns"
 

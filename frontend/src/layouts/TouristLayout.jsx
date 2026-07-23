@@ -31,6 +31,9 @@ export default function TouristLayout() {
           </NavLink>
           <nav className="main-nav">
             <NavLink to="/" end>Home</NavLink>
+            <NavLink to="/packages">Packages</NavLink>
+            <NavLink to="/destinations">Destinations</NavLink>
+            <NavLink to="/explore">Explore</NavLink>
             <NavLink to="/plan">Plan Trip</NavLink>
             <NavLink to="/trip">My Trip</NavLink>
             <NavLink to="/pools">Ride Pools</NavLink>

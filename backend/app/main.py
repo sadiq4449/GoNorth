@@ -10,6 +10,7 @@ from app.config import settings
 from app.db.models import SessionLocal, init_db
 from app.services.community import ensure_community_demo, ensure_featured_vendors
 from app.services.campaigns import ensure_default_campaigns
+from app.services.marketplace_packages import ensure_default_packages
 from app.services.pools import ensure_demo_pools
 from app.services.vehicle_categories import backfill_vehicle_categories
 from app.routers import admin, auth, bookings, campaigns, cart, community, health, listings, packages, payments, points, pools, recommend, safety, search, vendor_portal, vendors
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI):
         ensure_demo_pools(db)
         ensure_default_advisories(db)
         ensure_default_campaigns(db)
+        ensure_default_packages(db)
         ensure_community_demo(db)
         ensure_featured_vendors(db)
         backfill_vehicle_categories(db)

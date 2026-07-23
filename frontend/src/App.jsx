@@ -32,6 +32,10 @@ import VendorOnboardingPage from './pages/VendorOnboardingPage'
 import VendorProfilePage from './pages/VendorProfilePage'
 import VendorGuidesPage from './pages/VendorGuidesPage'
 import AdminCampaignsPage from './pages/AdminCampaignsPage'
+import PackagesPage from './pages/PackagesPage'
+import PackageDetailPage from './pages/PackageDetailPage'
+import DestinationsPage from './pages/DestinationsPage'
+import ExplorePage from './pages/ExplorePage'
 import NotFoundPage from './pages/NotFoundPage'
 import './styles/app.css'
 
@@ -42,6 +46,10 @@ export default function App() {
         <Routes>
           <Route element={<TouristLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/packages" element={<PackagesPage />} />
+            <Route path="/packages/:slug" element={<PackageDetailPage />} />
+            <Route path="/destinations" element={<DestinationsPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/plan" element={<PlanTripPage />} />
             <Route path="/trip" element={<MyTripPage />} />
             <Route path="/trip/pass/:reference" element={<BookingPassPage />} />

@@ -163,6 +163,26 @@ export async function fetchFeaturedPackages() {
   return apiFetch('/api/packages/featured')
 }
 
+export async function fetchPackages({ destination, vibe, featured } = {}) {
+  const params = new URLSearchParams()
+  if (destination) params.set('destination', destination)
+  if (vibe) params.set('vibe', vibe)
+  if (featured) params.set('featured', 'true')
+  const q = params.toString()
+  return apiFetch(`/api/packages${q ? `?${q}` : ''}`)
+}
+
+export async function fetchPackageDetail(slug) {
+  return apiFetch(`/api/packages/${encodeURIComponent(slug)}`)
+}
+
+export async function submitPackageInquiry(slug, payload) {
+  return apiFetch(`/api/packages/${encodeURIComponent(slug)}/inquiry`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function fetchActiveCampaigns(valley) {
   const q = valley ? `?valley=${encodeURIComponent(valley)}` : ''
   return apiFetch(`/api/campaigns/active${q}`)

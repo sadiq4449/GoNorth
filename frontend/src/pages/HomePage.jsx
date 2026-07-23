@@ -4,6 +4,9 @@ import HeroSearch from '../components/HeroSearch'
 import FeaturesSection from '../components/FeaturesSection'
 import PromoBanner from '../components/PromoBanner'
 import TourPackagesSection from '../components/TourPackagesSection'
+import MarketplaceServices from '../components/MarketplaceServices'
+import TrustSection from '../components/TrustSection'
+import FaqSection from '../components/FaqSection'
 import AppIcon from '../components/AppIcon'
 import { fetchListings } from '../api/client'
 
@@ -26,6 +29,8 @@ export default function HomePage() {
     <>
       <HeroSearch />
 
+      <MarketplaceServices />
+
       {stats && (
         <section className="container home-trust-strip" aria-label="Live marketplace inventory">
           <div className="home-trust-item">
@@ -47,7 +52,11 @@ export default function HomePage() {
 
       <PromoBanner />
 
+      <TrustSection stats={stats} />
+
       <FeaturesSection />
+
+      <FaqSection />
 
       <section className="container home-cta home-cta-final">
         <h2>Your Gilgit-Baltistan trip starts here</h2>
