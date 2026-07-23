@@ -39,7 +39,7 @@ export function StayCard({ room, selected, onSelect, recommendSource }) {
       {room.ai_recommended && (
         <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
           <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
-          {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
+          {recommendSource === 'ai' ? 'Matched for you' : 'Best available match'}
         </span>
       )}
       {room.within_budget && !room.ai_recommended && <span className="budget-badge">Within budget</span>}

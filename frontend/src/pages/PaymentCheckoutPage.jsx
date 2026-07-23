@@ -50,9 +50,9 @@ export default function PaymentCheckoutPage() {
     <div className="container payment-checkout-page">
       <Link to="/plan" className="back-link">← Back to trip</Link>
       <div className="payment-checkout-card">
-        <span className="portal-badge">Sandbox checkout</span>
-        <h1>Pay with {label}</h1>
-        <p className="plan-lead">Booking ref: <strong>{session.booking_reference}</strong></p>
+        <span className="portal-badge">Secure checkout</span>
+        <h1>Book with Confidence</h1>
+        <p className="plan-lead">Reference <strong>{session.booking_reference}</strong> — one step away from Gilgit-Baltistan.</p>
         <div className="payment-amount-box">
           {session.currency === 'USD' ? (
             <>
@@ -68,7 +68,7 @@ export default function PaymentCheckoutPage() {
         </p>
         {error && <p className="form-error">{error}</p>}
         <button type="button" className="btn-primary btn-enabled" onClick={handlePay} disabled={paying || session.status === 'paid'}>
-          {session.status === 'paid' ? 'Already paid' : paying ? 'Processing…' : `Simulate ${label} payment`}
+          {session.status === 'paid' ? 'Payment complete' : paying ? 'Processing…' : `Pay with ${label}`}
         </button>
       </div>
     </div>

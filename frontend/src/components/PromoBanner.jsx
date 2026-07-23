@@ -16,8 +16,8 @@ export default function PromoBanner({ valley }) {
   return (
     <section className="promo-banner-section container" aria-label="Seasonal promotions">
       <div className="promo-banner-header">
-        <span className="section-eyebrow">Off-season offers</span>
-        <h2>Save on your next Gilgit-Baltistan trip</h2>
+        <span className="section-eyebrow">Seasonal offers</span>
+        <h2>Travel Gilgit-Baltistan for less</h2>
       </div>
       <div className="promo-banner-grid">
         {campaigns.map((c) => (
@@ -27,7 +27,7 @@ export default function PromoBanner({ valley }) {
             {c.valley && <span className="promo-valley-tag">{c.valley}</span>}
             <p>{c.message}</p>
             <Link to={c.cta_url || '/plan'} className="promo-cta">
-              {c.cta_label || 'Book now'} →
+              {c.cta_label || 'Start Your Adventure'} →
             </Link>
           </article>
         ))}

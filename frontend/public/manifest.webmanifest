@@ -1,7 +1,7 @@
 {
-  "name": "GoNorth",
+  "name": "GoNorth — Gilgit-Baltistan Travel",
   "short_name": "GoNorth",
-  "description": "AI trip builder for Baltistan — works offline in valleys",
+  "description": "Book stays, transport, and guides across Gilgit-Baltistan — works offline in the valleys",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b2545",

@@ -35,15 +35,15 @@ export default function HomePage() {
         <section className="container home-trust-strip" aria-label="Live marketplace inventory">
           <div className="home-trust-item">
             <strong>{stats.stays}+</strong>
-            <span>Verified stays</span>
+            <span>Verified stays across GB</span>
           </div>
           <div className="home-trust-item">
             <strong>{stats.rides}+</strong>
-            <span>Transport options</span>
+            <span>Private vehicles & drivers</span>
           </div>
           <div className="home-trust-item">
             <strong>{stats.guides}+</strong>
-            <span>Local guides</span>
+            <span>Local guides & experts</span>
           </div>
         </section>
       )}
@@ -59,11 +59,11 @@ export default function HomePage() {
       <FaqSection />
 
       <section className="container home-cta home-cta-final">
-        <h2>Your Gilgit-Baltistan trip starts here</h2>
-        <p>Use AI Magic Build above, or hand-pick every stay, vehicle, and guide yourself.</p>
+        <h2>Create Unforgettable Memories</h2>
+        <p>Start with a curated package, or hand-pick every stay, ride, and guide across Gilgit-Baltistan.</p>
         <Link to="/plan" className="btn-ai home-cta-btn btn-with-icon">
           <AppIcon name="sparkles" size={18} />
-          Build my trip
+          Start Your Adventure
         </Link>
       </section>
     </>

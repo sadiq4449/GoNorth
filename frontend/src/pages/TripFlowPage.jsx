@@ -37,9 +37,9 @@ export default function TripFlowPage() {
   return (
     <div className="container trip-flow-page">
       <Link to={`/trip/pass/${booking.reference}`} className="back-link">← Voucher pass</Link>
-      <h1>Trip timeline</h1>
+      <h1>Your journey</h1>
       <p className="plan-lead">
-        {booking.destination} · {booking.reference}
+        Day-by-day plan for {booking.destination} · {booking.reference}
         {offline && <span className="offline-badge"> · Offline mode</span>}
       </p>
 

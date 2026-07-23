@@ -32,8 +32,8 @@ export default function PaymentMethodModal({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <span className="portal-badge">Secure payment</span>
-        <h2>Choose payment method</h2>
+        <span className="portal-badge">Secure checkout</span>
+        <h2>Book with Confidence</h2>
         <p className="modal-total">
           Total: <strong>Rs. {totalPkr?.toLocaleString()}</strong>
           {amountUsd != null && <span className="usd-hint"> ≈ ${amountUsd.toFixed(2)} USD</span>}
@@ -62,7 +62,7 @@ export default function PaymentMethodModal({
               </label>
             </fieldset>
           ) : (
-            <p className="plan-lead">Foreign travelers pay by card via Stripe (USD). PKR estimate shown for reference.</p>
+            <p className="plan-lead">International travelers pay by card via Stripe (USD). The PKR total is shown for reference.</p>
           )}
 
           <div className="modal-actions">

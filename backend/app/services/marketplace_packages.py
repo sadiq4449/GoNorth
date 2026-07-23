@@ -35,8 +35,8 @@ DEFAULT_PACKAGES = [
         "image_colors": ["#1e4976", "#3d8fd1"],
         "image_url": PACKAGE_IMAGE_URLS["skardu-valley-explorer"],
         "description": (
-            "Discover Skardu Bazaar, Kachura lakes, and Shangrila Resort with verified local stays "
-            "and private transport — ideal for first-time Gilgit-Baltistan visitors."
+            "Skardu Bazaar, Kachura lakes, and Shangrila — paired with a verified stay and private driver. "
+            "The ideal first trip for anyone discovering Gilgit-Baltistan."
         ),
         "highlights": ["Skardu Bazaar & Upper Kachura", "Shangrila Resort day trip", "Verified hostel stay", "Private vehicle with driver"],
         "inclusions": ["Accommodation", "Private transport", "Driver fuel & tolls", "Platform support"],
@@ -65,7 +65,7 @@ DEFAULT_PACKAGES = [
         "image_layout": "single",
         "image_colors": ["#0d5c4a", "#3cb89a"],
         "image_url": PACKAGE_IMAGE_URLS["hunza-cherry-blossom"],
-        "description": "Luxury Hunza escape with Eagle's Nest views, Baltit Fort, and Passu cones — peak season cherry blossom route.",
+        "description": "Cherry blossoms, Eagle's Nest sunsets, and Baltit Fort — a premium Hunza route with Attabad Lake and Passu on the Karakoram Highway.",
         "highlights": ["Eagle's Nest sunset", "Baltit & Altit Forts", "Passu cones viewpoint", "Premium family room"],
         "inclusions": ["Boutique stay", "AC/heater vehicle", "Experienced driver", "Trip support line"],
         "exclusions": ["Flights to Gilgit/ Skardu", "Lunch & dinner", "Guide tips"],
@@ -95,7 +95,7 @@ DEFAULT_PACKAGES = [
         "image_layout": "single",
         "image_colors": ["#4a3728", "#8b6914", "#c4a035"],
         "image_url": PACKAGE_IMAGE_URLS["deosai-plateau-adventure"],
-        "description": "4x4 expedition across Deosai National Park with camping expert guide — brown bears, wildflowers, and starry nights.",
+        "description": "Cross Deosai National Park by 4x4 with a camping guide — brown bears, wildflower meadows, Sheosar Lake, and nights under some of the clearest skies in Gilgit-Baltistan.",
         "highlights": ["4x4 Deosai crossing", "Camping expert guide", "Sheosar Lake", "Wildlife spotting"],
         "inclusions": ["Guide", "4x4 vehicle", "Camping coordination", "Park logistics support"],
         "exclusions": ["Camping gear rental", "Meals on plateau", "Park fees if applicable"],
@@ -123,7 +123,7 @@ DEFAULT_PACKAGES = [
         "image_layout": "single",
         "image_colors": ["#5c3d2e", "#a67c52", "#d4a574", "#8b5a3c"],
         "image_url": PACKAGE_IMAGE_URLS["khaplu-heritage-trail"],
-        "description": "Walk through Khaplu Palace, Chaqchan Mosque, and Ghanche valley culture with a heritage-focused local guide.",
+        "description": "Khaplu Palace, Chaqchan Mosque, and the orchards of Ghanche — a slow-travel heritage route in eastern Gilgit-Baltistan with Mashabrum on the horizon.",
         "highlights": ["Khaplu Palace", "Heritage guide", "Ghanche valley", "Mashabrum views"],
         "inclusions": ["Stay near Khaplu", "Transport from Skardu", "Heritage guide", "Platform fee"],
         "exclusions": ["Meals", "Museum tickets", "Optional Mashabrum trek"],
@@ -152,7 +152,7 @@ DEFAULT_PACKAGES = [
         "image_layout": "single",
         "image_colors": ["#7c4a2d", "#c9956c"],
         "image_url": PACKAGE_IMAGE_URLS["shigar-fort-retreat"],
-        "description": "Stay near the restored Shigar Fort with curated valley walks and apricot orchard visits.",
+        "description": "Stay near the restored Shigar Fort — heritage walks, apricot orchards, and quiet mornings in one of Gilgit-Baltistan's most peaceful valleys.",
         "highlights": ["Shigar Fort visit", "Heritage guest house", "Valley walks", "Local cuisine stops"],
         "inclusions": ["Heritage stay", "Airport/Skardu transfers", "Valley transport"],
         "exclusions": ["Fort entry fee", "Meals", "Personal shopping"],
@@ -179,7 +179,7 @@ DEFAULT_PACKAGES = [
         "image_layout": "single",
         "image_colors": ["#2d5016", "#6b8f3c", "#a4c639"],
         "image_url": PACKAGE_IMAGE_URLS["basho-meadows-trek"],
-        "description": "Trek to Basho Meadows with camping support — wildflowers, pine forests, and K2 range panoramas.",
+        "description": "Trek to Basho Meadows with camping support — pine forests, wildflowers, and K2-range panoramas without the crowds of better-known routes.",
         "highlights": ["Basho Meadows trek", "Camping support", "K2 range views", "4x4 approach"],
         "inclusions": ["Guide", "4x4 approach vehicle", "Camping coordination"],
         "exclusions": ["Trekking gear", "Meals", "Porter fees"],
@@ -292,6 +292,28 @@ def package_to_detail(db: Session, pkg: TourPackage) -> TourPackageDetailOut:
     )
 
 
+def sync_package_marketing_copy(db: Session) -> None:
+    """Refresh description, highlights, and itinerary on existing seeded packages."""
+    by_slug = {item["slug"]: item for item in DEFAULT_PACKAGES}
+    rows = db.query(TourPackage).filter(TourPackage.slug.in_(by_slug.keys())).all()
+    changed = False
+    for row in rows:
+        src = by_slug.get(row.slug)
+        if not src:
+            continue
+        if row.description != src["description"]:
+            row.description = src["description"]
+            changed = True
+        if row.get_highlights() != src["highlights"]:
+            row.highlights_json = json.dumps(src["highlights"])
+            changed = True
+        if row.get_itinerary() != src["itinerary"]:
+            row.itinerary_json = json.dumps(src["itinerary"])
+            changed = True
+    if changed:
+        db.commit()
+
+
 def ensure_default_packages(db: Session) -> None:
     if db.query(TourPackage).count() > 0:
         return
@@ -368,5 +390,5 @@ def create_inquiry(db: Session, slug: str, data: PackageInquiryRequest) -> Packa
     db.refresh(row)
     return PackageInquiryResponse(
         id=row.id,
-        message="Inquiry received. A verified operator will contact you within 24 hours.",
+        message="Inquiry received — a verified operator will reach out within 24 hours.",
     )

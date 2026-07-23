@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchActivePools, joinPool, leavePool } from '../api/client'
 
 const MEMBERS_KEY = 'baltitour_pool_members'
@@ -86,10 +87,9 @@ export default function CarpoolPage() {
 
   return (
     <div className="container carpool-page">
-      <h1>Ride Pools</h1>
+      <h1>Share the Ride, Split the Fare</h1>
       <p className="plan-lead">
-        Share verified transport on popular routes. Shared fare is 120% of private hire — split
-        among passengers so everyone saves and drivers earn more.
+        Join verified ride pools on popular Gilgit-Baltistan routes. Travel with other explorers, pay less per seat, and help local drivers fill their vehicles.
       </p>
 
       <div className="pool-econ-banner">
@@ -190,7 +190,7 @@ export default function CarpoolPage() {
       </div>
 
       {!loading && pools.length === 0 && !error && (
-        <p className="invoice-empty">No active pools right now. Check back soon.</p>
+        <p className="invoice-empty">No active pools right now — check back soon or <Link to="/plan">book private transport</Link>.</p>
       )}
     </div>
   )

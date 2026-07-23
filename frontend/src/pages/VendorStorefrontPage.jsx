@@ -49,7 +49,7 @@ export default function VendorStorefrontPage() {
           </p>
         </div>
         <div className="storefront-actions">
-          <Link to="/plan" className="btn-primary btn-enabled">Build a trip</Link>
+          <Link to="/plan" className="btn-primary btn-enabled">Build Your Perfect Trip</Link>
           {store.whatsapp && (
             <a href={`https://wa.me/${store.whatsapp.replace(/\D/g, '')}`} className="btn-secondary" target="_blank" rel="noreferrer">
               WhatsApp

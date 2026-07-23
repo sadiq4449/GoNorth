@@ -84,8 +84,8 @@ export default function MyTripPage() {
   if (!booking) {
     return (
       <div className="container my-trip-page">
-        <h1>My Trip</h1>
-        <p className="plan-lead">Retrieve your booking with the reference from your confirmation.</p>
+        <h1>Your Trip</h1>
+        <p className="plan-lead">Enter the reference from your confirmation email to pull up your voucher, driver contact, and itinerary.</p>
 
         <form className="vendor-panel trip-recovery-form" onSubmit={recoverBooking}>
           <label>
@@ -108,18 +108,18 @@ export default function MyTripPage() {
           </label>
           {lookupError && <p className="form-error">{lookupError}</p>}
           <button type="submit" className="btn-primary btn-enabled" disabled={lookupLoading}>
-            {lookupLoading ? 'Looking up…' : 'Find my trip'}
+            {lookupLoading ? 'Looking up…' : 'Find my booking'}
           </button>
         </form>
 
-        <p className="meta">Or <Link to="/plan">plan a new trip</Link> if you have not booked yet.</p>
+        <p className="meta">Haven’t booked yet? <Link to="/plan">Start Your Adventure</Link>.</p>
       </div>
     )
   }
 
   return (
     <div className="container my-trip-page">
-      <h1>My Trip</h1>
+      <h1>Your Trip</h1>
       <p>{booking.destination} · {booking.reference}</p>
       {actionError && <p className="form-error">{actionError}</p>}
       {(booking.points_earned > 0 || pointsBalance != null) && (
@@ -190,8 +190,8 @@ export default function MyTripPage() {
 
       {navigator.onLine && (
         <form className="vendor-panel dispute-form" onSubmit={submitDispute}>
-          <h2>File a dispute</h2>
-          <p className="plan-lead">Opens a ticket and holds escrow until GoNorth admin resolves it.</p>
+          <h2>Need help with your booking?</h2>
+          <p className="plan-lead">Opens a support ticket and holds escrow until GoNorth resolves the issue.</p>
           {msg && <p className="toast-info">{msg}</p>}
           <textarea
             value={disputeReason}

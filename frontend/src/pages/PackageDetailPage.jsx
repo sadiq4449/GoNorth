@@ -170,10 +170,10 @@ export default function PackageDetailPage() {
             <p className="invoice-meta">{pkg.nights} nights · per trip estimate</p>
             {pkg.bookable ? (
               <button type="button" className="btn-primary btn-enabled checkout-btn" onClick={handleBook}>
-                Book Now
+                Book with Confidence
               </button>
             ) : (
-              <p className="meta">Send an inquiry for custom pricing on this route.</p>
+              <p className="meta">Send an inquiry — our operators reply within 24 hours with custom pricing.</p>
             )}
             <Link to="/plan" className="btn-secondary-link package-customize-link">
               Customize in trip builder
@@ -181,8 +181,8 @@ export default function PackageDetailPage() {
           </div>
 
           <form className="vendor-panel package-inquiry-form" onSubmit={handleInquiry}>
-            <h3>Send inquiry</h3>
-            <p className="meta">Prefer to talk first? Our operators respond within 24 hours.</p>
+            <h3>Have a question?</h3>
+            <p className="meta">Prefer to talk first? Verified operators respond within 24 hours.</p>
             <label>Name<input value={inquiryForm.name} onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })} required /></label>
             <label>Email<input type="email" value={inquiryForm.email} onChange={(e) => setInquiryForm({ ...inquiryForm, email: e.target.value })} required /></label>
             <label>Phone<input value={inquiryForm.phone} onChange={(e) => setInquiryForm({ ...inquiryForm, phone: e.target.value })} /></label>

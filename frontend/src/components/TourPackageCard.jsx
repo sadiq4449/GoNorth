@@ -109,7 +109,7 @@ export default function TourPackageCard({ pkg, booking = false, onBook, imagePri
             onClick={handleBook}
             disabled={booking || !pkg.bookable}
           >
-            {booking ? 'Loading…' : 'Book Now'}
+            {booking ? 'Loading…' : 'Book with Confidence'}
           </button>
         </div>
       </div>

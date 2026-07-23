@@ -22,7 +22,7 @@ export function RideCard({ vehicle, selected, disabled, onSelect, recommendSourc
         {vehicle.ai_recommended && (
           <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
             <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
-            {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
+            {recommendSource === 'ai' ? 'Matched for you' : 'Best available match'}
           </span>
         )}
       </div>

@@ -4,71 +4,71 @@ import AppIcon from './AppIcon'
 const QUICK_ACTIONS = [
   {
     icon: 'map',
-    title: 'Plan your trip',
-    desc: 'Mix hostels, transport, and guides — see your total price instantly.',
+    title: 'Build Your Perfect Trip',
+    desc: 'Choose your stay, driver, and guide — watch the price update as you go.',
     to: '/plan',
-    cta: 'Open Trip Builder',
+    cta: 'Start planning',
   },
   {
     icon: 'car',
-    title: 'Ride pools',
-    desc: 'Share a vehicle with other travelers and split the fare.',
+    title: 'Share a Ride',
+    desc: 'Split transport costs with other travelers heading the same way.',
     to: '/pools',
-    cta: 'Browse pools',
+    cta: 'Browse ride pools',
   },
   {
     icon: 'ticket',
-    title: 'My trip',
-    desc: 'Your QR pass, driver contact, and day-by-day itinerary — even offline.',
+    title: 'Your Trip Pass',
+    desc: 'QR voucher, driver contact, and day-by-day itinerary — works offline.',
     to: '/trip',
-    cta: 'View my booking',
+    cta: 'Open my trip',
   },
   {
     icon: 'message',
-    title: 'Traveler forum',
-    desc: 'Ask locals, find trekking partners, and get route tips.',
+    title: 'Traveler Forum',
+    desc: 'Ask locals, find trekking partners, and get honest route advice.',
     to: '/forum',
-    cta: 'Join the forum',
+    cta: 'Join the conversation',
   },
 ]
 
 const BENEFITS = [
   {
     icon: 'sparkles',
-    title: 'AI trip builder',
-    desc: 'Enter your budget and vibe — get a full Gilgit-Baltistan package in one click.',
+    title: 'Smart trip matching',
+    desc: 'Tell us your budget and style — get a complete Gilgit-Baltistan itinerary in one go.',
   },
   {
     icon: 'car',
-    title: 'Full transport fleet',
-    desc: 'Prado, Land Cruiser, Hilux, Hiace, Coaster, sedans, and more — pick what fits your group.',
+    title: 'Every vehicle you need',
+    desc: 'Prado, Land Cruiser, Hilux, Hiace, Coaster, or sedan — matched to your group and terrain.',
   },
   {
     icon: 'shield',
-    title: 'Built for the mountains',
-    desc: 'SOS button, road alerts, and smart vehicle matching for Deosai and Basho routes.',
+    title: 'Built for mountain roads',
+    desc: 'SOS alerts, live road advisories, and automatic 4x4 matching for Deosai and high passes.',
   },
   {
     icon: 'wifiOff',
-    title: 'Works with weak signal',
-    desc: 'Download your voucher before you leave Skardu — access it with no data.',
+    title: 'Works when signal doesn’t',
+    desc: 'Save your trip pass before you leave town — access it with no data in the valleys.',
   },
   {
     icon: 'star',
     title: 'BaltiPoints rewards',
-    desc: 'Earn points on every booking and redeem on your next adventure.',
+    desc: 'Earn on every booking. Redeem up to 20% on your next adventure.',
   },
   {
     icon: 'users',
-    title: 'Solo & women-friendly filters',
-    desc: 'Find stays and drivers marked safe for solo travelers.',
+    title: 'Travel your way',
+    desc: 'Filter for solo-safe stays and women-friendly drivers — travel with confidence.',
   },
 ]
 
 const STEPS = [
-  { num: '1', title: 'Pick your route', desc: 'Skardu, Shigar, Khaplu, Deosai, Hunza — add multi-leg stops.' },
-  { num: '2', title: 'Build your package', desc: 'Choose stay, transport type, and guides. Price updates as you tap.' },
-  { num: '3', title: 'Book & go', desc: 'Pay with JazzCash, EasyPaisa, or card. Get your QR pass instantly.' },
+  { num: '1', title: 'Choose your valleys', desc: 'Skardu, Hunza, Gilgit, Deosai, Khaplu, Astore — link multiple stops on one route.' },
+  { num: '2', title: 'Pick your team', desc: 'Select a stay, vehicle, and optional guide. Your total updates instantly.' },
+  { num: '3', title: 'Book with confidence', desc: 'Pay via JazzCash, EasyPaisa, or card. Your trip pass arrives immediately.' },
 ]
 
 export default function FeaturesSection() {
@@ -76,8 +76,8 @@ export default function FeaturesSection() {
     <>
       <section className="container home-features" id="features">
         <div className="home-features-header">
-          <h2>Everything you need for Gilgit-Baltistan</h2>
-          <p>One place to plan, book, and travel — from your first search to your last mountain pass.</p>
+          <h2>One platform for all of Gilgit-Baltistan</h2>
+          <p>Plan, book, and travel across the region — from your first search to the last mountain pass.</p>
         </div>
         <div className="home-benefits-grid">
           {BENEFITS.map((b) => (
@@ -91,7 +91,7 @@ export default function FeaturesSection() {
       </section>
 
       <section className="container home-how">
-        <h2>How it works</h2>
+        <h2>Three steps to the Karakoram</h2>
         <div className="home-steps-grid">
           {STEPS.map((s) => (
             <div key={s.num} className="home-step-card">
@@ -101,11 +101,11 @@ export default function FeaturesSection() {
             </div>
           ))}
         </div>
-        <Link to="/plan" className="btn-secondary-link home-how-cta">Start planning →</Link>
+        <Link to="/plan" className="btn-secondary-link home-how-cta">Start Your Adventure →</Link>
       </section>
 
       <section className="container home-features home-explore">
-        <h2>Explore GoNorth</h2>
+        <h2>Discover Hidden Gems</h2>
         <div className="home-feature-grid">
           {QUICK_ACTIONS.map((f) => (
             <Link key={f.to} to={f.to} className="home-feature-card">

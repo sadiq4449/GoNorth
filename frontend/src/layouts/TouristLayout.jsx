@@ -26,7 +26,7 @@ export default function TouristLayout() {
             <span className="brand-mark">GN</span>
             <span>
               <strong>GoNorth</strong>
-              <small>Plan your trip</small>
+              <small>Gilgit-Baltistan travel</small>
             </span>
           </NavLink>
           <nav className="main-nav">
@@ -35,14 +35,14 @@ export default function TouristLayout() {
             <NavLink to="/destinations">Destinations</NavLink>
             <NavLink to="/explore">Explore</NavLink>
             <NavLink to="/plan">Plan Trip</NavLink>
-            <NavLink to="/trip">My Trip</NavLink>
+            <NavLink to="/trip">Your Trip</NavLink>
             <NavLink to="/pools">Ride Pools</NavLink>
             <NavLink to="/forum">Forum</NavLink>
           </nav>
           <div className="header-actions">
             <SosButton />
             <NavLink to="/vendor/login" className="header-portal-link">
-              Vendor Login
+              Partner login
             </NavLink>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function TouristLayout() {
       <ChatWidget />
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span>© 2026 GoNorth — Gilgit-Baltistan travel marketplace</span>
+          <span>© 2026 GoNorth — The Gilgit-Baltistan travel marketplace</span>
           <NavLink to="/vendor/login" className="footer-portal-link">List your business</NavLink>
         </div>
       </footer>

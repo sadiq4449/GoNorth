@@ -4,7 +4,7 @@ import { fetchPackages } from '../api/client'
 import TourPackageCard from '../components/TourPackageCard'
 
 const VIBES = ['all', 'backpacker', 'adventure', 'luxury']
-const DESTINATIONS = ['all', 'Skardu', 'Hunza', 'Deosai', 'Khaplu', 'Shigar', 'Basho']
+const DESTINATIONS = ['all', 'Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
 
 export default function PackagesPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -38,9 +38,9 @@ export default function PackagesPage() {
     <div className="container packages-page">
       <Link to="/" className="back-link">← Home</Link>
       <header className="packages-page-header">
-        <h1>Explore Gilgit-Baltistan Tour Packages</h1>
+        <h1>Curated Journeys Across Gilgit-Baltistan</h1>
         <p className="plan-lead">
-          Curated and operator packages with live pricing — or customize any package in the trip builder.
+          Hand-picked routes from Hunza to Deosai — live prices, verified operators, and room to customize every detail.
         </p>
       </header>
 
@@ -81,7 +81,7 @@ export default function PackagesPage() {
       {loading && <p>Loading packages…</p>}
 
       {!loading && !packages.length && (
-        <p className="meta">No packages match these filters. <Link to="/plan">Build a custom trip</Link> instead.</p>
+        <p className="meta">Nothing matches these filters yet. <Link to="/plan">Build Your Perfect Trip</Link> instead.</p>
       )}
 
       <div className="tour-packages-grid">
@@ -91,14 +91,14 @@ export default function PackagesPage() {
       </div>
 
       <section className="packages-includes vendor-panel">
-        <h2>What our packages typically include</h2>
+        <h2>What you can expect</h2>
         <div className="includes-grid">
-          <div><strong>Verified accommodation</strong><p>Hostels, guest houses, and hotels vetted by GoNorth.</p></div>
-          <div><strong>Private transport</strong><p>4x4, vans, or sedans with experienced local drivers.</p></div>
-          <div><strong>Local guides</strong><p>Optional certified guides for treks, culture, and camping.</p></div>
-          <div><strong>Escrow protection</strong><p>Secure checkout with funds held until trip completion.</p></div>
+          <div><strong>Verified stays</strong><p>Guesthouses, hostels, and hotels reviewed before they go live.</p></div>
+          <div><strong>Private transport</strong><p>4x4, jeeps, vans, or sedans with experienced local drivers.</p></div>
+          <div><strong>Local guides</strong><p>Trek, culture, and camping experts who know the valleys.</p></div>
+          <div><strong>Escrow protection</strong><p>Book with confidence — payment held until your trip is complete.</p></div>
         </div>
-        <Link to="/plan" className="btn-ai btn-with-icon home-cta-btn">Build a fully custom trip →</Link>
+        <Link to="/plan" className="btn-ai btn-with-icon home-cta-btn">Build Your Perfect Trip →</Link>
       </section>
     </div>
   )

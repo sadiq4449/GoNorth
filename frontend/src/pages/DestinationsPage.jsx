@@ -6,9 +6,9 @@ export default function DestinationsPage() {
     <div className="container destinations-page">
       <Link to="/" className="back-link">← Home</Link>
       <header className="destinations-header">
-        <h1>Discover Gilgit-Baltistan</h1>
+        <h1>Valleys of Gilgit-Baltistan</h1>
         <p className="plan-lead">
-          Compare valleys, seasons, and terrain — then browse packages or build a fully custom trip.
+          From Hunza’s forts to Deosai’s plateau — compare seasons, terrain, and routes, then book a package or build your own.
         </p>
       </header>
 
@@ -32,10 +32,10 @@ export default function DestinationsPage() {
               </div>
               <div className="destination-actions">
                 <Link to={`/packages?destination=${encodeURIComponent(d.name)}`} className="btn-secondary-link">
-                  View packages →
+                  See packages →
                 </Link>
                 <Link to={`/plan`} state={{ draft: { destination: d.name, nights: 5, budget: 60000, vibe: 'backpacker', guests: 2 } }} className="btn-secondary-link">
-                  Custom trip →
+                  Start Your Adventure →
                 </Link>
               </div>
             </div>

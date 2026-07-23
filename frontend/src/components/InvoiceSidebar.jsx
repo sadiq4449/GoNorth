@@ -23,7 +23,7 @@ export default function InvoiceSidebar({
   return (
     <aside className="invoice-sidebar">
       <div className="invoice-card">
-        <span className="invoice-type">Trip Invoice</span>
+        <span className="invoice-type">Your trip summary</span>
         <h3>{destination || 'Your trip'}</h3>
         <p className="invoice-meta">
           {nights} night{nights !== 1 ? 's' : ''} · 10% platform fee included
@@ -93,20 +93,20 @@ export default function InvoiceSidebar({
               onClick={onCheckout}
               disabled={checkoutDisabled}
             >
-              Confirm booking
+              Book with Confidence
             </button>
           </>
         )}
 
         {!quote && !loading && (
-          <p className="invoice-empty">Select a stay and vehicle to see pricing.</p>
+          <p className="invoice-empty">Choose a stay and vehicle to see live pricing.</p>
         )}
 
         <button type="button" className="btn-ai sidebar-ai btn-with-icon" onClick={onAiBuild} disabled={aiLoading}>
-          {aiLoading ? 'Building your package…' : (
+          {aiLoading ? 'Building your trip…' : (
             <>
               <AppIcon name="sparkles" size={16} />
-              AI Magic Build
+              Build Your Perfect Trip
             </>
           )}
         </button>

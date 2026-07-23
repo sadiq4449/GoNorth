@@ -7,9 +7,9 @@ export default function FaqSection() {
   return (
     <section className="faq-section container" aria-label="Frequently asked questions">
       <header className="faq-header">
-        <span className="section-eyebrow">Support</span>
-        <h2>Frequently asked questions</h2>
-        <p>Everything you need to know about booking Gilgit-Baltistan through GoNorth.</p>
+        <span className="section-eyebrow">Before you go</span>
+        <h2>Questions travelers ask us</h2>
+        <p>Planning a trip across Gilgit-Baltistan? Here’s what you need to know.</p>
       </header>
       <div className="faq-list">
         {FAQ_ITEMS.map((item, i) => (

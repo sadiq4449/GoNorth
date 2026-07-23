@@ -29,10 +29,10 @@ export default function SafetyProfileModal({ open, onClose, onSubmit, loading, t
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <span className="portal-badge">Trip Safety Profile</span>
-        <h2>Confirm your booking</h2>
+        <span className="portal-badge">Safety details</span>
+        <h2>Almost there</h2>
         <p className="modal-lead">
-          Optional emergency details for mountain safety — not a government permit.
+          Optional emergency contact for mountain travel — shared with your driver and support team only.
         </p>
         <p className="modal-total">Total due: <strong>Rs. {total?.toLocaleString()}</strong></p>
 

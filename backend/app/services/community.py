@@ -93,15 +93,15 @@ def ensure_community_demo(db: Session) -> None:
                 booking_reference="BT-DEMO",
                 author_name="Sara Khan",
                 rating=5,
-                body="Amazing Skardu trip — hostel and Murad 4x4 were perfect for solo travel.",
+                body="Solo trip through Skardu — Murad’s 4x4 and the guesthouse were exactly what I needed. Would book again through GoNorth.",
             )
         )
         db.add(
             ForumPost(
                 author_name="Traveler Ali",
                 valley="Skardu",
-                title="Best time for Deosai?",
-                body="Planning late June — is the road from Skardu usually open by then?",
+                title="When does Deosai open?",
+                body="Planning for late June — is the Skardu–Deosai road usually clear by then? Any 4x4 recommendations?",
             )
         )
         db.commit()

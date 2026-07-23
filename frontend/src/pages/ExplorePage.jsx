@@ -42,9 +42,9 @@ export default function ExplorePage() {
     <div className="container explore-page">
       <Link to="/" className="back-link">← Home</Link>
       <header>
-        <h1>Explore the marketplace</h1>
+        <h1>Find Your Ideal Stay — and More</h1>
         <p className="plan-lead">
-          Browse verified stays, transport, guides, restaurants, and activities — book à la carte or combine in a custom trip.
+          Browse verified stays, transport, guides, restaurants, and experiences across Gilgit-Baltistan. Book à la carte or combine everything in one trip.
         </p>
       </header>
 
@@ -65,7 +65,7 @@ export default function ExplorePage() {
           Valley
           <select value={valley} onChange={(e) => setValley(e.target.value)}>
             <option value="">All valleys</option>
-            {['Skardu', 'Hunza', 'Khaplu', 'Shigar', 'Deosai', 'Basho'].map((v) => (
+            {['Skardu', 'Hunza', 'Gilgit', 'Khaplu', 'Shigar', 'Deosai', 'Astore', 'Basho'].map((v) => (
               <option key={v} value={v}>{v}</option>
             ))}
           </select>
@@ -125,9 +125,9 @@ export default function ExplorePage() {
       )}
 
       <p className="explore-footer-note">
-        Each listing is from a verified vendor.{' '}
+        Every listing comes from a verified local partner.{' '}
         <Link to="/packages">Browse curated packages</Link> or{' '}
-        <Link to="/plan">build your own trip</Link>.
+        <Link to="/plan">Build Your Perfect Trip</Link>.
       </p>
     </div>
   )

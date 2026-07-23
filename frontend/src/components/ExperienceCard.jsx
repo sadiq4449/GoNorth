@@ -30,7 +30,7 @@ export function ExperienceCard({ experience, selected, onToggle }) {
       </div>
       {onToggle && (
         <button type="button" className={selected ? 'btn-secondary' : 'btn-primary btn-enabled'} onClick={() => onToggle(experience)}>
-          {selected ? 'Remove' : 'Add to trip'}
+          {selected ? 'Remove from trip' : 'Add to trip'}
         </button>
       )}
     </article>

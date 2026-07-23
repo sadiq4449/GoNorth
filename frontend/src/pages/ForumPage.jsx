@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchForum, postForum } from '../api/client'
 
-const VALLEYS = ['Skardu', 'Hunza', 'Shigar', 'Khaplu', 'Deosai', 'Basho']
+const VALLEYS = ['Skardu', 'Hunza', 'Gilgit', 'Shigar', 'Khaplu', 'Deosai', 'Astore', 'Basho']
 
 export default function ForumPage() {
   const [valley, setValley] = useState('')
@@ -47,9 +47,9 @@ export default function ForumPage() {
       <Link to="/" className="back-link">← Home</Link>
 
       <header className="forum-header">
-        <h1>Traveler Forum</h1>
+        <h1>Ask a Traveler</h1>
         <p className="plan-lead">
-          Ask locals and fellow travelers about routes, weather, and stays in Gilgit-Baltistan.
+          Real advice from locals and people who’ve been there — routes, weather, stays, and what to pack for Gilgit-Baltistan.
         </p>
       </header>
 
@@ -83,8 +83,8 @@ export default function ForumPage() {
         {!loading && posts.length === 0 && (
           <div className="forum-empty">
             <span className="forum-empty-icon" aria-hidden>💬</span>
-            <h3>No posts yet</h3>
-            <p>Be the first to ask about routes, weather, or stays{valley ? ` in ${valley}` : ''}.</p>
+            <h3>No posts yet in this valley</h3>
+            <p>Be the first to ask about routes, weather, or where to stay{valley ? ` in ${valley}` : ''}.</p>
           </div>
         )}
 
@@ -104,7 +104,7 @@ export default function ForumPage() {
       </section>
 
       <section className="forum-compose">
-        <h2 className="forum-section-title">Start a new post</h2>
+        <h2 className="forum-section-title">Share your question</h2>
         <form className="forum-form" onSubmit={submit}>
           <div className="forum-form-row">
             <label>
@@ -151,7 +151,7 @@ export default function ForumPage() {
           </label>
 
           <button type="submit" className="btn-primary btn-enabled forum-submit" disabled={submitting}>
-            {submitting ? 'Publishing…' : 'Publish post'}
+            {submitting ? 'Publishing…' : 'Post to forum'}
           </button>
         </form>
       </section>

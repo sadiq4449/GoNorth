@@ -12,7 +12,7 @@ export function GuideCard({ guide, selected, onToggle, recommendSource }) {
       {guide.ai_recommended && (
         <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
           <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
-          {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
+          {recommendSource === 'ai' ? 'Matched for you' : 'Best available match'}
         </span>
       )}
       <h3>{guide.name}</h3>

@@ -4,7 +4,7 @@ import { fetchRecommendation } from '../api/client'
 import { packageStatus } from '../lib/aiStatus'
 import AppIcon from './AppIcon'
 
-const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
+const DESTINATIONS = ['Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
 const VIBES = [
   { id: 'backpacker', label: 'Backpacker' },
   { id: 'adventure', label: 'Adventure' },
@@ -23,7 +23,7 @@ export default function HeroSearch() {
 
   async function handleAiBuild() {
     if (!budget || budget < 5000) {
-      setError('Enter a budget of at least PKR 5,000')
+      setError('Please enter a budget of at least PKR 5,000')
       return
     }
     setError('')
@@ -56,8 +56,8 @@ export default function HeroSearch() {
     } catch (e) {
       setError(
         e.message.includes('No approved listings')
-          ? 'No verified listings for this destination yet. Try Skardu or Hunza, or browse manually.'
-          : 'Could not build a package right now. Continue to Plan Trip and pick your stay and vehicle manually.'
+          ? 'We don’t have verified listings for that valley yet. Try Skardu or Hunza — or build your trip manually.'
+          : 'We couldn’t assemble a package just now. Head to the trip builder and choose each piece yourself.'
       )
     } finally {
       setLoading(false)
@@ -67,14 +67,14 @@ export default function HeroSearch() {
   return (
     <section className="hero">
       <div className="hero-content">
-        <span className="hero-tag">AI Dynamic Trip Builder</span>
-        <h1>Build your Gilgit-Baltistan adventure</h1>
-        <p>Mix hostels, transport, and local guides — priced instantly for your budget.</p>
+        <span className="hero-tag">Gilgit-Baltistan · Trip Builder</span>
+        <h1>Explore Gilgit-Baltistan on your terms</h1>
+        <p>From Hunza’s forts to Deosai’s wild meadows — pick your valley, set your budget, and see a full trip priced in seconds.</p>
       </div>
 
       <div className="quick-search">
         <div className="quick-field">
-          <label>Destination</label>
+          <label>Where to?</label>
           <select value={destination} onChange={(e) => setDestination(e.target.value)}>
             {DESTINATIONS.map((d) => (
               <option key={d} value={d}>{d}</option>
@@ -86,11 +86,11 @@ export default function HeroSearch() {
           <input type="number" min={1} max={30} value={nights} onChange={(e) => setNights(Number(e.target.value))} />
         </div>
         <div className="quick-field">
-          <label>Max Budget (PKR)</label>
+          <label>Budget (PKR)</label>
           <input type="number" min={5000} step={1000} value={budget} onChange={(e) => setBudget(Number(e.target.value))} />
         </div>
         <div className="quick-field">
-          <label>Vibe</label>
+          <label>Travel style</label>
           <div className="vibe-selector">
             {VIBES.map((v) => (
               <button
@@ -105,10 +105,10 @@ export default function HeroSearch() {
           </div>
         </div>
         <button type="button" className="btn-ai btn-with-icon" onClick={handleAiBuild} disabled={loading}>
-          {loading ? 'Building your package…' : (
+          {loading ? 'Putting your trip together…' : (
             <>
               <AppIcon name="sparkles" size={18} />
-              AI Magic Build
+              Build Your Perfect Trip
             </>
           )}
         </button>
@@ -118,7 +118,7 @@ export default function HeroSearch() {
         <div className="hero-error-block">
           <p className="hero-error">{error}</p>
           <Link to="/plan" state={{ draft: { destination, nights, budget, vibe, guests: 2 } }} className="hero-error-link">
-            Plan manually →
+            Build manually →
           </Link>
         </div>
       )}

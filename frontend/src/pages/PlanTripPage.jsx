@@ -14,8 +14,8 @@ import PaymentMethodModal from '../components/PaymentMethodModal'
 import PromoBanner from '../components/PromoBanner'
 import { VEHICLE_CATEGORIES } from '../lib/vehicleCategories'
 
-const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
-const STOP_OPTIONS = ['Shigar', 'Hunza', 'Khaplu', 'Deosai']
+const DESTINATIONS = ['Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
+const STOP_OPTIONS = ['Hunza', 'Gilgit', 'Khaplu', 'Shigar', 'Deosai', 'Astore']
 const VIBES = ['backpacker', 'adventure', 'luxury']
 
 export default function PlanTripPage() {
@@ -246,8 +246,8 @@ export default function PlanTripPage() {
   return (
     <div className="builder-layout container">
       <div className="builder-main">
-        <h1>Plan Your Trip</h1>
-        <p className="plan-lead">Pick any combination of stay, transport, guides, or experiences — invoice updates instantly.</p>
+        <h1>Build Your Perfect Trip</h1>
+        <p className="plan-lead">Mix stays, transport, guides, and experiences across Gilgit-Baltistan — your total updates with every choice.</p>
 
         <PromoBanner valley={destination} />
 
@@ -279,7 +279,7 @@ export default function PlanTripPage() {
         </div>
 
         <div className="multi-leg-panel">
-          <h3>Multi-leg route</h3>
+          <h3>Link multiple valleys</h3>
           <p className="meta">Route: {routeLabel}</p>
           <div className="stop-chips">
             {STOP_OPTIONS.filter((s) => s !== destination).map((s) => (
@@ -298,7 +298,7 @@ export default function PlanTripPage() {
         <div className="safety-filter-row">
           <label className="check-label">
             <input type="checkbox" checked={soloSafe} onChange={(e) => setSoloSafe(e.target.checked)} />
-            Solo-safe vendors only
+            Solo-safe listings only
           </label>
           <label className="check-label">
             <input type="checkbox" checked={womenFriendly} onChange={(e) => setWomenFriendly(e.target.checked)} />
@@ -310,7 +310,7 @@ export default function PlanTripPage() {
           </label>
           <label className="check-label">
             <input type="checkbox" checked={enablePooling} onChange={(e) => setEnablePooling(e.target.checked)} />
-            Join seat pool at checkout (save on transport)
+            Join a ride pool at checkout (split transport costs)
           </label>
         </div>
 
@@ -323,7 +323,7 @@ export default function PlanTripPage() {
         {search && !loading && (
           <>
             <section className="listing-section">
-              <h2>1. Choose stay</h2>
+              <h2>1. Find your ideal stay</h2>
               <div className="listing-grid">
                 {search.rooms.map((r) => (
                   <StayCard
@@ -338,9 +338,9 @@ export default function PlanTripPage() {
             </section>
 
             <section className="listing-section">
-              <h2>2. Select transport</h2>
+              <h2>2. Book your ride</h2>
               <p className="plan-lead section-hint">
-                Prado, Land Cruiser, Hilux, Hiace, Coaster, sedans, and more — filter by vehicle type.
+                Prado, Land Cruiser, Hilux, Hiace, Coaster, or sedan — filtered for your route and terrain.
               </p>
               <div className="vehicle-category-filters">
                 {VEHICLE_CATEGORIES.map((cat) => (
@@ -370,7 +370,7 @@ export default function PlanTripPage() {
             </section>
 
             <section className="listing-section">
-              <h2>3. Add guides (optional)</h2>
+              <h2>3. Add a local guide (optional)</h2>
               <div className="listing-grid">
                 {search.guides.map((g) => (
                   <GuideCard
@@ -385,7 +385,7 @@ export default function PlanTripPage() {
             </section>
 
             <section className="listing-section">
-              <h2>4. Restaurants & activities (optional)</h2>
+              <h2>4. Restaurants & experiences (optional)</h2>
               <div className="listing-grid">
                 {(search.experiences || []).map((exp) => (
                   <ExperienceCard

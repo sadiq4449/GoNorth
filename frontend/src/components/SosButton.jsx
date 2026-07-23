@@ -59,9 +59,9 @@ export default function SosButton() {
         <div className="modal-overlay" onClick={() => setOpen(false)}>
           <div className="modal-card sos-modal" onClick={(e) => e.stopPropagation()}>
             <span className="portal-badge sos-badge">1122 + Control Room</span>
-            <h2>Emergency SOS</h2>
+            <h2>Need help on the road?</h2>
             <p className="modal-lead">
-              Sends GPS coordinates via SMS to rescue services. Works offline — queued until signal returns.
+              Sends your GPS location to rescue services via SMS. Works offline — queued until signal returns.
             </p>
             {coords && (
               <p className="sos-coords">

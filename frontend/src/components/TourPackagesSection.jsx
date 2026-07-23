@@ -19,8 +19,8 @@ export default function TourPackagesSection() {
     return (
       <section className="tour-packages-section container" aria-label="Tour packages">
         <header className="tour-packages-header">
-          <h2>Explore Our Gilgit-Baltistan Tour Packages</h2>
-          <p>Discover amazing destinations</p>
+          <h2>Curated Journeys Across Gilgit-Baltistan</h2>
+          <p>Hand-picked routes from Hunza to Deosai — priced live, ready to book.</p>
         </header>
         <div className="tour-packages-grid tour-packages-grid--loading">
           {[1, 2, 3, 4].map((n) => (
@@ -37,10 +37,10 @@ export default function TourPackagesSection() {
     <section className="tour-packages-section container" aria-label="Tour packages">
       <header className="tour-packages-header">
         <div>
-          <h2>Explore Our Gilgit-Baltistan Tour Packages</h2>
-          <p>Discover amazing destinations</p>
+          <h2>Curated Journeys Across Gilgit-Baltistan</h2>
+          <p>Hand-picked routes from Hunza to Deosai — priced live, ready to book.</p>
         </div>
-        <Link to="/packages" className="btn-secondary-link">View all packages →</Link>
+        <Link to="/packages" className="btn-secondary-link">See all packages →</Link>
       </header>
       <div className="tour-packages-grid">
         {packages.map((pkg, index) => (

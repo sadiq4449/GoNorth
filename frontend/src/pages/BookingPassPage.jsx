@@ -27,7 +27,7 @@ export default function BookingPassPage() {
     return (
       <div className="container placeholder-page">
         <p className="form-error">{error}</p>
-        <Link to="/plan" className="back-link">← Plan a new trip</Link>
+        <Link to="/plan" className="back-link">← Start Your Adventure</Link>
       </div>
     )
   }
@@ -37,9 +37,9 @@ export default function BookingPassPage() {
   return (
     <div className="container pass-page">
       <div className="pass-card">
-        <span className="pass-badge">Booking confirmed</span>
-        <h1>Your trip voucher</h1>
-        <p className="pass-meta">{booking.destination} · {booking.nights} nights · {booking.guests} guests</p>
+        <span className="pass-badge">You’re all set</span>
+        <h1>Your trip pass</h1>
+        <p className="pass-meta">{booking.destination} · {booking.nights} nights · {booking.guests} guests — Gilgit-Baltistan</p>
 
         <QrVoucher token={booking.voucher_token} reference={booking.reference} />
 
