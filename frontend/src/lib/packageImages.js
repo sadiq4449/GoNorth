@@ -3,12 +3,12 @@
  * Set value to null when no asset exists (UI shows an explicit missing state).
  */
 export const PACKAGE_IMAGE_ASSETS = {
-  'skardu-valley-explorer': null,
+  'skardu-valley-explorer': '/assets/skardu.jfif',
   'hunza-cherry-blossom': '/assets/huza.jfif',
   'deosai-plateau-adventure': '/assets/desai.jfif',
   'khaplu-heritage-trail': '/assets/khapulu.jfif',
   'shigar-fort-retreat': '/assets/shigargb.jpg',
-  'basho-meadows-trek': null,
+  'basho-meadows-trek': '/assets/basho.jfif',
 }
 
 /** Slugs that need a destination photo added to public/assets. */

@@ -1,12 +1,12 @@
 """Cover image paths for seeded marketplace tour packages."""
 
 PACKAGE_IMAGE_URLS: dict[str, str | None] = {
-    "skardu-valley-explorer": None,
+    "skardu-valley-explorer": "/assets/skardu.jfif",
     "hunza-cherry-blossom": "/assets/huza.jfif",
     "deosai-plateau-adventure": "/assets/desai.jfif",
     "khaplu-heritage-trail": "/assets/khapulu.jfif",
     "shigar-fort-retreat": "/assets/shigargb.jpg",
-    "basho-meadows-trek": None,
+    "basho-meadows-trek": "/assets/basho.jfif",
 }
 
 
