@@ -138,6 +138,18 @@ body {
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
 }
 
+.portal-brand-link {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.portal-brand-logo {
+  height: 44px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .portal-badge {
   display: inline-block;
   background: #eef2ff;
@@ -1761,6 +1773,32 @@ body {
   color: var(--navy);
 }
 
+.brand--logo {
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  height: 44px;
+  width: auto;
+  max-width: min(240px, 52vw);
+  object-fit: contain;
+  display: block;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-logo {
+  height: 32px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  opacity: 0.92;
+}
+
 .brand-mark {
   width: 40px;
   height: 40px;
@@ -2289,6 +2327,16 @@ body {
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+  }
+
+  .brand-logo {
+    height: 36px;
+    max-width: 170px;
+  }
+
+  .footer-logo {
+    height: 28px;
+    max-width: 160px;
   }
 
   .header-portal-link {

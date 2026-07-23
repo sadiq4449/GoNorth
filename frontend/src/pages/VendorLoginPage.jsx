@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { login, registerVendor, smsVendorRegister } from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import { BRAND_LOGO_ALT, BRAND_LOGO_URL } from '../lib/brand'
 
 export default function VendorLoginPage() {
   const [mode, setMode] = useState('login')
@@ -67,6 +68,9 @@ export default function VendorLoginPage() {
   return (
     <div className="portal-login-page">
       <div className="portal-login-card">
+        <Link to="/" className="portal-brand-link">
+          <img src={BRAND_LOGO_URL} alt={BRAND_LOGO_ALT} className="portal-brand-logo" width={220} height={44} />
+        </Link>
         <span className="portal-badge">Vendor Portal</span>
         <h1>{mode === 'login' ? 'Sign in' : 'Register your business'}</h1>
         <p>Hotels, drivers, and guides — separate from the tourist trip planner.</p>
