@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchActivePools, joinPool, leavePool } from '../api/client'
+import PageHeader from '../components/PageHeader'
 
 const MEMBERS_KEY = 'baltitour_pool_members'
 
@@ -86,11 +87,11 @@ export default function CarpoolPage() {
   }
 
   return (
-    <div className="container carpool-page">
-      <h1>Share the Ride, Split the Fare</h1>
-      <p className="plan-lead">
-        Join verified ride pools on popular Gilgit-Baltistan routes. Travel with other explorers, pay less per seat, and help local drivers fill their vehicles.
-      </p>
+    <div className="container tourist-page carpool-page">
+      <PageHeader
+        title="Share the Ride, Split the Fare"
+        lead="Join verified ride pools on popular Gilgit-Baltistan routes. Travel with other explorers, pay less per seat, and help local drivers fill their vehicles."
+      />
 
       <div className="pool-econ-banner">
         <strong>Example:</strong> Rs. 10,000 private → Rs. 12,000 shared pool →{' '}
@@ -147,17 +148,23 @@ export default function CarpoolPage() {
                     {actionId === pool.id ? 'Leaving…' : 'Leave pool'}
                   </button>
                 ) : isJoining ? (
-                  <div className="pool-join-form">
-                    <input
-                      placeholder="Your name"
-                      value={joinForm.guest_name}
-                      onChange={(e) => setJoinForm((f) => ({ ...f, guest_name: e.target.value }))}
-                    />
-                    <input
-                      placeholder="Phone (+92…)"
-                      value={joinForm.guest_phone}
-                      onChange={(e) => setJoinForm((f) => ({ ...f, guest_phone: e.target.value }))}
-                    />
+                  <div className="pool-join-form stacked-form">
+                    <label>
+                      Your name
+                      <input
+                        placeholder="Full name"
+                        value={joinForm.guest_name}
+                        onChange={(e) => setJoinForm((f) => ({ ...f, guest_name: e.target.value }))}
+                      />
+                    </label>
+                    <label>
+                      Phone
+                      <input
+                        placeholder="+92 300 …"
+                        value={joinForm.guest_phone}
+                        onChange={(e) => setJoinForm((f) => ({ ...f, guest_phone: e.target.value }))}
+                      />
+                    </label>
                     <button
                       type="button"
                       className="btn-pool-join"

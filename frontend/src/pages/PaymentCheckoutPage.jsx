@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { completeSandboxPayment, fetchPaymentDetail, fetchBooking } from '../api/client'
 import { cacheActiveBooking } from '../utils/offlineCache'
+import PageHeader from '../components/PageHeader'
 
 const GATEWAY_LABELS = {
   jazzcash: 'JazzCash',
@@ -47,12 +48,14 @@ export default function PaymentCheckoutPage() {
   const label = GATEWAY_LABELS[session.gateway] || GATEWAY_LABELS[gateway] || 'Payment'
 
   return (
-    <div className="container payment-checkout-page">
-      <Link to="/plan" className="back-link">← Back to trip</Link>
-      <div className="payment-checkout-card">
-        <span className="portal-badge">Secure checkout</span>
-        <h1>Book with Confidence</h1>
-        <p className="plan-lead">Reference <strong>{session.booking_reference}</strong> — one step away from Gilgit-Baltistan.</p>
+    <div className="container tourist-page payment-checkout-page">
+      <PageHeader
+        title="Book with Confidence"
+        lead={<>Reference <strong>{session.booking_reference}</strong> — one step away from Gilgit-Baltistan.</>}
+        backTo="/plan"
+        backLabel="Trip builder"
+      />
+      <div className="payment-checkout-card content-card content-card--narrow">
         <div className="payment-amount-box">
           {session.currency === 'USD' ? (
             <>

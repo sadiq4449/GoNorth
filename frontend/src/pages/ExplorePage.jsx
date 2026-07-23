@@ -5,6 +5,7 @@ import { StayCard } from '../components/StayCard'
 import { RideCard } from '../components/RideCard'
 import { GuideCard } from '../components/GuideCard'
 import { ExperienceCard } from '../components/ExperienceCard'
+import PageHeader from '../components/PageHeader'
 
 const TABS = [
   { id: 'stays', label: 'Stays' },
@@ -39,14 +40,11 @@ export default function ExplorePage() {
   const activities = listings?.experiences?.filter((e) => e.category === 'activity') || []
 
   return (
-    <div className="container explore-page">
-      <Link to="/" className="back-link">← Home</Link>
-      <header>
-        <h1>Find Your Ideal Stay — and More</h1>
-        <p className="plan-lead">
-          Browse verified stays, transport, guides, restaurants, and experiences across Gilgit-Baltistan. Book à la carte or combine everything in one trip.
-        </p>
-      </header>
+    <div className="container tourist-page explore-page">
+      <PageHeader
+        title="Find Your Ideal Stay — and More"
+        lead="Browse verified stays, transport, guides, restaurants, and experiences across Gilgit-Baltistan. Book à la carte or combine everything in one trip."
+      />
 
       <div className="explore-toolbar">
         <div className="chip-row">

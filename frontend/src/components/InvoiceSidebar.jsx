@@ -58,15 +58,15 @@ export default function InvoiceSidebar({
             </div>
             {quote.points_discount > 0 && (
               <div className="invoice-row muted">
-                <span>BaltiPoints ({quote.points_redeemed} pts)</span>
+                <span>GoNorth Points ({quote.points_redeemed} pts)</span>
                 <span>- Rs. {quote.points_discount.toLocaleString()}</span>
               </div>
             )}
             {quote.points_earn_estimate > 0 && (
-              <p className="points-earn-hint">Earn ~{quote.points_earn_estimate} BaltiPoints on this trip</p>
+              <p className="points-earn-hint">Earn ~{quote.points_earn_estimate} GoNorth Points on this trip</p>
             )}
             <label className="redeem-email">
-              Email for BaltiPoints
+              Email for GoNorth Points
               <input
                 type="email"
                 value={pointsEmail || ''}
@@ -81,7 +81,7 @@ export default function InvoiceSidebar({
                 onChange={(e) => onRedeemChange?.(e.target.checked)}
                 disabled={!pointsBalance}
               />
-              Redeem BaltiPoints (max 20%) · balance: {pointsBalance ?? 0}
+              Redeem GoNorth Points (max 20%) · balance: {pointsBalance ?? 0}
             </label>
             <div className="invoice-total">
               <span>Total</span>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { DESTINATIONS } from '../lib/destinations'
 import { resolveDestinationImageUrl } from '../lib/destinationImages'
+import PageHeader from '../components/PageHeader'
 
 function DestinationHero({ destination, priority = false }) {
   const url = resolveDestinationImageUrl(destination)
@@ -34,14 +35,11 @@ function DestinationHero({ destination, priority = false }) {
 
 export default function DestinationsPage() {
   return (
-    <div className="container destinations-page">
-      <Link to="/" className="back-link">← Home</Link>
-      <header className="destinations-header">
-        <h1>Valleys of Gilgit-Baltistan</h1>
-        <p className="plan-lead">
-          From Hunza’s forts to Deosai’s plateau — compare seasons, terrain, and routes, then book a package or build your own.
-        </p>
-      </header>
+    <div className="container tourist-page destinations-page">
+      <PageHeader
+        title="Valleys of Gilgit-Baltistan"
+        lead="From Hunza's forts to Deosai's plateau — compare seasons, terrain, and routes, then book a package or build your own."
+      />
 
       <div className="destinations-grid">
         {DESTINATIONS.map((d, index) => (

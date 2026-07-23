@@ -1,12 +1,29 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import SosButton from '../components/SosButton'
 import AdvisoryBar from '../components/AdvisoryBar'
 import ChatWidget from '../components/ChatWidget'
 import { getCachedBooking } from '../utils/offlineCache'
 
+const NAV_LINKS = [
+  { to: '/', end: true, label: 'Home' },
+  { to: '/packages', label: 'Packages' },
+  { to: '/destinations', label: 'Destinations' },
+  { to: '/explore', label: 'Explore' },
+  { to: '/plan', label: 'Plan Trip' },
+  { to: '/trip', label: 'Your Trip' },
+  { to: '/pools', label: 'Ride Pools' },
+  { to: '/forum', label: 'Forum' },
+]
+
 export default function TouristLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    setNavOpen(false)
+  }, [location.pathname])
 
   useEffect(() => {
     if (!navigator.onLine) {
@@ -29,15 +46,21 @@ export default function TouristLayout() {
               <small>Gilgit-Baltistan travel</small>
             </span>
           </NavLink>
-          <nav className="main-nav">
-            <NavLink to="/" end>Home</NavLink>
-            <NavLink to="/packages">Packages</NavLink>
-            <NavLink to="/destinations">Destinations</NavLink>
-            <NavLink to="/explore">Explore</NavLink>
-            <NavLink to="/plan">Plan Trip</NavLink>
-            <NavLink to="/trip">Your Trip</NavLink>
-            <NavLink to="/pools">Ride Pools</NavLink>
-            <NavLink to="/forum">Forum</NavLink>
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-expanded={navOpen}
+            aria-label={navOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setNavOpen((open) => !open)}
+          >
+            {navOpen ? '✕' : '☰'}
+          </button>
+          <nav className={`main-nav ${navOpen ? 'is-open' : ''}`} aria-label="Main">
+            {NAV_LINKS.map((link) => (
+              <NavLink key={link.to} to={link.to} end={link.end}>
+                {link.label}
+              </NavLink>
+            ))}
           </nav>
           <div className="header-actions">
             <SosButton />

@@ -11,7 +11,7 @@ import InvoiceSidebar from '../components/InvoiceSidebar'
 import TerrainWarning from '../components/TerrainWarning'
 import SafetyProfileModal from '../components/SafetyProfileModal'
 import PaymentMethodModal from '../components/PaymentMethodModal'
-import PromoBanner from '../components/PromoBanner'
+import PageHeader from '../components/PageHeader'
 import { VEHICLE_CATEGORIES } from '../lib/vehicleCategories'
 
 const DESTINATIONS = ['Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
@@ -246,8 +246,11 @@ export default function PlanTripPage() {
   return (
     <div className="builder-layout container">
       <div className="builder-main">
-        <h1>Build Your Perfect Trip</h1>
-        <p className="plan-lead">Mix stays, transport, guides, and experiences across Gilgit-Baltistan — your total updates with every choice.</p>
+        <PageHeader
+          title="Build Your Perfect Trip"
+          lead="Mix stays, transport, guides, and experiences across Gilgit-Baltistan — your total updates with every choice."
+          backTo="/"
+        />
 
         <PromoBanner valley={destination} />
 

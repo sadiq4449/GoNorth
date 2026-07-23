@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchBooking } from '../api/client'
 import { getCachedBooking } from '../utils/offlineCache'
+import PageHeader from '../components/PageHeader'
 
 export default function TripFlowPage() {
   const { reference } = useParams()
@@ -35,13 +36,18 @@ export default function TripFlowPage() {
   if (!booking) return <div className="container loading-page">Loading timeline…</div>
 
   return (
-    <div className="container trip-flow-page">
-      <Link to={`/trip/pass/${booking.reference}`} className="back-link">← Voucher pass</Link>
-      <h1>Your journey</h1>
-      <p className="plan-lead">
-        Day-by-day plan for {booking.destination} · {booking.reference}
-        {offline && <span className="offline-badge"> · Offline mode</span>}
-      </p>
+    <div className="container tourist-page trip-flow-page">
+      <PageHeader
+        title="Your journey"
+        lead={
+          <>
+            Day-by-day plan for {booking.destination} · {booking.reference}
+            {offline && <span className="offline-badge"> · Offline mode</span>}
+          </>
+        }
+        backTo={`/trip/pass/${booking.reference}`}
+        backLabel="Voucher"
+      />
 
       <div className="timeline">
         {booking.timeline.map((day) => (

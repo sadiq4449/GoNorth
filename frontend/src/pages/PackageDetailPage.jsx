@@ -180,7 +180,7 @@ export default function PackageDetailPage() {
             </Link>
           </div>
 
-          <form className="vendor-panel package-inquiry-form" onSubmit={handleInquiry}>
+          <form className="vendor-panel package-inquiry-form stacked-form" onSubmit={handleInquiry}>
             <h3>Have a question?</h3>
             <p className="meta">Prefer to talk first? Verified operators respond within 24 hours.</p>
             <label>Name<input value={inquiryForm.name} onChange={(e) => setInquiryForm({ ...inquiryForm, name: e.target.value })} required /></label>

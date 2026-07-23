@@ -68,14 +68,16 @@ export default function SosButton() {
                 GPS: {coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E
               </p>
             )}
-            <label>
-              Your phone
-              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+92 300 …" />
-            </label>
-            <label>
-              Name
-              <input value={name} onChange={(e) => setName(e.target.value)} />
-            </label>
+            <div className="stacked-form">
+              <label>
+                Your phone
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+92 300 …" required />
+              </label>
+              <label>
+                Name
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+              </label>
+            </div>
             {status && <p className={status.includes('dispatched') || status.includes('queued') ? 'toast-info' : 'form-error'}>{status}</p>}
             <div className="modal-actions">
               <button type="button" className="btn-secondary" onClick={() => setOpen(false)}>Cancel</button>

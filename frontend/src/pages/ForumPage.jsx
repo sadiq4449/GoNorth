@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { fetchForum, postForum } from '../api/client'
+import PageHeader from '../components/PageHeader'
 
 const VALLEYS = ['Skardu', 'Hunza', 'Gilgit', 'Shigar', 'Khaplu', 'Deosai', 'Astore', 'Basho']
 
@@ -43,15 +43,11 @@ export default function ForumPage() {
   }
 
   return (
-    <div className="container community-page">
-      <Link to="/" className="back-link">← Home</Link>
-
-      <header className="forum-header">
-        <h1>Ask a Traveler</h1>
-        <p className="plan-lead">
-          Real advice from locals and people who’ve been there — routes, weather, stays, and what to pack for Gilgit-Baltistan.
-        </p>
-      </header>
+    <div className="container tourist-page community-page">
+      <PageHeader
+        title="Ask a Traveler"
+        lead="Real advice from locals and people who've been there — routes, weather, stays, and what to pack for Gilgit-Baltistan."
+      />
 
       <div className="forum-filter-row" role="tablist" aria-label="Filter by valley">
         <button type="button" className={!valley ? 'active' : ''} onClick={() => setValley('')}>

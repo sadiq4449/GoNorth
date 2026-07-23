@@ -50,6 +50,8 @@ body {
   justify-content: space-between;
   gap: 16px;
   min-height: 64px;
+  position: relative;
+  flex-wrap: wrap;
 }
 
 .header-portal-link {
@@ -1471,6 +1473,7 @@ body {
 
 .plan-lead {
   color: var(--muted);
+  line-height: 1.6;
 }
 
 .filter-field {
@@ -2053,6 +2056,194 @@ body {
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Tourist pages — shared layout, forms, cards */
+.tourist-page {
+  padding: 24px 20px 56px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  color: var(--navy);
+  margin: 10px 0 8px;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.page-header .plan-lead {
+  margin: 0;
+  max-width: 720px;
+  line-height: 1.6;
+}
+
+.page-footer-note {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.page-footer-note a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.content-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.content-card--narrow {
+  max-width: 480px;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  color: var(--navy);
+  font-size: 1.1rem;
+}
+
+.stacked-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stacked-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.label-hint {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.stacked-form input,
+.stacked-form select,
+.stacked-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--white);
+  min-height: 42px;
+}
+
+.stacked-form textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.stacked-form .form-error,
+.stacked-form .toast-info {
+  margin: 0;
+}
+
+.stacked-form .btn-primary,
+.stacked-form .btn-secondary {
+  width: 100%;
+  min-height: 42px;
+}
+
+.trip-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.trip-action-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.trip-action-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(15, 35, 65, 0.08);
+}
+
+.trip-action-card strong {
+  color: var(--navy);
+}
+
+.trip-action-card span {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.trip-driver-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trip-driver-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.trip-driver-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.trip-review-form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.trip-status-toast {
+  margin-bottom: 16px;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--navy);
+  margin-left: auto;
 }
 
 .site-footer {
@@ -2065,13 +2256,52 @@ body {
 }
 
 @media (max-width: 640px) {
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .main-nav {
     display: none;
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px 16px;
+    box-shadow: 0 8px 24px rgba(11, 37, 69, 0.08);
+    z-index: 20;
+  }
+
+  .main-nav.is-open {
+    display: flex;
+  }
+
+  .main-nav a {
+    padding: 10px 12px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .header-portal-link {
     font-size: 0.75rem;
     padding: 6px 10px;
+  }
+
+  .tourist-page {
+    padding-top: 16px;
+  }
+
+  .content-card {
+    padding: 18px;
   }
 }
 
@@ -3003,7 +3233,8 @@ body {
   background: var(--light);
   border-radius: var(--radius);
   padding: 14px 16px;
-  margin: 16px 0;
+  margin: 0;
+  border: none;
 }
 
 .points-wallet-card .muted {
@@ -3013,10 +3244,6 @@ body {
 
 .dispute-form textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin: 10px 0;
 }
 
 .admin-split {
@@ -3740,8 +3967,8 @@ body {
 }
 
 .trip-recovery-form {
-  max-width: 480px;
-  margin: 20px 0;
+  max-width: none;
+  margin: 0;
 }
 
 .my-trip-page {

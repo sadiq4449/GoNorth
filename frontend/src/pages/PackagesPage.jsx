@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { fetchPackages } from '../api/client'
 import TourPackageCard from '../components/TourPackageCard'
+import PageHeader from '../components/PageHeader'
 
 const VIBES = ['all', 'backpacker', 'adventure', 'luxury']
 const DESTINATIONS = ['all', 'Skardu', 'Hunza', 'Gilgit', 'Deosai', 'Khaplu', 'Shigar', 'Astore', 'Basho']
@@ -35,14 +36,11 @@ export default function PackagesPage() {
   }
 
   return (
-    <div className="container packages-page">
-      <Link to="/" className="back-link">← Home</Link>
-      <header className="packages-page-header">
-        <h1>Curated Journeys Across Gilgit-Baltistan</h1>
-        <p className="plan-lead">
-          Hand-picked routes from Hunza to Deosai — live prices, verified operators, and room to customize every detail.
-        </p>
-      </header>
+    <div className="container tourist-page packages-page">
+      <PageHeader
+        title="Curated Journeys Across Gilgit-Baltistan"
+        lead="Hand-picked routes from Hunza to Deosai — live prices, verified operators, and room to customize every detail."
+      />
 
       <div className="packages-filters">
         <div className="filter-group">

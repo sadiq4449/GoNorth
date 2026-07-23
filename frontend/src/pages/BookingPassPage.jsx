@@ -71,7 +71,7 @@ export default function BookingPassPage() {
 
         <div className="pass-actions">
           <Link to={`/trip/${booking.reference}`} className="btn-secondary-link">View trip timeline →</Link>
-          <Link to="/plan" className="back-link">Plan another trip</Link>
+          <Link to="/plan" className="back-link">Build Your Perfect Trip</Link>
         </div>
       </div>
     </div>
