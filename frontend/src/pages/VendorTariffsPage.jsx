@@ -122,6 +122,18 @@ export default function VendorTariffsPage() {
         <Link to="/vendor" className="back-link">← Dashboard</Link>
         <h1>Fleet & tariffs</h1>
         <p>This account is hotel-only. Manage rooms on the Inventory page.</p>
+        <Link to="/vendor/inventory" className="btn-secondary-link">Go to inventory →</Link>
+      </div>
+    )
+  }
+
+  if (dash && dash.vendor_type === 'guide') {
+    return (
+      <div className="container placeholder-page">
+        <Link to="/vendor" className="back-link">← Dashboard</Link>
+        <h1>Fleet & tariffs</h1>
+        <p>Guide accounts manage services on the Guides page.</p>
+        <Link to="/vendor/guides" className="btn-secondary-link">Manage guides →</Link>
       </div>
     )
   }

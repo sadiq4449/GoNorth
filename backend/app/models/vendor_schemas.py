@@ -183,6 +183,7 @@ class VendorDashboardOut(BaseModel):
     status: str
     room_count: int
     vehicle_count: int
+    guide_count: int = 0
     driver_count: int
     tariff_count: int
     blocked_nights: int
@@ -210,6 +211,38 @@ class VendorProfileUpdate(BaseModel):
     description: str | None = None
     solo_safe: bool | None = None
     women_friendly: bool | None = None
+    whatsapp: str | None = None
+    policies_text: str | None = None
+
+
+class VendorProfileOut(BaseModel):
+    id: str
+    business_name: str
+    vendor_type: str
+    valley: str
+    status: str
+    description: str
+    solo_safe: bool
+    women_friendly: bool
+    gold_badge: bool
+    physically_vetted: bool
+    featured: bool
+    kyc_status: str
+    email: str
+    phone: str | None = None
+    full_name: str
+    whatsapp: str = ""
+    policies_text: str = ""
+    room_count: int = 0
+    vehicle_count: int = 0
+    guide_count: int = 0
+    driver_count: int = 0
+    tariff_count: int = 0
+    blocked_nights: int = 0
+    gallery: list[str] = []
+    avg_rating: float | None = None
+    review_count: int = 0
+    onboarding_complete: bool = False
 
 
 class VendorGuideOut(BaseModel):
@@ -225,6 +258,13 @@ class VendorGuideCreate(BaseModel):
     specialty: str = Field(min_length=2)
     daily_rate: int = Field(ge=1000)
     languages: list[str] = []
+
+
+class VendorGuideUpdate(BaseModel):
+    name: str | None = Field(None, min_length=2)
+    specialty: str | None = Field(None, min_length=2)
+    daily_rate: int | None = Field(None, ge=1000)
+    languages: list[str] | None = None
 
 
 class UploadResponse(BaseModel):

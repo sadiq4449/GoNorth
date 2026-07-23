@@ -95,8 +95,8 @@ export default function VendorOnboardingPage() {
     e.preventDefault()
     setError('')
     try {
-      const s = await updateVendorProfile(profile)
-      setStatus(s)
+      await updateVendorProfile(profile)
+      await reload()
       setMsg('Profile saved')
       setStep(1)
     } catch (err) {

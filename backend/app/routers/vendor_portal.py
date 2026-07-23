@@ -23,6 +23,8 @@ from app.models.vendor_schemas import (
     VendorDashboardOut,
     VendorGuideCreate,
     VendorGuideOut,
+    VendorGuideUpdate,
+    VendorProfileOut,
     VendorProfileUpdate,
     VendorRoomCreate,
     VendorRoomOut,
@@ -74,7 +76,16 @@ def vendor_onboarding_status(
     return svc.onboarding_status(db, vendor, user)
 
 
-@router.patch("/profile", response_model=OnboardingStatusOut)
+@router.get("/profile", response_model=VendorProfileOut)
+def get_vendor_profile(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    vendor = _vendor(db, user)
+    return svc.vendor_profile_detail(db, vendor, user)
+
+
+@router.patch("/profile", response_model=VendorProfileOut)
 def update_vendor_profile(
     data: VendorProfileUpdate,
     db: Annotated[Session, Depends(get_db)],
@@ -82,7 +93,7 @@ def update_vendor_profile(
 ):
     vendor = _vendor(db, user)
     svc.update_vendor_profile(db, vendor, user, data)
-    return svc.onboarding_status(db, vendor, user)
+    return svc.vendor_profile_detail(db, vendor, user)
 
 
 @router.post("/guides", response_model=VendorGuideOut)
@@ -92,6 +103,24 @@ def create_guide(
     user: Annotated[User, Depends(require_roles("vendor"))],
 ):
     return svc.create_guide(db, _vendor(db, user), data)
+
+
+@router.get("/guides", response_model=list[VendorGuideOut])
+def list_guides(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    return svc.list_guides(db, _vendor(db, user))
+
+
+@router.patch("/guides/{guide_id}", response_model=VendorGuideOut)
+def update_guide(
+    guide_id: str,
+    data: VendorGuideUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    return svc.update_guide(db, _vendor(db, user), guide_id, data)
 
 
 @router.get("/rooms", response_model=list[VendorRoomOut])

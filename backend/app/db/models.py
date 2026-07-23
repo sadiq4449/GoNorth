@@ -43,6 +43,8 @@ class Vendor(Base):
     women_friendly: Mapped[bool] = mapped_column(Boolean, default=False)
     gold_badge: Mapped[bool] = mapped_column(Boolean, default=False)
     description: Mapped[str] = mapped_column(Text, default="")
+    whatsapp: Mapped[str] = mapped_column(String(32), default="")
+    policies_text: Mapped[str] = mapped_column(Text, default="")
     kyc_status: Mapped[str] = mapped_column(String(20), default="none")  # none|draft|submitted|approved|rejected
     physically_vetted: Mapped[bool] = mapped_column(Boolean, default=False)
     featured_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
@@ -596,8 +598,6 @@ def _migrate_sqlite(eng) -> None:
     """Add columns to existing SQLite tables when schema evolves."""
     from sqlalchemy import inspect, text
 
-    if eng.dialect.name != "sqlite":
-        return
     insp = inspect(eng)
     alters = {
         "rooms": [
@@ -618,6 +618,8 @@ def _migrate_sqlite(eng) -> None:
             ("physically_vetted", "BOOLEAN DEFAULT 0"),
             ("women_friendly", "BOOLEAN DEFAULT 0"),
             ("featured_until", "DATETIME"),
+            ("whatsapp", "VARCHAR(32) DEFAULT ''"),
+            ("policies_text", "TEXT DEFAULT ''"),
         ],
         "bookings": [
             ("stops_json", "TEXT DEFAULT '[]'"),
@@ -631,7 +633,10 @@ def _migrate_sqlite(eng) -> None:
             existing = {c["name"] for c in insp.get_columns(table)}
             for col, typedef in cols:
                 if col not in existing:
-                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {typedef}"))
+                    if eng.dialect.name == "postgresql":
+                        conn.execute(text(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {col} {typedef}"))
+                    else:
+                        conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {typedef}"))
 
 
 def get_db():

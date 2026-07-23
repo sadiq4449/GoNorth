@@ -1,6 +1,6 @@
 import AppIcon from './AppIcon'
 
-export function GuideCard({ guide, selected, onToggle }) {
+export function GuideCard({ guide, selected, onToggle, recommendSource }) {
   return (
     <article
       className={`listing-card selectable ${selected ? 'selected' : ''}`}
@@ -10,8 +10,9 @@ export function GuideCard({ guide, selected, onToggle }) {
       tabIndex={0}
     >
       {guide.ai_recommended && (
-        <span className="ai-badge">
-          <AppIcon name="sparkles" size={12} /> AI Pick
+        <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
+          <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
+          {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
         </span>
       )}
       <h3>{guide.name}</h3>

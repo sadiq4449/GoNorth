@@ -18,6 +18,8 @@ from app.models.vendor_schemas import (
     VendorDashboardOut,
     VendorGuideCreate,
     VendorGuideOut,
+    VendorGuideUpdate,
+    VendorProfileOut,
     VendorProfileUpdate,
     VendorRoomOut,
     VendorVehicleOut,
@@ -156,9 +158,108 @@ def update_vendor_profile(db: Session, vendor: Vendor, user: User, data: VendorP
         vendor.solo_safe = data.solo_safe
     if data.women_friendly is not None:
         vendor.women_friendly = data.women_friendly
+    if data.whatsapp is not None:
+        vendor.whatsapp = data.whatsapp.strip()
+    if data.policies_text is not None:
+        vendor.policies_text = data.policies_text.strip()
     db.commit()
     db.refresh(vendor)
     return vendor
+
+
+def vendor_profile_detail(db: Session, vendor: Vendor, user: User) -> VendorProfileOut:
+    from app.db.models import Booking, TripReview
+
+    dash = dashboard_summary(db, vendor)
+    onboarding = onboarding_status(db, vendor, user)
+
+    gallery: list[str] = []
+    for room in vendor_rooms(db, vendor.id):
+        gallery.extend(room.get_images())
+    for vehicle in db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).all():
+        gallery.extend(vehicle.get_images())
+    gallery = [u for u in gallery if u][:12]
+
+    guide_count = db.query(Guide).filter(Guide.vendor_id == vendor.id).count()
+    prop_ids = vendor_property_ids(db, vendor.id)
+    room_ids = [r.id for r in db.query(Room).filter(Room.property_id.in_(prop_ids)).all()] if prop_ids else []
+    vehicle_ids = [v.id for v in db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).all()]
+    refs = {
+        b.reference
+        for b in db.query(Booking).filter(
+            (Booking.room_id.in_(room_ids)) | (Booking.vehicle_id.in_(vehicle_ids))
+        ).all()
+        if b.reference
+    }
+    reviews = db.query(TripReview).filter(TripReview.booking_reference.in_(refs)).all() if refs else []
+    avg_rating = round(sum(r.rating for r in reviews) / len(reviews), 1) if reviews else None
+
+    return VendorProfileOut(
+        id=vendor.id,
+        business_name=vendor.business_name,
+        vendor_type=vendor.vendor_type,
+        valley=vendor.valley,
+        status=vendor.status,
+        description=vendor.description or "",
+        solo_safe=vendor.solo_safe,
+        women_friendly=vendor.women_friendly,
+        gold_badge=vendor.gold_badge,
+        physically_vetted=vendor.physically_vetted,
+        featured=vendor.is_featured,
+        kyc_status=vendor.kyc_status or "none",
+        email=user.email,
+        phone=user.phone,
+        full_name=user.full_name,
+        whatsapp=getattr(vendor, "whatsapp", "") or "",
+        policies_text=getattr(vendor, "policies_text", "") or "",
+        room_count=dash.room_count,
+        vehicle_count=dash.vehicle_count,
+        guide_count=guide_count,
+        driver_count=dash.driver_count,
+        tariff_count=dash.tariff_count,
+        blocked_nights=dash.blocked_nights,
+        gallery=gallery,
+        avg_rating=avg_rating,
+        review_count=len(reviews),
+        onboarding_complete=onboarding.complete,
+    )
+
+
+def list_guides(db: Session, vendor: Vendor) -> list[VendorGuideOut]:
+    rows = db.query(Guide).filter(Guide.vendor_id == vendor.id).order_by(Guide.name).all()
+    return [
+        VendorGuideOut(
+            id=g.id,
+            name=g.name,
+            specialty=g.specialty,
+            daily_rate=g.daily_rate,
+            languages=g.get_languages(),
+        )
+        for g in rows
+    ]
+
+
+def update_guide(db: Session, vendor: Vendor, guide_id: str, data: VendorGuideUpdate) -> VendorGuideOut:
+    row = db.query(Guide).filter(Guide.id == guide_id, Guide.vendor_id == vendor.id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Guide not found")
+    if data.name is not None:
+        row.name = data.name
+    if data.specialty is not None:
+        row.specialty = data.specialty
+    if data.daily_rate is not None:
+        row.daily_rate = data.daily_rate
+    if data.languages is not None:
+        row.languages_json = json.dumps(data.languages)
+    db.commit()
+    db.refresh(row)
+    return VendorGuideOut(
+        id=row.id,
+        name=row.name,
+        specialty=row.specialty,
+        daily_rate=row.daily_rate,
+        languages=row.get_languages(),
+    )
 
 
 def create_guide(db: Session, vendor: Vendor, data: VendorGuideCreate) -> VendorGuideOut:
@@ -189,6 +290,7 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
     vehicles = db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).all()
     drivers = db.query(FleetDriver).filter(FleetDriver.vendor_id == vendor.id).all()
     tariffs = db.query(RouteTariff).filter(RouteTariff.vendor_id == vendor.id).count()
+    guide_count = db.query(Guide).filter(Guide.vendor_id == vendor.id).count()
     room_ids = [r.id for r in rooms]
     blocked = 0
     if room_ids:
@@ -204,6 +306,7 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
         status=vendor.status,
         room_count=len(rooms),
         vehicle_count=len(vehicles),
+        guide_count=guide_count,
         driver_count=len(drivers),
         tariff_count=tariffs,
         blocked_nights=blocked,

@@ -1,7 +1,7 @@
 import AppIcon from './AppIcon'
 import { categoryLabel } from '../lib/vehicleCategories'
 
-export function RideCard({ vehicle, selected, disabled, onSelect }) {
+export function RideCard({ vehicle, selected, disabled, onSelect, recommendSource }) {
   const cat = vehicle.category_label || categoryLabel(vehicle.vehicle_category)
 
   return (
@@ -20,8 +20,9 @@ export function RideCard({ vehicle, selected, disabled, onSelect }) {
           </span>
         )}
         {vehicle.ai_recommended && (
-          <span className="ai-badge">
-            <AppIcon name="sparkles" size={12} /> AI Pick
+          <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
+            <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
+            {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
           </span>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { login, registerVendor, smsVendorRegister } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 
@@ -9,6 +9,8 @@ export default function VendorLoginPage() {
   const [loading, setLoading] = useState(false)
   const { loginSuccess } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname
 
   const [smsPhone, setSmsPhone] = useState('')
   const [smsMessage, setSmsMessage] = useState('REG HOTEL My Guest House')
@@ -52,7 +54,9 @@ export default function VendorLoginPage() {
         throw new Error('This account is not a vendor. Use the correct portal.')
       }
       loginSuccess(result.access_token, result.user)
-      navigate(mode === 'register' ? '/vendor/onboarding' : '/vendor')
+      navigate(
+        mode === 'register' ? '/vendor/onboarding' : (from && from.startsWith('/vendor') ? from : '/vendor')
+      )
     } catch (err) {
       setError(err.message)
     } finally {

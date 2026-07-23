@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import AppIcon from './AppIcon'
+import { PackageSourceBadge } from './AiStatusBanner'
 
 export default function InvoiceSidebar({
   quote,
@@ -6,6 +8,8 @@ export default function InvoiceSidebar({
   destination,
   nights,
   aiReason,
+  packageSource,
+  aiAvailable,
   onAiBuild,
   aiLoading,
   onCheckout,
@@ -25,7 +29,12 @@ export default function InvoiceSidebar({
           {nights} night{nights !== 1 ? 's' : ''} · 10% platform fee included
         </p>
 
-        {aiReason && <p className="ai-reason-box">{aiReason}</p>}
+        {aiReason && (
+          <div className="ai-reason-box">
+            {packageSource && <PackageSourceBadge source={packageSource} aiAvailable={aiAvailable} />}
+            <p>{aiReason}</p>
+          </div>
+        )}
 
         {loading && <p className="invoice-loading">Updating quote…</p>}
 
@@ -94,7 +103,7 @@ export default function InvoiceSidebar({
         )}
 
         <button type="button" className="btn-ai sidebar-ai btn-with-icon" onClick={onAiBuild} disabled={aiLoading}>
-          {aiLoading ? 'Consulting AI…' : (
+          {aiLoading ? 'Building your package…' : (
             <>
               <AppIcon name="sparkles" size={16} />
               AI Magic Build

@@ -184,6 +184,18 @@ export async function updateVendorProfile(payload) {
   return apiFetch('/api/vendor/profile', { method: 'PATCH', body: JSON.stringify(payload) })
 }
 
+export async function fetchVendorProfile() {
+  return apiFetch('/api/vendor/profile')
+}
+
+export async function fetchVendorGuides() {
+  return apiFetch('/api/vendor/guides')
+}
+
+export async function updateVendorGuide(guideId, payload) {
+  return apiFetch(`/api/vendor/guides/${guideId}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
 export async function createVendorGuide(payload) {
   return apiFetch('/api/vendor/guides', { method: 'POST', body: JSON.stringify(payload) })
 }

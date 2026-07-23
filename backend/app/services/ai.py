@@ -1,3 +1,5 @@
+"""Unified AI recommendation with professional fallback metadata."""
+
 import json
 import re
 
@@ -14,6 +16,41 @@ from app.services.terrain import requires_4x4, vehicle_compatible
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+FALLBACK_MESSAGES = {
+    "unconfigured": (
+        "Smart matching selected the best verified stay and transport for your trip. "
+        "You can adjust any selection below."
+    ),
+    "outage": (
+        "AI recommendations are temporarily unavailable. "
+        "We built your package using our verified inventory rules — review and customize below."
+    ),
+    "budget": (
+        "We adjusted your package to fit your budget using smart matching. "
+        "Swap any stay or vehicle below if you prefer."
+    ),
+    "parse_error": (
+        "AI could not finalize a package this time. "
+        "We matched you using verified inventory rules instead."
+    ),
+}
+
+
+def _attach_fallback(result: dict, cause: str) -> dict:
+    result["source"] = "fallback"
+    result["ai_available"] = False
+    result["fallback_cause"] = cause
+    result["user_message"] = FALLBACK_MESSAGES.get(cause, FALLBACK_MESSAGES["outage"])
+    return result
+
+
+def _attach_ai_success(result: dict) -> dict:
+    result["source"] = "ai"
+    result["ai_available"] = True
+    result["fallback_cause"] = None
+    result["user_message"] = None
+    return result
+
 
 def _rules_recommend_live(
     db: Session,
@@ -21,6 +58,8 @@ def _rules_recommend_live(
     rooms,
     vehicles,
     guides,
+    *,
+    cause: str = "unconfigured",
 ):
     room, vehicle, guide_ids = _pick_by_vibe(
         rooms, vehicles, guides, data.vibe, data.budget, data.nights, data.destination
@@ -35,14 +74,14 @@ def _rules_recommend_live(
     reason = f"Smart match for {data.vibe} vibe within PKR {data.budget:,} budget."
     if requires_4x4(data.destination):
         reason = f"4x4 terrain package for {data.destination}. {reason}"
-    return {
+    result = {
         "room_id": room.id,
         "vehicle_id": vehicle.id,
         "guide_ids": guide_ids,
         "reason": reason,
-        "source": "fallback",
         "quote": quote,
     }
+    return _attach_fallback(result, cause)
 
 
 def _build_ai_prompt(data: RecommendRequest, rooms, vehicles, guides) -> str:
@@ -123,7 +162,7 @@ def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
     valid_guides = {g.id for g in guides}
 
     if not settings.ai_configured:
-        return _rules_recommend_live(db, data, rooms, vehicles, guides)
+        return _rules_recommend_live(db, data, rooms, vehicles, guides, cause="unconfigured")
 
     payload = {
         "model": settings.openrouter_model,
@@ -140,7 +179,7 @@ def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
             timeout=45,
         )
         if response.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"OpenRouter API error: {response.text}")
+            return _rules_recommend_live(db, data, rooms, vehicles, guides, cause="outage")
 
         ai_response = response.json()["choices"][0]["message"]["content"]
         parsed = _parse_ai_json(ai_response, valid_rooms, valid_vehicles, valid_guides)
@@ -152,12 +191,10 @@ def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
             nights=data.nights,
         )
         if quote["total"] > data.budget:
-            return _rules_recommend_live(db, data, rooms, vehicles, guides)
+            return _rules_recommend_live(db, data, rooms, vehicles, guides, cause="budget")
 
-        return {**parsed, "source": "ai", "quote": quote}
+        return _attach_ai_success({**parsed, "quote": quote})
     except HTTPException:
         raise
     except Exception:
-        result = _rules_recommend_live(db, data, rooms, vehicles, guides)
-        result["reason"] = f"[AI temporarily unavailable] {result['reason']}"
-        return result
+        return _rules_recommend_live(db, data, rooms, vehicles, guides, cause="parse_error")

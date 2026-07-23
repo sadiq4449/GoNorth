@@ -62,6 +62,8 @@ def search_trip(
     ai_room_id = ai_vehicle_id = None
     ai_guide_ids: list[str] = []
     ai_package = None
+    ai_status = None
+    ai_message = None
 
     if budget and vibe:
         try:
@@ -73,8 +75,14 @@ def search_trip(
             ai_vehicle_id = rec["vehicle_id"]
             ai_guide_ids = rec.get("guide_ids", [])
             ai_package = RecommendResponse(**rec)
+            ai_status = rec.get("source", "fallback")
+            ai_message = rec.get("user_message")
         except HTTPException:
-            pass
+            ai_status = "unavailable"
+            ai_message = (
+                "We could not auto-build a package for this destination. "
+                "Browse verified stays and transport below."
+            )
 
     min_room = min((r.price_per_night for r in rooms), default=0)
     min_vehicle = min((v.daily_rate for v in vehicles if vehicle_compatible(destination, v.is_4x4)), default=0)
@@ -114,6 +122,8 @@ def search_trip(
         vibe=vibe,
         requires_4x4=needs_4x4,
         ai_package=ai_package,
+        ai_status=ai_status,
+        ai_message=ai_message,
         rooms=room_results,
         vehicles=vehicle_results,
         guides=guide_results,

@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { fetchRecommendation } from '../api/client'
+import { packageStatus } from '../lib/aiStatus'
 import AppIcon from './AppIcon'
 
 const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
@@ -18,6 +19,7 @@ export default function HeroSearch() {
   const [vibe, setVibe] = useState('backpacker')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   async function handleAiBuild() {
     if (!budget || budget < 5000) {
@@ -25,9 +27,14 @@ export default function HeroSearch() {
       return
     }
     setError('')
+    setNotice('')
     setLoading(true)
     try {
       const pkg = await fetchRecommendation({ destination, nights, budget, vibe })
+      const status = packageStatus(pkg)
+      if (status.kind === 'fallback') {
+        setNotice(status.message)
+      }
       navigate('/plan', {
         state: {
           draft: {
@@ -40,12 +47,18 @@ export default function HeroSearch() {
             vehicleId: pkg.vehicle_id,
             guideIds: pkg.guide_ids || [],
             quote: pkg.quote,
-            aiReason: pkg.reason,
+            aiReason: status.kind === 'ai' ? pkg.reason : status.message,
+            packageSource: pkg.source,
+            aiAvailable: pkg.ai_available,
           },
         },
       })
     } catch (e) {
-      setError(e.message)
+      setError(
+        e.message.includes('No approved listings')
+          ? 'No verified listings for this destination yet. Try Skardu or Hunza, or browse manually.'
+          : 'Could not build a package right now. Continue to Plan Trip and pick your stay and vehicle manually.'
+      )
     } finally {
       setLoading(false)
     }
@@ -92,7 +105,7 @@ export default function HeroSearch() {
           </div>
         </div>
         <button type="button" className="btn-ai btn-with-icon" onClick={handleAiBuild} disabled={loading}>
-          {loading ? 'Consulting AI…' : (
+          {loading ? 'Building your package…' : (
             <>
               <AppIcon name="sparkles" size={18} />
               AI Magic Build
@@ -100,7 +113,15 @@ export default function HeroSearch() {
           )}
         </button>
       </div>
-      {error && <p className="hero-error">{error}</p>}
+      {notice && <p className="hero-notice">{notice}</p>}
+      {error && (
+        <div className="hero-error-block">
+          <p className="hero-error">{error}</p>
+          <Link to="/plan" state={{ draft: { destination, nights, budget, vibe, guests: 2 } }} className="hero-error-link">
+            Plan manually →
+          </Link>
+        </div>
+      )}
     </section>
   )
 }

@@ -15,6 +15,7 @@ export function VendorDashboardPage() {
 
   const isHotel = dash?.vendor_type === 'hotel' || dash?.vendor_type === 'mixed'
   const isTransport = dash?.vendor_type === 'transport' || dash?.vendor_type === 'mixed'
+  const isGuide = dash?.vendor_type === 'guide'
 
   async function handleBoost() {
     setError('')
@@ -69,14 +70,17 @@ export function VendorDashboardPage() {
             {isTransport && <div className="kpi-card"><span>Vehicles</span><strong>{dash.vehicle_count}</strong></div>}
             {isTransport && <div className="kpi-card"><span>Drivers</span><strong>{dash.driver_count}</strong></div>}
             {isTransport && <div className="kpi-card"><span>Route tariffs</span><strong>{dash.tariff_count}</strong></div>}
+            {isGuide && <div className="kpi-card"><span>Guide profiles</span><strong>{dash.guide_count ?? 1}</strong></div>}
             {isHotel && <div className="kpi-card"><span>Blocked nights</span><strong>{dash.blocked_nights}</strong></div>}
           </div>
 
           <div className="vendor-sub-tabs">
-            {isHotel && <Link to="/vendor/inventory" className="vendor-sub-btn">🏨 Inventory & calendar</Link>}
-            {isTransport && <Link to="/vendor/tariffs" className="vendor-sub-btn">🚗 Fleet & tariffs</Link>}
-            <Link to="/vendor/trips" className="vendor-sub-btn">✅ Trip completion</Link>
-            <Link to="/vendor/kyc" className="vendor-sub-btn">🛡️ KYC & payouts</Link>
+            <Link to="/vendor/profile" className="vendor-sub-btn">Business profile</Link>
+            {isHotel && <Link to="/vendor/inventory" className="vendor-sub-btn">Inventory & calendar</Link>}
+            {isTransport && <Link to="/vendor/tariffs" className="vendor-sub-btn">Fleet & tariffs</Link>}
+            {isGuide && <Link to="/vendor/guides" className="vendor-sub-btn">Guide services</Link>}
+            <Link to="/vendor/trips" className="vendor-sub-btn">Trip completion</Link>
+            <Link to="/vendor/kyc" className="vendor-sub-btn">KYC & payouts</Link>
           </div>
 
           {!dash.featured && (

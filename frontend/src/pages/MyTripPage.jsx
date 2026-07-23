@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchPointsBalance, fetchReviews, fileBookingDispute, postReview } from '../api/client'
-import { getCachedBooking } from '../utils/offlineCache'
+import { fetchBooking, fetchPointsBalance, fetchReviews, fileBookingDispute, postReview } from '../api/client'
+import { cacheActiveBooking, getCachedBooking } from '../utils/offlineCache'
 
 export default function MyTripPage() {
   const [booking, setBooking] = useState(null)
+  const [lookupRef, setLookupRef] = useState('')
+  const [lookupEmail, setLookupEmail] = useState('')
+  const [lookupLoading, setLookupLoading] = useState(false)
+  const [lookupError, setLookupError] = useState('')
   const [pointsBalance, setPointsBalance] = useState(null)
   const [reviews, setReviews] = useState([])
   const [disputeReason, setDisputeReason] = useState('')
   const [reviewForm, setReviewForm] = useState({ author_name: '', rating: 5, body: '', photo_url: '' })
   const [msg, setMsg] = useState('')
+  const [actionError, setActionError] = useState('')
 
   useEffect(() => {
     getCachedBooking()
       .then((b) => {
-        setBooking(b)
+        if (b) setBooking(b)
         if (b?.email) {
           fetchPointsBalance(b.email, b.subtotal || 0)
             .then((p) => setPointsBalance(p.balance))
@@ -24,44 +29,99 @@ export default function MyTripPage() {
           setReviewForm((f) => ({ ...f, author_name: b.traveler_name }))
         }
       })
-      .catch(() => setBooking(null))
+      .catch(() => {})
     fetchReviews().then(setReviews).catch(() => {})
   }, [])
+
+  async function recoverBooking(e) {
+    e.preventDefault()
+    if (!lookupRef.trim()) return
+    setLookupLoading(true)
+    setLookupError('')
+    try {
+      const b = await fetchBooking(lookupRef.trim())
+      await cacheActiveBooking(b)
+      setBooking(b)
+      if (b.email) setLookupEmail(b.email)
+      if (b.traveler_name) setReviewForm((f) => ({ ...f, author_name: b.traveler_name }))
+    } catch (err) {
+      setLookupError('Booking not found. Check your reference code from your confirmation email.')
+    } finally {
+      setLookupLoading(false)
+    }
+  }
 
   async function submitDispute(e) {
     e.preventDefault()
     if (!booking?.reference) return
-    await fileBookingDispute(booking.reference, {
-      filed_by: booking.email || booking.traveler_name,
-      reason: disputeReason,
-    })
-    setMsg('Dispute filed — escrow is on hold until admin review.')
-    setDisputeReason('')
+    setActionError('')
+    try {
+      await fileBookingDispute(booking.reference, {
+        filed_by: booking.email || booking.traveler_name,
+        reason: disputeReason,
+      })
+      setMsg('Dispute filed — escrow is on hold until admin review.')
+      setDisputeReason('')
+    } catch (err) {
+      setActionError(err.message)
+    }
   }
 
   async function submitReview(e) {
     e.preventDefault()
     if (!booking?.reference) return
-    await postReview({ ...reviewForm, booking_reference: booking.reference })
-    setMsg('Thanks — your review is live for other travelers.')
-    fetchReviews().then(setReviews)
-    setReviewForm((f) => ({ ...f, body: '', photo_url: '' }))
+    setActionError('')
+    try {
+      await postReview({ ...reviewForm, booking_reference: booking.reference })
+      setMsg('Thanks — your review is live for other travelers.')
+      fetchReviews().then(setReviews)
+      setReviewForm((f) => ({ ...f, body: '', photo_url: '' }))
+    } catch (err) {
+      setActionError(err.message)
+    }
   }
 
   if (!booking) {
     return (
-      <div className="container placeholder-page">
+      <div className="container my-trip-page">
         <h1>My Trip</h1>
-        <p>No active booking cached yet. Complete a booking to see your pass offline.</p>
-        <Link to="/plan" className="btn-secondary-link">Plan a trip →</Link>
+        <p className="plan-lead">Retrieve your booking with the reference from your confirmation.</p>
+
+        <form className="vendor-panel trip-recovery-form" onSubmit={recoverBooking}>
+          <label>
+            Booking reference
+            <input
+              value={lookupRef}
+              onChange={(e) => setLookupRef(e.target.value)}
+              placeholder="e.g. GN-20250723-ABC123"
+              required
+            />
+          </label>
+          <label>
+            Email (optional, for BaltiPoints)
+            <input
+              type="email"
+              value={lookupEmail}
+              onChange={(e) => setLookupEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </label>
+          {lookupError && <p className="form-error">{lookupError}</p>}
+          <button type="submit" className="btn-primary btn-enabled" disabled={lookupLoading}>
+            {lookupLoading ? 'Looking up…' : 'Find my trip'}
+          </button>
+        </form>
+
+        <p className="meta">Or <Link to="/plan">plan a new trip</Link> if you have not booked yet.</p>
       </div>
     )
   }
 
   return (
-    <div className="container placeholder-page">
+    <div className="container my-trip-page">
       <h1>My Trip</h1>
       <p>{booking.destination} · {booking.reference}</p>
+      {actionError && <p className="form-error">{actionError}</p>}
       {(booking.points_earned > 0 || pointsBalance != null) && (
         <div className="points-wallet-card">
           <strong>BaltiPoints wallet</strong>
@@ -75,7 +135,7 @@ export default function MyTripPage() {
         <p className="driver-contact">
           Driver: <strong>{booking.driver_name}</strong>
           {booking.driver_phone && (
-            <a href={`tel:${booking.driver_phone}`} className="btn-call-driver">Call driver (GSM)</a>
+            <a href={`tel:${booking.driver_phone}`} className="btn-call-driver">Call driver</a>
           )}
         </p>
       )}

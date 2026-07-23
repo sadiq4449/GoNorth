@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { cartAbandon, fetchCartQuote, fetchRecommendation, fetchSearch, initPayment } from '../api/client'
+import { packageStatus, searchAiStatus } from '../lib/aiStatus'
+import AiStatusBanner from '../components/AiStatusBanner'
 import { StayCard } from '../components/StayCard'
 import { RideCard } from '../components/RideCard'
 import { GuideCard } from '../components/GuideCard'
@@ -40,6 +42,8 @@ export default function PlanTripPage() {
   const [selectedGuides, setSelectedGuides] = useState(draft?.guideIds || [])
   const [quote, setQuote] = useState(draft?.quote || null)
   const [aiReason, setAiReason] = useState(draft?.aiReason || '')
+  const [packageSource, setPackageSource] = useState(draft?.packageSource || null)
+  const [aiAvailable, setAiAvailable] = useState(draft?.aiAvailable ?? true)
 
   const [loading, setLoading] = useState(true)
   const [quoteLoading, setQuoteLoading] = useState(false)
@@ -89,9 +93,14 @@ export default function PlanTripPage() {
     setSelectedVehicle(pkg.vehicle_id)
     setSelectedGuides(pkg.guide_ids || [])
     setQuote(pkg.quote)
-    setAiReason(pkg.reason)
-    if (pkg.source === 'fallback' && pkg.reason.includes('temporarily unavailable')) {
-      setToast('AI temporarily unavailable — used smart fallback')
+    const status = packageStatus(pkg)
+    setPackageSource(pkg.source)
+    setAiAvailable(pkg.ai_available !== false)
+    setAiReason(status.kind === 'ai' ? pkg.reason : status.message)
+    if (status.kind === 'fallback') {
+      setToast(status.message)
+    } else {
+      setToast('')
     }
   }
 
@@ -159,11 +168,12 @@ export default function PlanTripPage() {
     try {
       const pkg = await fetchRecommendation({ destination, nights, budget, vibe })
       applyAiPackage(pkg)
-      if (pkg.source === 'fallback' && pkg.reason.includes('temporarily unavailable')) {
-        setToast('AI temporarily unavailable — used smart fallback')
-      }
     } catch (e) {
-      setError(e.message)
+      setError(
+        e.message.includes('No approved listings')
+          ? 'No verified listings for this destination. Try Skardu or Hunza.'
+          : 'Could not auto-build a package. Select a stay and vehicle below.'
+      )
     } finally {
       setAiLoading(false)
     }
@@ -217,6 +227,7 @@ export default function PlanTripPage() {
 
   const usdEstimate = quote ? Math.round((quote.total / 280) * 100) / 100 : null
   const routeLabel = [destination, ...stops].join(' → ')
+  const aiBanner = searchAiStatus(search)
 
   return (
     <div className="builder-layout container">
@@ -290,7 +301,8 @@ export default function PlanTripPage() {
         </div>
 
         <TerrainWarning show={search?.requires_4x4} />
-        {toast && <p className="toast-info">{toast}</p>}
+        <AiStatusBanner status={aiBanner} onRetry={handleAiBuild} retrying={aiLoading} />
+        {toast && !aiBanner && <p className="toast-info">{toast}</p>}
         {error && <p className="form-error">{error}</p>}
         {loading && <p>Loading…</p>}
 
@@ -305,6 +317,7 @@ export default function PlanTripPage() {
                     room={r}
                     selected={selectedRoom === r.id}
                     onSelect={() => setSelectedRoom(r.id)}
+                    recommendSource={search.ai_status}
                   />
                 ))}
               </div>
@@ -336,6 +349,7 @@ export default function PlanTripPage() {
                     selected={selectedVehicle === v.id}
                     disabled={search.requires_4x4 && !v.terrain_compatible}
                     onSelect={() => setSelectedVehicle(v.id)}
+                    recommendSource={search.ai_status}
                   />
                 ))}
               </div>
@@ -350,6 +364,7 @@ export default function PlanTripPage() {
                     guide={g}
                     selected={selectedGuides.includes(g.id)}
                     onToggle={toggleGuide}
+                    recommendSource={search.ai_status}
                   />
                 ))}
               </div>
@@ -364,6 +379,8 @@ export default function PlanTripPage() {
         destination={routeLabel}
         nights={nights}
         aiReason={aiReason}
+        packageSource={packageSource}
+        aiAvailable={aiAvailable}
         onAiBuild={handleAiBuild}
         aiLoading={aiLoading}
         onCheckout={() => setCheckoutOpen(true)}

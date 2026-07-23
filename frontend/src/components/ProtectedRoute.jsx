@@ -19,7 +19,8 @@ export default function ProtectedRoute({ children, roles }) {
   }
 
   if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/" replace />
+    const fallback = user.role === 'vendor' ? '/vendor' : user.role === 'admin' ? '/admin' : '/'
+    return <Navigate to={fallback} replace />
   }
 
   return children

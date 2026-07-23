@@ -136,6 +136,18 @@ export default function VendorInventoryPage() {
         <Link to="/vendor" className="back-link">← Dashboard</Link>
         <h1>Hotel inventory</h1>
         <p>This account is registered as transport-only. Manage fleet on the Tariffs page.</p>
+        <Link to="/vendor/tariffs" className="btn-secondary-link">Go to tariffs →</Link>
+      </div>
+    )
+  }
+
+  if (dash && dash.vendor_type === 'guide') {
+    return (
+      <div className="container placeholder-page">
+        <Link to="/vendor" className="back-link">← Dashboard</Link>
+        <h1>Hotel inventory</h1>
+        <p>Guide accounts manage services on the Guides page.</p>
+        <Link to="/vendor/guides" className="btn-secondary-link">Manage guides →</Link>
       </div>
     )
   }

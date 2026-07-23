@@ -113,6 +113,9 @@ class RecommendResponse(BaseModel):
     reason: str
     source: str
     quote: CartQuoteResponse
+    ai_available: bool = True
+    fallback_cause: str | None = None
+    user_message: str | None = None
 
 
 class TourPackageOut(BaseModel):
@@ -159,6 +162,8 @@ class SearchResponse(BaseModel):
     vibe: str | None
     requires_4x4: bool
     ai_package: RecommendResponse | None = None
+    ai_status: str | None = None
+    ai_message: str | None = None
     rooms: list[RoomSearchOut]
     vehicles: list[VehicleSearchOut]
     guides: list[GuideSearchOut]

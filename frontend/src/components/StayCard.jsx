@@ -15,7 +15,7 @@ const AMENITY_ICONS = {
   'Valley View': 'eye',
 }
 
-export function StayCard({ room, selected, onSelect }) {
+export function StayCard({ room, selected, onSelect, recommendSource }) {
   const [expanded, setExpanded] = useState(false)
 
   function toggleExpand(e) {
@@ -37,8 +37,9 @@ export function StayCard({ room, selected, onSelect }) {
         </span>
       )}
       {room.ai_recommended && (
-        <span className="ai-badge">
-          <AppIcon name="sparkles" size={12} /> AI Pick
+        <span className={recommendSource === 'ai' ? 'ai-badge' : 'smart-badge'}>
+          <AppIcon name={recommendSource === 'ai' ? 'sparkles' : 'check'} size={12} />
+          {recommendSource === 'ai' ? 'AI Pick' : 'Smart Match'}
         </span>
       )}
       {room.within_budget && !room.ai_recommended && <span className="budget-badge">Within budget</span>}
