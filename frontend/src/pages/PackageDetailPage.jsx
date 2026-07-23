@@ -3,20 +3,33 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { fetchPackageDetail, submitPackageInquiry } from '../api/client'
 import TourPackageCard from '../components/TourPackageCard'
 import AppIcon from '../components/AppIcon'
+import { packageImageStatus } from '../lib/packageImages'
 
 function PackageHero({ pkg }) {
-  const layout = pkg.image_layout
-  const colors = pkg.image_colors || []
-  if (layout === 'split' && colors.length >= 2) {
+  const status = packageImageStatus(pkg)
+
+  if (status.missing) {
     return (
-      <div className="package-detail-hero package-detail-hero--split">
-        <div style={{ background: colors[0] }} />
-        <div style={{ background: colors[1] }} />
+      <div className="package-detail-hero package-detail-hero--missing" role="img" aria-label={`${status.label} photo not yet available`}>
+        <AppIcon name="image" size={32} />
+        <span>Photo needed — {status.label}</span>
+        {status.slug && <small>{status.slug}</small>}
       </div>
     )
   }
-  const bg = colors.length >= 2 ? `linear-gradient(135deg, ${colors[0]}, ${colors[1]})` : colors[0] || '#1e4976'
-  return <div className="package-detail-hero" style={{ background: bg }} />
+
+  return (
+    <div className="package-detail-hero package-detail-hero--photo">
+      <img
+        src={status.url}
+        alt={`${pkg.title} — ${pkg.destination}, Gilgit-Baltistan`}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        sizes="100vw"
+      />
+    </div>
+  )
 }
 
 export default function PackageDetailPage() {

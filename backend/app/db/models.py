@@ -593,6 +593,7 @@ class TourPackage(Base):
     itinerary_json: Mapped[str] = mapped_column(Text, default="[]")
     image_layout: Mapped[str] = mapped_column(String(20), default="single")
     image_colors_json: Mapped[str] = mapped_column(Text, default="[]")
+    image_url: Mapped[str] = mapped_column(Text, default="")
     room_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     vehicle_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     guide_ids_json: Mapped[str] = mapped_column(Text, default="[]")
@@ -743,6 +744,9 @@ def _migrate_sqlite(eng) -> None:
         ],
         "escrow_entries": [
             ("vendor_splits_json", "TEXT DEFAULT '[]'"),
+        ],
+        "marketplace_packages": [
+            ("image_url", "TEXT DEFAULT ''"),
         ],
     }
     with eng.begin() as conn:

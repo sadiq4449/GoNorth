@@ -12,6 +12,7 @@ from app.services.community import ensure_community_demo, ensure_featured_vendor
 from app.services.campaigns import ensure_default_campaigns
 from app.services.experiences_seed import ensure_demo_experiences
 from app.services.marketplace_packages import ensure_default_packages
+from app.services.package_images import ensure_package_images
 from app.services.pools import ensure_demo_pools
 from app.services.vehicle_categories import backfill_vehicle_categories
 from app.services.vendor_slugs import backfill_vendor_slugs
@@ -31,6 +32,7 @@ async def lifespan(app: FastAPI):
         ensure_default_advisories(db)
         ensure_default_campaigns(db)
         ensure_default_packages(db)
+        ensure_package_images(db)
         ensure_demo_experiences(db)
         backfill_vendor_slugs(db)
         ensure_community_demo(db)

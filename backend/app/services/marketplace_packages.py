@@ -17,6 +17,7 @@ from app.models.schemas import (
 from app.services.cart import quote_cart
 from app.services.catalog import load_approved_listings
 from app.services.recommend_rules import _pick_by_vibe
+from app.services.package_images import PACKAGE_IMAGE_URLS
 
 DEFAULT_PACKAGES = [
     {
@@ -32,6 +33,7 @@ DEFAULT_PACKAGES = [
         "budget_hint": 65000,
         "image_layout": "single",
         "image_colors": ["#1e4976", "#3d8fd1"],
+        "image_url": PACKAGE_IMAGE_URLS["skardu-valley-explorer"],
         "description": (
             "Discover Skardu Bazaar, Kachura lakes, and Shangrila Resort with verified local stays "
             "and private transport — ideal for first-time Gilgit-Baltistan visitors."
@@ -62,6 +64,7 @@ DEFAULT_PACKAGES = [
         "budget_hint": 120000,
         "image_layout": "single",
         "image_colors": ["#0d5c4a", "#3cb89a"],
+        "image_url": PACKAGE_IMAGE_URLS["hunza-cherry-blossom"],
         "description": "Luxury Hunza escape with Eagle's Nest views, Baltit Fort, and Passu cones — peak season cherry blossom route.",
         "highlights": ["Eagle's Nest sunset", "Baltit & Altit Forts", "Passu cones viewpoint", "Premium family room"],
         "inclusions": ["Boutique stay", "AC/heater vehicle", "Experienced driver", "Trip support line"],
@@ -89,8 +92,9 @@ DEFAULT_PACKAGES = [
         "badge_style": "new",
         "rating": 4.8,
         "budget_hint": 90000,
-        "image_layout": "split",
+        "image_layout": "single",
         "image_colors": ["#4a3728", "#8b6914", "#c4a035"],
+        "image_url": PACKAGE_IMAGE_URLS["deosai-plateau-adventure"],
         "description": "4x4 expedition across Deosai National Park with camping expert guide — brown bears, wildflowers, and starry nights.",
         "highlights": ["4x4 Deosai crossing", "Camping expert guide", "Sheosar Lake", "Wildlife spotting"],
         "inclusions": ["Guide", "4x4 vehicle", "Camping coordination", "Park logistics support"],
@@ -116,8 +120,9 @@ DEFAULT_PACKAGES = [
         "badge_style": "popular",
         "rating": 4.9,
         "budget_hint": 75000,
-        "image_layout": "collage",
+        "image_layout": "single",
         "image_colors": ["#5c3d2e", "#a67c52", "#d4a574", "#8b5a3c"],
+        "image_url": PACKAGE_IMAGE_URLS["khaplu-heritage-trail"],
         "description": "Walk through Khaplu Palace, Chaqchan Mosque, and Ghanche valley culture with a heritage-focused local guide.",
         "highlights": ["Khaplu Palace", "Heritage guide", "Ghanche valley", "Mashabrum views"],
         "inclusions": ["Stay near Khaplu", "Transport from Skardu", "Heritage guide", "Platform fee"],
@@ -146,6 +151,7 @@ DEFAULT_PACKAGES = [
         "budget_hint": 85000,
         "image_layout": "single",
         "image_colors": ["#7c4a2d", "#c9956c"],
+        "image_url": PACKAGE_IMAGE_URLS["shigar-fort-retreat"],
         "description": "Stay near the restored Shigar Fort with curated valley walks and apricot orchard visits.",
         "highlights": ["Shigar Fort visit", "Heritage guest house", "Valley walks", "Local cuisine stops"],
         "inclusions": ["Heritage stay", "Airport/Skardu transfers", "Valley transport"],
@@ -170,8 +176,9 @@ DEFAULT_PACKAGES = [
         "badge_style": "trending",
         "rating": 4.8,
         "budget_hint": 70000,
-        "image_layout": "split",
+        "image_layout": "single",
         "image_colors": ["#2d5016", "#6b8f3c", "#a4c639"],
+        "image_url": PACKAGE_IMAGE_URLS["basho-meadows-trek"],
         "description": "Trek to Basho Meadows with camping support — wildflowers, pine forests, and K2 range panoramas.",
         "highlights": ["Basho Meadows trek", "Camping support", "K2 range views", "4x4 approach"],
         "inclusions": ["Guide", "4x4 approach vehicle", "Camping coordination"],
@@ -260,6 +267,7 @@ def package_to_out(db: Session, pkg: TourPackage, *, include_quote: bool = False
         rating=pkg.rating,
         image_layout=pkg.image_layout,
         image_colors=pkg.get_image_colors(),
+        image_url=pkg.image_url or PACKAGE_IMAGE_URLS.get(pkg.slug) or "",
         starting_price=starting_price,
         room_id=room_id or "",
         vehicle_id=vehicle_id or "",
@@ -308,6 +316,7 @@ def ensure_default_packages(db: Session) -> None:
             itinerary_json=json.dumps(item["itinerary"]),
             image_layout=item["image_layout"],
             image_colors_json=json.dumps(item["image_colors"]),
+            image_url=item.get("image_url") or "",
             featured=item.get("featured", False),
             sort_order=item.get("sort_order", 0),
             active=True,

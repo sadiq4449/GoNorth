@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { fetchFeaturedPackages } from '../api/client'
 import TourPackageCard from './TourPackageCard'
+import { PACKAGES_MISSING_IMAGES } from '../lib/packageImages'
 
 export default function TourPackagesSection() {
   const [packages, setPackages] = useState([])
@@ -42,10 +43,15 @@ export default function TourPackagesSection() {
         <Link to="/packages" className="btn-secondary-link">View all packages →</Link>
       </header>
       <div className="tour-packages-grid">
-        {packages.map((pkg) => (
-          <TourPackageCard key={pkg.id} pkg={pkg} />
+        {packages.map((pkg, index) => (
+          <TourPackageCard key={pkg.id} pkg={pkg} imagePriority={index < 2} />
         ))}
       </div>
+      {PACKAGES_MISSING_IMAGES.length > 0 && (
+        <p className="tour-packages-asset-note meta">
+          Missing destination photos: {PACKAGES_MISSING_IMAGES.join(', ')} — add matching files to <code>public/assets/</code>.
+        </p>
+      )}
     </section>
   )
 }

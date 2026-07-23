@@ -20,6 +20,7 @@ import {
   Ship,
   Check,
   AlertTriangle,
+  ImageOff,
 } from 'lucide-react'
 
 const ICONS = {
@@ -44,6 +45,7 @@ const ICONS = {
   ship: Ship,
   check: Check,
   alert: AlertTriangle,
+  image: ImageOff,
 }
 
 /** Consistent stroke icons for GoNorth UI */

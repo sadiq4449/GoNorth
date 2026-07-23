@@ -133,6 +133,7 @@ class TourPackageOut(BaseModel):
     rating: float
     image_layout: str = "single"
     image_colors: list[str] = []
+    image_url: str = ""
     starting_price: int
     room_id: str
     vehicle_id: str

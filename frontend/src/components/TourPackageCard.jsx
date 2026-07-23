@@ -1,39 +1,40 @@
 import { Link, useNavigate } from 'react-router-dom'
 import AppIcon from './AppIcon'
+import { packageImageStatus } from '../lib/packageImages'
 
 function formatPrice(amount) {
   return amount.toLocaleString('en-PK')
 }
 
-function PackageImage({ layout, colors, title }) {
-  if (layout === 'split' && colors.length >= 2) {
+function PackageImage({ pkg, priority = false }) {
+  const status = packageImageStatus(pkg)
+
+  if (status.missing) {
     return (
-      <div className="tour-package-images tour-package-images--split">
-        <div className="tour-package-img-cell" style={{ background: colors[0] }} aria-hidden />
-        <div className="tour-package-img-cell" style={{ background: colors[1] }} aria-hidden />
+      <div className="tour-package-images tour-package-images--missing" role="img" aria-label={`${status.label} photo not yet available`}>
+        <AppIcon name="image" size={28} className="tour-package-missing-icon" />
+        <span className="tour-package-missing-title">Photo needed</span>
+        <span className="tour-package-missing-dest">{status.label}</span>
+        {status.slug && <span className="tour-package-missing-slug">{status.slug}</span>}
       </div>
     )
   }
-  if (layout === 'collage' && colors.length >= 3) {
-    return (
-      <div className="tour-package-images tour-package-images--collage">
-        <div className="tour-package-img-cell" style={{ background: colors[0] }} aria-hidden />
-        <div className="tour-package-img-cell" style={{ background: colors[1] }} aria-hidden />
-        <div className="tour-package-img-cell tour-package-img-cell--wide" style={{ background: colors[2] }} aria-hidden />
-      </div>
-    )
-  }
-  const bg = colors.length >= 2
-    ? `linear-gradient(135deg, ${colors[0]} 0%, ${colors[1]} 100%)`
-    : colors[0] || '#1e4976'
+
   return (
-    <div className="tour-package-images tour-package-images--single" style={{ background: bg }} aria-hidden>
-      <span className="tour-package-img-label">{title}</span>
+    <div className="tour-package-images tour-package-images--photo">
+      <img
+        src={status.url}
+        alt={`${pkg.title} — ${pkg.destination}, Gilgit-Baltistan`}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      />
     </div>
   )
 }
 
-export default function TourPackageCard({ pkg, booking = false, onBook }) {
+export default function TourPackageCard({ pkg, booking = false, onBook, imagePriority = false }) {
   const navigate = useNavigate()
 
   function handleBook() {
@@ -62,7 +63,7 @@ export default function TourPackageCard({ pkg, booking = false, onBook }) {
   return (
     <article className="tour-package-card">
       <div className="tour-package-media">
-        <PackageImage layout={pkg.image_layout} colors={pkg.image_colors} title={pkg.destination} />
+        <PackageImage pkg={pkg} priority={imagePriority} />
         {pkg.badge && (
           <span className={`tour-package-badge tour-package-badge--${pkg.badge_style}`}>
             {pkg.badge}
@@ -115,3 +116,5 @@ export default function TourPackageCard({ pkg, booking = false, onBook }) {
     </article>
   )
 }
+
+export { PackageImage }
