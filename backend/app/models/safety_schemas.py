@@ -30,6 +30,8 @@ class AdvisoryOut(BaseModel):
     admin_override: bool
     updated_at: datetime
     live: bool = False
+    external_url: str | None = None
+    verified: bool = False
 
     class Config:
         from_attributes = True

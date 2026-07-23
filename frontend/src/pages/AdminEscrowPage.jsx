@@ -10,6 +10,7 @@ import {
   reviewAdminKyc,
   fetchAdminAdvisories,
   upsertAdminAdvisory,
+  fetchAdvisories,
 } from '../api/client'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
@@ -20,12 +21,14 @@ export default function AdminEscrowPage() {
   const [filter, setFilter] = useState('')
   const [msg, setMsg] = useState('')
   const [advisories, setAdvisories] = useState([])
+  const [liveFeed, setLiveFeed] = useState([])
   const [advForm, setAdvForm] = useState({ region: 'Skardu', message: '', severity: 'info' })
 
   function load() {
     fetchAdminEscrow(filter || undefined).then(setEscrows).catch(() => {})
     fetchAdminKyc('submitted').then(setKycQueue).catch(() => {})
     fetchAdminAdvisories().then(setAdvisories).catch(() => {})
+    fetchAdvisories().then(setLiveFeed).catch(() => {})
   }
 
   useEffect(() => {
@@ -75,7 +78,27 @@ export default function AdminEscrowPage() {
           {advisories.map((a) => (
             <li key={a.id} className={`severity-${a.severity}`}>
               <strong>{a.region}</strong> — {a.message}
-              {a.admin_override && <span className="pool-pill">Override</span>}
+              {a.admin_override && <span className="pool-pill">Verified override</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="vendor-panel">
+        <h2>Live advisory feed</h2>
+        <p className="plan-lead">Automated weather, NDMA alerts, and seasonal pass rules. Publish an override above to replace a region.</p>
+        <ul className="advisory-admin-list live-feed">
+          {liveFeed.length === 0 && <li>No live advisories loaded.</li>}
+          {liveFeed.map((a) => (
+            <li key={a.id} className={`severity-${a.severity}`}>
+              <span className="advisory-category">{a.category || 'road'}</span>
+              <strong>{a.region}</strong> — {a.message}
+              {a.live && <span className="pool-pill">Live</span>}
+              {a.verified && <span className="pool-pill">Verified</span>}
+              <span className="meta"> · {a.source}</span>
+              {a.external_url && (
+                <a href={a.external_url} target="_blank" rel="noreferrer" className="advisory-source-link">Source</a>
+              )}
             </li>
           ))}
         </ul>

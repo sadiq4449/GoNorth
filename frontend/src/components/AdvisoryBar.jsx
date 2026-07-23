@@ -26,8 +26,15 @@ export default function AdvisoryBar() {
               {a.category && a.category !== 'road' && (
                 <span className="advisory-category">{a.category}</span>
               )}
-              <strong>{a.region}:</strong> {a.message}
-              {a.live && <span className="advisory-live-dot" title="Live data" />}
+              <strong>{a.region}:</strong>{' '}
+              {a.external_url ? (
+                <a href={a.external_url} target="_blank" rel="noopener noreferrer" className="advisory-link">
+                  {a.message}
+                </a>
+              ) : (
+                a.message
+              )}
+              {a.live && <span className="advisory-live-dot" title={`Live · ${a.source || 'automated'}`} />}
             </span>
           ))}
         </div>

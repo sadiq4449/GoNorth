@@ -3154,6 +3154,26 @@ body {
   vertical-align: middle;
 }
 
+.advisory-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.advisory-link:hover {
+  color: #bfdbfe;
+}
+
+.advisory-source-link {
+  margin-left: 8px;
+  font-size: 0.78rem;
+}
+
+.advisory-admin-list.live-feed .meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .advisory-item.severity-critical {
   color: #fca5a5;
 }

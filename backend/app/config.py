@@ -51,6 +51,8 @@ class Settings(BaseSettings):
 
     # Live travel advisories (Open-Meteo weather — no API key required)
     advisory_live_weather: bool = True
+    advisory_ndma_sync: bool = True
+    advisory_seasonal_rules: bool = True
 
     # Observability
     sentry_dsn: str = ""
