@@ -21,9 +21,15 @@ from app.models.vendor_schemas import (
     SeasonRuleOut,
     UploadResponse,
     VendorDashboardOut,
+    VendorExperienceCreate,
+    VendorExperienceOut,
+    VendorExperienceUpdate,
     VendorGuideCreate,
     VendorGuideOut,
     VendorGuideUpdate,
+    VendorPackageCreate,
+    VendorPackageOut,
+    VendorPackageUpdate,
     VendorProfileOut,
     VendorProfileUpdate,
     VendorRoomCreate,
@@ -43,6 +49,15 @@ from app.models.kyc_schemas import (
     WalletOut,
 )
 from app.services import vendor_portal as svc
+from app.services.booking_vendor import booking_matches_vendor
+from app.services.vendor_inventory import (
+    create_vendor_experience,
+    create_vendor_package,
+    list_vendor_experiences,
+    list_vendor_packages,
+    update_vendor_experience,
+    update_vendor_package,
+)
 from app.services.kyc import (
     get_kyc,
     initiate_penny_test,
@@ -414,13 +429,10 @@ def vendor_pending_trips(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(require_roles("vendor"))],
 ):
-    from app.db.models import Booking, EscrowEntry, Property, Room, Vehicle
+    from app.db.models import Booking, EscrowEntry
     from app.services.escrow import create_completion_token
 
     vendor = _vendor(db, user)
-    prop_ids = [p.id for p in db.query(Property).filter(Property.vendor_id == vendor.id).all()]
-    room_ids = [r.id for r in db.query(Room).filter(Room.property_id.in_(prop_ids)).all()] if prop_ids else []
-    vehicle_ids = [v.id for v in db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).all()]
 
     bookings = (
         db.query(Booking)
@@ -434,7 +446,7 @@ def vendor_pending_trips(
     )
     out = []
     for b in bookings:
-        if b.room_id not in room_ids and b.vehicle_id not in vehicle_ids:
+        if not booking_matches_vendor(db, b, vendor):
             continue
         escrow = db.query(EscrowEntry).filter(EscrowEntry.booking_id == b.id).first()
         out.append(
@@ -449,6 +461,90 @@ def vendor_pending_trips(
             )
         )
     return out
+
+
+@router.get("/packages", response_model=list[VendorPackageOut])
+def vendor_packages_list(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    vendor = _vendor(db, user)
+    return list_vendor_packages(db, vendor.id)
+
+
+@router.post("/packages", response_model=VendorPackageOut)
+def vendor_packages_create(
+    data: VendorPackageCreate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    from fastapi import HTTPException
+
+    vendor = _vendor(db, user)
+    if vendor.vendor_type not in ("tour_operator", "mixed"):
+        raise HTTPException(status_code=403, detail="Tour packages require a tour operator account")
+    try:
+        return create_vendor_package(db, vendor, data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.patch("/packages/{package_id}", response_model=VendorPackageOut)
+def vendor_packages_update(
+    package_id: str,
+    data: VendorPackageUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    from fastapi import HTTPException
+
+    vendor = _vendor(db, user)
+    try:
+        return update_vendor_package(db, vendor, package_id, data)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/experiences", response_model=list[VendorExperienceOut])
+def vendor_experiences_list(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    vendor = _vendor(db, user)
+    return list_vendor_experiences(db, vendor.id)
+
+
+@router.post("/experiences", response_model=VendorExperienceOut)
+def vendor_experiences_create(
+    data: VendorExperienceCreate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    from fastapi import HTTPException
+
+    vendor = _vendor(db, user)
+    if vendor.vendor_type not in ("restaurant", "activity", "mixed"):
+        raise HTTPException(status_code=403, detail="Experiences require a restaurant or activity account")
+    try:
+        return create_vendor_experience(db, vendor, data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.patch("/experiences/{experience_id}", response_model=VendorExperienceOut)
+def vendor_experiences_update(
+    experience_id: str,
+    data: VendorExperienceUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    from fastapi import HTTPException
+
+    vendor = _vendor(db, user)
+    try:
+        return update_vendor_experience(db, vendor, experience_id, data)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.post("/boost", response_model=VendorBoostOut)

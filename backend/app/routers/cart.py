@@ -14,15 +14,21 @@ router = APIRouter(prefix="/api/cart", tags=["cart"])
 
 @router.post("/quote", response_model=CartQuoteResponse)
 def cart_quote(data: CartQuoteRequest, db: Annotated[Session, Depends(get_db)]):
-    room = get_room(db, data.room_id)
-    vehicle = get_vehicle(db, data.vehicle_id)
-    if not room or not vehicle:
-        raise HTTPException(status_code=404, detail="Room or vehicle not found")
+    if not any([data.room_id, data.vehicle_id, data.guide_ids, data.experience_ids]):
+        raise HTTPException(status_code=400, detail="Select at least one stay, vehicle, guide, or experience")
 
-    prop = db.get(Property, room.property_id)
-    valley = prop.valley if prop else "Skardu"
-    if requires_4x4(valley) and not vehicle.is_4x4:
-        raise HTTPException(status_code=400, detail="4x4 vehicle required for this stay region")
+    if data.room_id:
+        room = get_room(db, data.room_id)
+        if not room:
+            raise HTTPException(status_code=404, detail="Room not found")
+        prop = db.get(Property, room.property_id)
+        valley = prop.valley if prop else "Skardu"
+        if data.vehicle_id:
+            vehicle = get_vehicle(db, data.vehicle_id)
+            if not vehicle:
+                raise HTTPException(status_code=404, detail="Vehicle not found")
+            if requires_4x4(valley) and not vehicle.is_4x4:
+                raise HTTPException(status_code=400, detail="4x4 vehicle required for this stay region")
 
     try:
         result = quote_cart(
@@ -30,6 +36,7 @@ def cart_quote(data: CartQuoteRequest, db: Annotated[Session, Depends(get_db)]):
             room_id=data.room_id,
             vehicle_id=data.vehicle_id,
             guide_ids=data.guide_ids,
+            experience_ids=data.experience_ids,
             nights=data.nights,
             guests=data.guests,
             destination=data.destination,

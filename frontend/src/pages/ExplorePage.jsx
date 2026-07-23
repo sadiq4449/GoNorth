@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchListings } from '../api/client'
 import { StayCard } from '../components/StayCard'
 import { RideCard } from '../components/RideCard'
 import { GuideCard } from '../components/GuideCard'
+import { ExperienceCard } from '../components/ExperienceCard'
 
 const TABS = [
   { id: 'stays', label: 'Stays' },
   { id: 'transport', label: 'Transport' },
   { id: 'guides', label: 'Guides' },
+  { id: 'restaurants', label: 'Restaurants' },
+  { id: 'activities', label: 'Activities' },
 ]
 
 export default function ExplorePage() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const tab = searchParams.get('tab') || 'stays'
   const [listings, setListings] = useState(null)
@@ -27,13 +31,20 @@ export default function ExplorePage() {
       .finally(() => setLoading(false))
   }, [valley])
 
+  function goPlan(draft) {
+    navigate('/plan', { state: { draft } })
+  }
+
+  const restaurants = listings?.experiences?.filter((e) => e.category === 'restaurant') || []
+  const activities = listings?.experiences?.filter((e) => e.category === 'activity') || []
+
   return (
     <div className="container explore-page">
       <Link to="/" className="back-link">← Home</Link>
       <header>
         <h1>Explore the marketplace</h1>
         <p className="plan-lead">
-          Browse verified stays, transport fleets, and local guides — then add them to your custom trip.
+          Browse verified stays, transport, guides, restaurants, and activities — book à la carte or combine in a custom trip.
         </p>
       </header>
 
@@ -67,21 +78,57 @@ export default function ExplorePage() {
       {listings && !loading && (
         <div className="listing-grid">
           {tab === 'stays' && listings.rooms.map((r) => (
-            <StayCard key={r.id} room={r} selected={false} onSelect={() => {}} />
+            <StayCard
+              key={r.id}
+              room={r}
+              selected={false}
+              onSelect={() => goPlan({ roomId: r.id, destination: r.valley })}
+            />
           ))}
           {tab === 'transport' && listings.vehicles.map((v) => (
-            <RideCard key={v.id} vehicle={v} selected={false} onSelect={() => {}} />
+            <RideCard
+              key={v.id}
+              vehicle={v}
+              selected={false}
+              onSelect={() => goPlan({ vehicleId: v.id, destination: v.valley })}
+            />
           ))}
           {tab === 'guides' && listings.guides.map((g) => (
-            <GuideCard key={g.id} guide={g} selected={false} onToggle={() => {}} />
+            <GuideCard
+              key={g.id}
+              guide={g}
+              selected={false}
+              onToggle={() => goPlan({ guideIds: [g.id], destination: g.valley })}
+            />
+          ))}
+          {tab === 'restaurants' && restaurants.map((exp) => (
+            <ExperienceCard
+              key={exp.id}
+              experience={exp}
+              selected={false}
+              onToggle={() => goPlan({ experienceIds: [exp.id], destination: exp.valley })}
+            />
+          ))}
+          {tab === 'activities' && activities.map((exp) => (
+            <ExperienceCard
+              key={exp.id}
+              experience={exp}
+              selected={false}
+              onToggle={() => goPlan({ experienceIds: [exp.id], destination: exp.valley })}
+            />
           ))}
         </div>
       )}
 
-      <div className="explore-cta vendor-panel">
-        <p>Ready to combine listings into one trip?</p>
-        <Link to="/plan" className="btn-primary btn-enabled">Open trip builder</Link>
-      </div>
+      {listings && !loading && tab === 'stays' && listings.rooms.length === 0 && (
+        <p>No stays found for this filter.</p>
+      )}
+
+      <p className="explore-footer-note">
+        Each listing is from a verified vendor.{' '}
+        <Link to="/packages">Browse curated packages</Link> or{' '}
+        <Link to="/plan">build your own trip</Link>.
+      </p>
     </div>
   )
 }

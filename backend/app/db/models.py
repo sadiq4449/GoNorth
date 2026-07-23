@@ -36,7 +36,8 @@ class Vendor(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), unique=True)
     business_name: Mapped[str] = mapped_column(String(255))
-    vendor_type: Mapped[str] = mapped_column(String(20))  # hotel|transport|guide|mixed
+    slug: Mapped[str] = mapped_column(String(120), unique=True, index=True, default="")
+    vendor_type: Mapped[str] = mapped_column(String(20))  # hotel|transport|guide|mixed|tour_operator|restaurant|activity
     valley: Mapped[str] = mapped_column(String(100), default="Skardu")
     status: Mapped[str] = mapped_column(String(20), default="pending")  # pending|approved|suspended
     solo_safe: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -66,6 +67,8 @@ class Vendor(Base):
     season_rules: Mapped[list["SeasonPricing"]] = relationship(back_populates="vendor", cascade="all, delete-orphan")
     route_tariffs: Mapped[list["RouteTariff"]] = relationship(back_populates="vendor", cascade="all, delete-orphan")
     fleet_drivers: Mapped[list["FleetDriver"]] = relationship(back_populates="vendor", cascade="all, delete-orphan")
+    packages: Mapped[list["TourPackage"]] = relationship(back_populates="vendor", cascade="all, delete-orphan")
+    experiences: Mapped[list["Experience"]] = relationship(back_populates="vendor", cascade="all, delete-orphan")
     kyc: Mapped["VendorKyc | None"] = relationship(back_populates="vendor", uselist=False)
     wallet: Mapped["VendorWallet | None"] = relationship(back_populates="vendor", uselist=False)
 
@@ -239,8 +242,8 @@ class Booking(Base):
     nights: Mapped[int] = mapped_column(Integer)
     guests: Mapped[int] = mapped_column(Integer)
 
-    room_id: Mapped[str] = mapped_column(String(36))
-    vehicle_id: Mapped[str] = mapped_column(String(36))
+    room_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    vehicle_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     guide_ids_json: Mapped[str] = mapped_column(Text, default="[]")
     line_items_json: Mapped[str] = mapped_column(Text, default="[]")
 
@@ -282,9 +285,16 @@ class EscrowEntry(Base):
     completion_lng: Mapped[float | None] = mapped_column(nullable=True)
     geofence_flag: Mapped[bool] = mapped_column(Boolean, default=False)
     dispute_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    vendor_splits_json: Mapped[str] = mapped_column(Text, default="[]")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     booking: Mapped["Booking"] = relationship(back_populates="escrow")
+
+    def get_vendor_splits(self) -> list[dict]:
+        return json.loads(self.vendor_splits_json or "[]")
+
+    def set_vendor_splits(self, splits: list[dict]) -> None:
+        self.vendor_splits_json = json.dumps(splits)
 
 
 class VendorKyc(Base):
@@ -593,7 +603,7 @@ class TourPackage(Base):
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
-    vendor: Mapped["Vendor | None"] = relationship()
+    vendor: Mapped["Vendor | None"] = relationship(back_populates="packages")
 
     def get_highlights(self) -> list[str]:
         return json.loads(self.highlights_json or "[]")
@@ -612,6 +622,39 @@ class TourPackage(Base):
 
     def get_guide_ids(self) -> list[str]:
         return json.loads(self.guide_ids_json or "[]")
+
+
+class Experience(Base):
+    """Restaurant, activity, or experience listing from a vendor."""
+
+    __tablename__ = "experiences"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    vendor_id: Mapped[str] = mapped_column(String(36), ForeignKey("vendors.id"))
+    name: Mapped[str] = mapped_column(String(255))
+    category: Mapped[str] = mapped_column(String(20))  # restaurant|activity
+    description: Mapped[str] = mapped_column(Text, default="")
+    price: Mapped[int] = mapped_column(Integer, default=0)
+    pricing_unit: Mapped[str] = mapped_column(String(20), default="per_person")  # per_person|flat
+    valley: Mapped[str] = mapped_column(String(100), default="Skardu")
+    images_json: Mapped[str] = mapped_column(Text, default="[]")
+    features_json: Mapped[str] = mapped_column(Text, default="[]")
+    hidden: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    vendor: Mapped["Vendor"] = relationship(back_populates="experiences")
+
+    def get_images(self) -> list[str]:
+        return json.loads(self.images_json or "[]")
+
+    def set_images(self, urls: list[str]) -> None:
+        self.images_json = json.dumps(urls)
+
+    def get_features(self) -> list[str]:
+        return json.loads(self.features_json or "[]")
+
+    def set_features(self, items: list[str]) -> None:
+        self.features_json = json.dumps(items)
 
 
 class PackageInquiry(Base):
@@ -692,10 +735,14 @@ def _migrate_sqlite(eng) -> None:
             ("featured_until", "DATETIME"),
             ("whatsapp", "VARCHAR(32) DEFAULT ''"),
             ("policies_text", "TEXT DEFAULT ''"),
+            ("slug", "VARCHAR(120) DEFAULT ''"),
         ],
         "bookings": [
             ("stops_json", "TEXT DEFAULT '[]'"),
             ("enable_pooling", "BOOLEAN DEFAULT 0"),
+        ],
+        "escrow_entries": [
+            ("vendor_splits_json", "TEXT DEFAULT '[]'"),
         ],
     }
     with eng.begin() as conn:

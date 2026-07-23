@@ -184,6 +184,8 @@ class VendorDashboardOut(BaseModel):
     room_count: int
     vehicle_count: int
     guide_count: int = 0
+    package_count: int = 0
+    experience_count: int = 0
     driver_count: int
     tariff_count: int
     blocked_nights: int
@@ -218,6 +220,7 @@ class VendorProfileUpdate(BaseModel):
 class VendorProfileOut(BaseModel):
     id: str
     business_name: str
+    slug: str = ""
     vendor_type: str
     valley: str
     status: str
@@ -269,3 +272,100 @@ class VendorGuideUpdate(BaseModel):
 
 class UploadResponse(BaseModel):
     url: str
+
+
+class VendorPackageOut(BaseModel):
+    id: str
+    slug: str
+    title: str
+    destination: str
+    valley: str
+    nights: int
+    vibe: str
+    starting_price: int
+    active: bool
+    featured: bool
+    bookable: bool
+    description: str = ""
+
+
+class VendorPackageCreate(BaseModel):
+    title: str = Field(min_length=3)
+    destination: str
+    valley: str | None = None
+    nights: int = Field(ge=1, le=30)
+    vibe: str = "backpacker"
+    description: str = ""
+    highlights: list[str] = []
+    inclusions: list[str] = []
+    exclusions: list[str] = []
+    itinerary: list[dict] = []
+    room_id: str | None = None
+    vehicle_id: str | None = None
+    guide_ids: list[str] = []
+    budget_hint: int | None = None
+    starting_price: int | None = None
+    badge: str = ""
+    badge_style: str = "trending"
+    rating: float = 4.8
+    image_layout: str = "single"
+    image_colors: list[str] = []
+    listing_valley: str | None = None
+    featured: bool = False
+
+
+class VendorPackageUpdate(BaseModel):
+    title: str | None = None
+    destination: str | None = None
+    valley: str | None = None
+    nights: int | None = Field(None, ge=1, le=30)
+    vibe: str | None = None
+    description: str | None = None
+    highlights: list[str] | None = None
+    inclusions: list[str] | None = None
+    exclusions: list[str] | None = None
+    itinerary: list[dict] | None = None
+    room_id: str | None = None
+    vehicle_id: str | None = None
+    guide_ids: list[str] | None = None
+    budget_hint: int | None = None
+    badge: str | None = None
+    featured: bool | None = None
+    active: bool | None = None
+
+
+class VendorExperienceOut(BaseModel):
+    id: str
+    name: str
+    category: str
+    description: str = ""
+    price: int
+    pricing_unit: str = "per_person"
+    valley: str
+    images: list[str] = []
+    features: list[str] = []
+    hidden: bool = False
+    vendor_name: str = ""
+
+
+class VendorExperienceCreate(BaseModel):
+    name: str = Field(min_length=2)
+    category: str = Field(pattern="^(restaurant|activity)$")
+    description: str = ""
+    price: int = Field(ge=100)
+    pricing_unit: str = "per_person"
+    valley: str | None = None
+    images: list[str] = []
+    features: list[str] = []
+
+
+class VendorExperienceUpdate(BaseModel):
+    name: str | None = Field(None, min_length=2)
+    category: str | None = Field(None, pattern="^(restaurant|activity)$")
+    description: str | None = None
+    price: int | None = Field(None, ge=100)
+    pricing_unit: str | None = None
+    valley: str | None = None
+    images: list[str] | None = None
+    features: list[str] | None = None
+    hidden: bool | None = None

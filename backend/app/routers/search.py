@@ -48,7 +48,7 @@ def search_trip(
 ):
     stop_list = [s.strip() for s in (stops or "").split(",") if s.strip()]
     all_stops = [destination] + stop_list
-    rooms, vehicles, guides = load_approved_listings(
+    rooms, vehicles, guides, experiences = load_approved_listings(
         db,
         valley=destination,
         check_in=checkin,
@@ -127,4 +127,5 @@ def search_trip(
         rooms=room_results,
         vehicles=vehicle_results,
         guides=guide_results,
+        experiences=experiences,
     )

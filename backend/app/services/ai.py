@@ -149,7 +149,7 @@ def _openrouter_headers() -> dict:
 
 
 def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
-    rooms, vehicles, guides = load_approved_listings(db, valley=data.destination)
+    rooms, vehicles, guides, _ = load_approved_listings(db, valley=data.destination)
     if not rooms or not vehicles:
         raise HTTPException(status_code=404, detail="No approved listings for this destination")
 

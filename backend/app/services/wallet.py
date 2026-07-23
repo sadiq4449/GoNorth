@@ -100,4 +100,9 @@ def vendor_id_for_line_item(db: Session, item: dict) -> str | None:
 
         guide = db.get(Guide, item["id"])
         return guide.vendor_id if guide else None
+    if item["type"] == "experience":
+        from app.db.models import Experience
+
+        exp = db.get(Experience, item["id"])
+        return exp.vendor_id if exp else None
     return None

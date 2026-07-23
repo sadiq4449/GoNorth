@@ -45,6 +45,7 @@ def init_payment_session(
         room_id=data.room_id,
         vehicle_id=data.vehicle_id,
         guide_ids=data.guide_ids,
+        experience_ids=data.experience_ids,
         traveler_name=sp.traveler_name,
         email=sp.email,
         phone=sp.phone,

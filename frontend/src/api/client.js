@@ -280,6 +280,40 @@ export async function fetchListings(valley) {
   return apiFetch(`/api/listings${q}`)
 }
 
+export async function fetchVendorStorefront(slug) {
+  return apiFetch(`/api/vendors/public/${encodeURIComponent(slug)}`)
+}
+
+export async function fetchVendorPackages() {
+  return apiFetch('/api/vendor/packages')
+}
+
+export async function createVendorPackage(payload) {
+  return apiFetch('/api/vendor/packages', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function updateVendorPackage(id, payload) {
+  return apiFetch(`/api/vendor/packages/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function fetchVendorExperiences() {
+  return apiFetch('/api/vendor/experiences')
+}
+
+export async function createVendorExperience(payload) {
+  return apiFetch('/api/vendor/experiences', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function updateVendorExperience(id, payload) {
+  return apiFetch(`/api/vendor/experiences/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function fetchVendorMe() {
   return apiFetch('/api/vendors/me')
 }

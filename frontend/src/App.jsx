@@ -31,6 +31,9 @@ import VendorTripsPage from './pages/VendorTripsPage'
 import VendorOnboardingPage from './pages/VendorOnboardingPage'
 import VendorProfilePage from './pages/VendorProfilePage'
 import VendorGuidesPage from './pages/VendorGuidesPage'
+import VendorPackagesPage from './pages/VendorPackagesPage'
+import VendorExperiencesPage from './pages/VendorExperiencesPage'
+import VendorStorefrontPage from './pages/VendorStorefrontPage'
 import AdminCampaignsPage from './pages/AdminCampaignsPage'
 import PackagesPage from './pages/PackagesPage'
 import PackageDetailPage from './pages/PackageDetailPage'
@@ -50,6 +53,7 @@ export default function App() {
             <Route path="/packages/:slug" element={<PackageDetailPage />} />
             <Route path="/destinations" element={<DestinationsPage />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/vendors/:slug" element={<VendorStorefrontPage />} />
             <Route path="/plan" element={<PlanTripPage />} />
             <Route path="/trip" element={<MyTripPage />} />
             <Route path="/trip/pass/:reference" element={<BookingPassPage />} />
@@ -67,6 +71,8 @@ export default function App() {
             <Route path="onboarding" element={<VendorOnboardingPage />} />
             <Route path="profile" element={<VendorProfilePage />} />
             <Route path="guides" element={<VendorGuidesPage />} />
+            <Route path="packages" element={<VendorPackagesPage />} />
+            <Route path="experiences" element={<VendorExperiencesPage />} />
             <Route path="inventory" element={<VendorInventoryPage />} />
             <Route path="tariffs" element={<VendorTariffsPage />} />
             <Route path="kyc" element={<VendorKycPage />} />

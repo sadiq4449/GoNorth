@@ -15,9 +15,10 @@ class BookingCreateRequest(BaseModel):
     destination: str
     nights: int = Field(ge=1, le=30)
     guests: int = Field(ge=1, le=20)
-    room_id: str
-    vehicle_id: str
+    room_id: str | None = None
+    vehicle_id: str | None = None
     guide_ids: list[str] = []
+    experience_ids: list[str] = []
     check_in: str | None = None
     stops: list[str] = []
     enable_pooling: bool = False
@@ -36,6 +37,7 @@ class EscrowOut(BaseModel):
     geofence_flag: bool = False
     dispute_reason: str | None = None
     paid_at: datetime | None = None
+    vendor_splits: list[dict] = []
 
     class Config:
         from_attributes = True

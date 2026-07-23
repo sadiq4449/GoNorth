@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.db.models import Guide, Property, Room, Vehicle, Vendor
-from app.models.schemas import GuideOut, RoomOut, VehicleOut
+from app.db.models import Experience, Guide, Property, Room, Vehicle, Vendor
+from app.models.schemas import ExperienceOut, GuideOut, RoomOut, VehicleOut
 from app.services.pricing import date_range, effective_room_price, room_blocked_on_dates
 from app.services.vehicle_categories import category_label
 
@@ -99,7 +99,34 @@ def load_approved_listings(
                 )
             )
 
-    return rooms_out, vehicles_out, guides_out
+    experiences_out: list[ExperienceOut] = []
+    if vendor_ids:
+        for exp in db.query(Experience).filter(
+            Experience.vendor_id.in_(vendor_ids),
+            Experience.hidden.is_(False),
+        ).all():
+            vendor = vendor_map[exp.vendor_id]
+            experiences_out.append(
+                ExperienceOut(
+                    id=exp.id,
+                    vendor_id=exp.vendor_id,
+                    vendor_name=vendor.business_name,
+                    vendor_slug=vendor.slug or "",
+                    name=exp.name,
+                    category=exp.category,
+                    description=exp.description,
+                    price=exp.price,
+                    pricing_unit=exp.pricing_unit,
+                    valley=exp.valley,
+                    images=exp.get_images(),
+                    features=exp.get_features(),
+                    solo_safe=vendor.solo_safe,
+                    women_friendly=vendor.women_friendly,
+                    featured=vendor.is_featured,
+                )
+            )
+
+    return rooms_out, vehicles_out, guides_out, experiences_out
 
 
 def get_room(db: Session, room_id: str) -> Room | None:
@@ -114,3 +141,13 @@ def get_guides(db: Session, guide_ids: list[str]) -> list[Guide]:
     if not guide_ids:
         return []
     return db.query(Guide).filter(Guide.id.in_(guide_ids)).all()
+
+
+def get_experience(db: Session, experience_id: str) -> Experience | None:
+    return db.get(Experience, experience_id)
+
+
+def get_experiences(db: Session, experience_ids: list[str]) -> list[Experience]:
+    if not experience_ids:
+        return []
+    return db.query(Experience).filter(Experience.id.in_(experience_ids)).all()

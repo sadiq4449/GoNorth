@@ -25,10 +25,29 @@ from app.services.disputes import file_dispute
 router = APIRouter(prefix="/api/bookings", tags=["bookings"])
 
 
+def _escrow_out(db: Session, escrow) -> EscrowOut | None:
+    if not escrow:
+        return None
+    splits = escrow.get_vendor_splits() if hasattr(escrow, "get_vendor_splits") else []
+    return EscrowOut(
+        status=escrow.status,
+        amount=escrow.amount,
+        platform_share=escrow.platform_share,
+        vendor_share=escrow.vendor_share,
+        release_at=escrow.release_at,
+        release_scheduled_at=escrow.release_scheduled_at,
+        completed_at=escrow.completed_at,
+        geofence_flag=escrow.geofence_flag,
+        dispute_reason=escrow.dispute_reason,
+        paid_at=escrow.paid_at,
+        vendor_splits=splits,
+    )
+
+
 def _booking_out(db: Session, booking: Booking) -> BookingOut:
     timeline = build_timeline(db, booking)
-    escrow_out = EscrowOut.model_validate(booking.escrow) if booking.escrow else None
-    vehicle = get_vehicle(db, booking.vehicle_id)
+    escrow_out = _escrow_out(db, booking.escrow)
+    vehicle = get_vehicle(db, booking.vehicle_id) if booking.vehicle_id else None
     driver_name = vehicle.driver_name if vehicle else None
     driver_phone = None
     if vehicle:
@@ -100,6 +119,7 @@ def create_booking_endpoint(
             room_id=data.room_id,
             vehicle_id=data.vehicle_id,
             guide_ids=data.guide_ids,
+            experience_ids=data.experience_ids,
             traveler_name=sp.traveler_name,
             email=sp.email,
             phone=sp.phone,

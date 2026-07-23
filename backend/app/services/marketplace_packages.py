@@ -209,7 +209,7 @@ def _resolve_inventory(db: Session, pkg: TourPackage) -> tuple[str | None, str |
 
     listing_valley = pkg.listing_valley or pkg.destination
     budget = pkg.budget_hint or pkg.starting_price or 80000
-    rooms, vehicles, guides = load_approved_listings(db, valley=listing_valley)
+    rooms, vehicles, guides, _ = load_approved_listings(db, valley=listing_valley)
     if not rooms or not vehicles:
         return pkg.room_id, pkg.vehicle_id, pkg.get_guide_ids(), pkg.starting_price or None
 

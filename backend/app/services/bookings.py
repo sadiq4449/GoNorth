@@ -7,10 +7,11 @@ from jose import jwt
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.db.models import Booking, EscrowEntry
+from app.db.models import Booking, EscrowEntry, Vendor
 from app.services.cart import quote_cart
 from app.services.catalog import get_guides, get_room, get_vehicle
 from app.services.points import apply_points_delta, earn_for_subtotal
+from app.services.wallet import vendor_id_for_line_item
 
 
 def _reference_code() -> str:
@@ -45,15 +46,45 @@ def _escrow_release_time(destination: str) -> datetime:
     return datetime.now(timezone.utc) + timedelta(hours=hours)
 
 
+def _compute_vendor_splits(db: Session, line_items: list[dict]) -> list[dict]:
+    totals: dict[str, dict] = {}
+    for item in line_items:
+        vendor_id = vendor_id_for_line_item(db, item)
+        if not vendor_id:
+            continue
+        vendor = db.get(Vendor, vendor_id)
+        entry = totals.setdefault(
+            vendor_id,
+            {
+                "vendor_id": vendor_id,
+                "vendor_name": vendor.business_name if vendor else "Vendor",
+                "amount": 0,
+                "line_types": set(),
+            },
+        )
+        entry["amount"] += item["total"]
+        entry["line_types"].add(item["type"])
+    return [
+        {
+            "vendor_id": v["vendor_id"],
+            "vendor_name": v["vendor_name"],
+            "amount": v["amount"],
+            "line_types": sorted(v["line_types"]),
+        }
+        for v in totals.values()
+    ]
+
+
 def create_booking(
     db: Session,
     *,
     destination: str,
     nights: int,
     guests: int,
-    room_id: str,
-    vehicle_id: str,
-    guide_ids: list[str],
+    room_id: str | None = None,
+    vehicle_id: str | None = None,
+    guide_ids: list[str] | None = None,
+    experience_ids: list[str] | None = None,
     traveler_name: str,
     email: str,
     phone: str,
@@ -71,7 +102,8 @@ def create_booking(
         db,
         room_id=room_id,
         vehicle_id=vehicle_id,
-        guide_ids=guide_ids,
+        guide_ids=guide_ids or [],
+        experience_ids=experience_ids or [],
         nights=nights,
         guests=guests,
         destination=destination,
@@ -111,12 +143,13 @@ def create_booking(
         status=booking_status,
         voucher_token="",
     )
-    booking.set_guide_ids(guide_ids)
+    booking.set_guide_ids(guide_ids or [])
     db.add(booking)
     db.flush()
 
     booking.voucher_token = create_voucher_token(booking.id, booking.reference)
 
+    vendor_splits = _compute_vendor_splits(db, quote["line_items"])
     escrow = EscrowEntry(
         booking_id=booking.id,
         amount=quote["total"],
@@ -125,6 +158,7 @@ def create_booking(
         status=escrow_status,
         release_at=_escrow_release_time(destination),
     )
+    escrow.set_vendor_splits(vendor_splits)
     db.add(escrow)
 
     if booking_status == "confirmed":
@@ -138,29 +172,44 @@ def create_booking(
 
 
 def build_timeline(db: Session, booking: Booking) -> list[dict]:
-    room = get_room(db, booking.room_id)
-    vehicle = get_vehicle(db, booking.vehicle_id)
+    room = get_room(db, booking.room_id) if booking.room_id else None
+    vehicle = get_vehicle(db, booking.vehicle_id) if booking.vehicle_id else None
     guides = get_guides(db, booking.get_guide_ids())
 
     from app.db.models import Property
 
     prop = db.get(Property, room.property_id) if room else None
-    stay_name = f"{prop.name} — {room.name}" if prop and room else "Hotel check-in"
-    vehicle_name = f"{vehicle.model} ({vehicle.driver_name})" if vehicle else "Transport"
+    stay_name = f"{prop.name} — {room.name}" if prop and room else None
+    vehicle_name = f"{vehicle.model} ({vehicle.driver_name})" if vehicle else None
+
+    line_items = json.loads(booking.line_items_json or "[]")
+    experience_labels = [i["label"] for i in line_items if i.get("type") == "experience"]
 
     days = []
     for d in range(1, booking.nights + 1):
         events = []
         if d == 1:
-            events.append({"icon": "🏨", "text": f"Check-in: {stay_name}"})
-            events.append({"icon": "🚗", "text": f"Pickup: {vehicle_name}"})
+            if stay_name:
+                events.append({"icon": "🏨", "text": f"Check-in: {stay_name}"})
+            if vehicle_name:
+                events.append({"icon": "🚗", "text": f"Pickup: {vehicle_name}"})
+            for label in experience_labels[:2]:
+                events.append({"icon": "🍽️", "text": label})
+            if not events:
+                events.append({"icon": "🏔️", "text": f"Trip start — {booking.destination}"})
         elif d == booking.nights:
-            events.append({"icon": "🏨", "text": "Check-out and departure"})
+            if stay_name:
+                events.append({"icon": "🏨", "text": "Check-out and departure"})
+            else:
+                events.append({"icon": "🏔️", "text": "Trip wrap-up"})
         else:
-            events.append({"icon": "🚗", "text": f"Full-day transport: {vehicle_name}"})
+            if vehicle_name:
+                events.append({"icon": "🚗", "text": f"Full-day transport: {vehicle_name}"})
             if guides:
                 g = guides[(d - 2) % len(guides)]
                 events.append({"icon": "🏔️", "text": f"Excursion with {g.name}: {g.specialty}"})
+            elif not vehicle_name:
+                events.append({"icon": "🏔️", "text": f"Explore {booking.destination}"})
             else:
                 events.append({"icon": "🏔️", "text": f"Explore {booking.destination}"})
 

@@ -78,7 +78,7 @@ def _build_preset_package(db: Session, preset: dict) -> TourPackageOut | None:
         budget=preset["budget"],
         vibe=preset["vibe"],
     )
-    rooms, vehicles, guides = load_approved_listings(db, valley=listing_valley)
+    rooms, vehicles, guides, _ = load_approved_listings(db, valley=listing_valley)
     if not rooms or not vehicles:
         return None
 

@@ -6,7 +6,7 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.db.models import FleetDriver, Guide, Property, Room, RoomBlock, RouteTariff, SeasonPricing, User, Vehicle, Vendor
+from app.db.models import Experience, FleetDriver, Guide, Property, Room, RoomBlock, RouteTariff, SeasonPricing, TourPackage, User, Vehicle, Vendor
 from app.models.vendor_schemas import (
     CalendarDayOut,
     FleetDriverOut,
@@ -99,10 +99,18 @@ def _inventory_complete(db: Session, vendor: Vendor) -> bool:
         return db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).count() > 0
     if vendor.vendor_type == "guide":
         return db.query(Guide).filter(Guide.vendor_id == vendor.id).count() > 0
+    if vendor.vendor_type == "restaurant":
+        return db.query(Experience).filter(Experience.vendor_id == vendor.id, Experience.category == "restaurant").count() > 0
+    if vendor.vendor_type == "activity":
+        return db.query(Experience).filter(Experience.vendor_id == vendor.id, Experience.category == "activity").count() > 0
+    if vendor.vendor_type == "tour_operator":
+        return db.query(TourPackage).filter(TourPackage.vendor_id == vendor.id).count() > 0
     rooms = len(vendor_rooms(db, vendor.id))
     vehicles = db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).count()
     guides = db.query(Guide).filter(Guide.vendor_id == vendor.id).count()
-    return rooms > 0 or vehicles > 0 or guides > 0
+    packages = db.query(TourPackage).filter(TourPackage.vendor_id == vendor.id).count()
+    experiences = db.query(Experience).filter(Experience.vendor_id == vendor.id).count()
+    return rooms > 0 or vehicles > 0 or guides > 0 or packages > 0 or experiences > 0
 
 
 def onboarding_status(db: Session, vendor: Vendor, user: User) -> OnboardingStatusOut:
@@ -197,6 +205,7 @@ def vendor_profile_detail(db: Session, vendor: Vendor, user: User) -> VendorProf
     return VendorProfileOut(
         id=vendor.id,
         business_name=vendor.business_name,
+        slug=vendor.slug or "",
         vendor_type=vendor.vendor_type,
         valley=vendor.valley,
         status=vendor.status,
@@ -291,6 +300,8 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
     drivers = db.query(FleetDriver).filter(FleetDriver.vendor_id == vendor.id).all()
     tariffs = db.query(RouteTariff).filter(RouteTariff.vendor_id == vendor.id).count()
     guide_count = db.query(Guide).filter(Guide.vendor_id == vendor.id).count()
+    package_count = db.query(TourPackage).filter(TourPackage.vendor_id == vendor.id).count()
+    experience_count = db.query(Experience).filter(Experience.vendor_id == vendor.id).count()
     room_ids = [r.id for r in rooms]
     blocked = 0
     if room_ids:
@@ -307,6 +318,8 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
         room_count=len(rooms),
         vehicle_count=len(vehicles),
         guide_count=guide_count,
+        package_count=package_count,
+        experience_count=experience_count,
         driver_count=len(drivers),
         tariff_count=tariffs,
         blocked_nights=blocked,

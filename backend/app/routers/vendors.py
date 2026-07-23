@@ -5,10 +5,19 @@ from sqlalchemy.orm import Session
 
 from app.auth.security import require_roles
 from app.db.models import User, Vendor, get_db
-from app.models.schemas import VendorOut, VendorStatusUpdate
+from app.models.schemas import VendorOut, VendorStatusUpdate, VendorStorefrontOut
+from app.services.vendor_storefront import get_storefront
 from app.services.vendor_helpers import vendor_out
 
 router = APIRouter(prefix="/api/vendors", tags=["vendors"])
+
+
+@router.get("/public/{slug}", response_model=VendorStorefrontOut)
+def public_storefront(slug: str, db: Annotated[Session, Depends(get_db)]):
+    storefront = get_storefront(db, slug)
+    if not storefront:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    return storefront
 
 
 @router.get("", response_model=list[VendorOut])

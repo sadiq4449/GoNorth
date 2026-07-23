@@ -57,6 +57,8 @@ export default function VendorProfilePage() {
   const isGuide = profile.vendor_type === 'guide'
   const isHotel = profile.vendor_type === 'hotel' || profile.vendor_type === 'mixed'
   const isTransport = profile.vendor_type === 'transport' || profile.vendor_type === 'mixed'
+  const isTourOperator = profile.vendor_type === 'tour_operator' || profile.vendor_type === 'mixed'
+  const isExperience = profile.vendor_type === 'restaurant' || profile.vendor_type === 'activity' || profile.vendor_type === 'mixed'
 
   return (
     <div className="container vendor-page vendor-profile-page">
@@ -86,6 +88,9 @@ export default function VendorProfilePage() {
             )}
           </ul>
           <div className="vendor-profile-links">
+            {profile.slug && profile.status === 'approved' && (
+              <Link to={`/vendors/${profile.slug}`} className="btn-secondary-link">Public storefront →</Link>
+            )}
             <Link to="/vendor/kyc" className="btn-secondary-link">KYC & payouts →</Link>
             {!profile.onboarding_complete && (
               <Link to="/vendor/onboarding" className="btn-secondary-link">Complete setup →</Link>
@@ -109,6 +114,8 @@ export default function VendorProfilePage() {
             {isHotel && <Link to="/vendor/inventory" className="btn-secondary-link">Inventory & calendar →</Link>}
             {isTransport && <Link to="/vendor/tariffs" className="btn-secondary-link">Fleet & tariffs →</Link>}
             {isGuide && <Link to="/vendor/guides" className="btn-secondary-link">Manage guides →</Link>}
+            {isTourOperator && <Link to="/vendor/packages" className="btn-secondary-link">Tour packages →</Link>}
+            {isExperience && <Link to="/vendor/experiences" className="btn-secondary-link">Restaurants & activities →</Link>}
             <Link to="/vendor/trips" className="btn-secondary-link">Bookings & trips →</Link>
           </div>
         </section>

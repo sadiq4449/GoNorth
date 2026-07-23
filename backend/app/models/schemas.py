@@ -74,9 +74,10 @@ class CartLineItem(BaseModel):
 
 
 class CartQuoteRequest(BaseModel):
-    room_id: str
-    vehicle_id: str
+    room_id: str | None = None
+    vehicle_id: str | None = None
     guide_ids: list[str] = []
+    experience_ids: list[str] = []
     nights: int = Field(ge=1, le=30)
     guests: int = Field(ge=1, le=20, default=2)
     destination: str | None = None
@@ -194,12 +195,53 @@ class SearchResponse(BaseModel):
     rooms: list[RoomSearchOut]
     vehicles: list[VehicleSearchOut]
     guides: list[GuideSearchOut]
+    experiences: list["ExperienceOut"] = []
 
 
 class ListingsResponse(BaseModel):
     rooms: list[RoomOut]
     vehicles: list[VehicleOut]
     guides: list[GuideOut]
+    experiences: list["ExperienceOut"] = []
+
+
+class ExperienceOut(BaseModel):
+    id: str
+    vendor_id: str
+    vendor_name: str
+    vendor_slug: str = ""
+    name: str
+    category: str
+    description: str = ""
+    price: int
+    pricing_unit: str = "per_person"
+    valley: str
+    images: list[str] = []
+    features: list[str] = []
+    solo_safe: bool = False
+    women_friendly: bool = False
+    featured: bool = False
+
+
+class VendorStorefrontOut(BaseModel):
+    slug: str
+    business_name: str
+    vendor_type: str
+    valley: str
+    description: str = ""
+    solo_safe: bool = False
+    women_friendly: bool = False
+    gold_badge: bool = False
+    physically_vetted: bool = False
+    featured: bool = False
+    whatsapp: str = ""
+    avg_rating: float | None = None
+    review_count: int = 0
+    rooms: list[RoomOut] = []
+    vehicles: list[VehicleOut] = []
+    guides: list[GuideOut] = []
+    packages: list[TourPackageOut] = []
+    experiences: list[ExperienceOut] = []
 
 
 class RegisterRequest(BaseModel):
@@ -236,6 +278,7 @@ class TokenResponse(BaseModel):
 class VendorOut(BaseModel):
     id: str
     business_name: str
+    slug: str = ""
     vendor_type: str
     valley: str
     status: str

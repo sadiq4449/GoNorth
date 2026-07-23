@@ -16,6 +16,8 @@ export default function VendorLayout() {
   const isHotel = vendorType === 'hotel' || vendorType === 'mixed'
   const isTransport = vendorType === 'transport' || vendorType === 'mixed'
   const isGuide = vendorType === 'guide'
+  const isTourOperator = vendorType === 'tour_operator' || vendorType === 'mixed'
+  const isExperience = vendorType === 'restaurant' || vendorType === 'activity' || vendorType === 'mixed'
 
   return (
     <div className="app-shell vendor-shell">
@@ -34,6 +36,8 @@ export default function VendorLayout() {
             {isHotel && <NavLink to="/vendor/inventory">Inventory</NavLink>}
             {isTransport && <NavLink to="/vendor/tariffs">Tariffs</NavLink>}
             {isGuide && <NavLink to="/vendor/guides">Guides</NavLink>}
+            {isTourOperator && <NavLink to="/vendor/packages">Packages</NavLink>}
+            {isExperience && <NavLink to="/vendor/experiences">Experiences</NavLink>}
             <NavLink to="/vendor/trips">Trips</NavLink>
             <NavLink to="/vendor/kyc">KYC</NavLink>
             <NavLink to="/vendor/onboarding">Setup</NavLink>

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.security import create_access_token, hash_password, require_roles, verify_password
 from app.db.models import User, Vendor, get_db
+from app.services.vendor_slugs import ensure_unique_slug
 from app.models.schemas import (
     LoginRequest,
     RegisterRequest,
@@ -56,6 +57,7 @@ def register_vendor(data: VendorRegisterRequest, db: Annotated[Session, Depends(
     vendor = Vendor(
         user_id=user.id,
         business_name=data.business_name,
+        slug=ensure_unique_slug(db, data.business_name),
         vendor_type=data.vendor_type,
         valley=data.valley,
         description=data.description,

@@ -6,6 +6,7 @@ import AiStatusBanner from '../components/AiStatusBanner'
 import { StayCard } from '../components/StayCard'
 import { RideCard } from '../components/RideCard'
 import { GuideCard } from '../components/GuideCard'
+import { ExperienceCard } from '../components/ExperienceCard'
 import InvoiceSidebar from '../components/InvoiceSidebar'
 import TerrainWarning from '../components/TerrainWarning'
 import SafetyProfileModal from '../components/SafetyProfileModal'
@@ -40,6 +41,7 @@ export default function PlanTripPage() {
   const [selectedRoom, setSelectedRoom] = useState(draft?.roomId || null)
   const [selectedVehicle, setSelectedVehicle] = useState(draft?.vehicleId || null)
   const [selectedGuides, setSelectedGuides] = useState(draft?.guideIds || [])
+  const [selectedExperiences, setSelectedExperiences] = useState(draft?.experienceIds || [])
   const [quote, setQuote] = useState(draft?.quote || null)
   const [aiReason, setAiReason] = useState(draft?.aiReason || '')
   const [packageSource, setPackageSource] = useState(draft?.packageSource || null)
@@ -104,17 +106,19 @@ export default function PlanTripPage() {
     }
   }
 
-  const refreshQuote = useCallback(async (roomId, vehicleId, guideIds) => {
-    if (!roomId || !vehicleId) {
+  const refreshQuote = useCallback(async (roomId, vehicleId, guideIds, experienceIds) => {
+    const hasSelection = roomId || vehicleId || (guideIds?.length > 0) || (experienceIds?.length > 0)
+    if (!hasSelection) {
       setQuote(null)
       return
     }
     setQuoteLoading(true)
     try {
       const q = await fetchCartQuote({
-        room_id: roomId,
-        vehicle_id: vehicleId,
-        guide_ids: guideIds,
+        room_id: roomId || undefined,
+        vehicle_id: vehicleId || undefined,
+        guide_ids: guideIds || [],
+        experience_ids: experienceIds || [],
         nights,
         guests,
         destination,
@@ -135,11 +139,14 @@ export default function PlanTripPage() {
   }, [loadSearch])
 
   useEffect(() => {
-    refreshQuote(selectedRoom, selectedVehicle, selectedGuides)
-  }, [selectedRoom, selectedVehicle, selectedGuides, refreshQuote])
+    refreshQuote(selectedRoom, selectedVehicle, selectedGuides, selectedExperiences)
+  }, [selectedRoom, selectedVehicle, selectedGuides, selectedExperiences, refreshQuote])
+
+  const hasCheckoutSelection =
+    selectedRoom || selectedVehicle || selectedGuides.length > 0 || selectedExperiences.length > 0
 
   useEffect(() => {
-    if (!pointsEmail || !selectedRoom || abandonSent.current) return
+    if (!pointsEmail || !hasCheckoutSelection || abandonSent.current) return
     const timer = setTimeout(() => {
       cartAbandon({
         email: pointsEmail,
@@ -179,6 +186,12 @@ export default function PlanTripPage() {
     }
   }
 
+  function toggleExperience(exp) {
+    setSelectedExperiences((prev) =>
+      prev.includes(exp.id) ? prev.filter((id) => id !== exp.id) : [...prev, exp.id]
+    )
+  }
+
   function toggleGuide(guide) {
     setSelectedGuides((prev) =>
       prev.includes(guide.id) ? prev.filter((id) => id !== guide.id) : [...prev, guide.id]
@@ -200,9 +213,10 @@ export default function PlanTripPage() {
         destination,
         nights,
         guests,
-        room_id: selectedRoom,
-        vehicle_id: selectedVehicle,
+        room_id: selectedRoom || undefined,
+        vehicle_id: selectedVehicle || undefined,
         guide_ids: selectedGuides,
+        experience_ids: selectedExperiences,
         safety_profile: safetyProfile,
         redeem_points: quote?.points_redeemed || 0,
         country,
@@ -233,7 +247,7 @@ export default function PlanTripPage() {
     <div className="builder-layout container">
       <div className="builder-main">
         <h1>Plan Your Trip</h1>
-        <p className="plan-lead">Select stay, transport, and guides — invoice updates instantly.</p>
+        <p className="plan-lead">Pick any combination of stay, transport, guides, or experiences — invoice updates instantly.</p>
 
         <PromoBanner valley={destination} />
 
@@ -369,6 +383,20 @@ export default function PlanTripPage() {
                 ))}
               </div>
             </section>
+
+            <section className="listing-section">
+              <h2>4. Restaurants & activities (optional)</h2>
+              <div className="listing-grid">
+                {(search.experiences || []).map((exp) => (
+                  <ExperienceCard
+                    key={exp.id}
+                    experience={exp}
+                    selected={selectedExperiences.includes(exp.id)}
+                    onToggle={toggleExperience}
+                  />
+                ))}
+              </div>
+            </section>
           </>
         )}
       </div>
@@ -384,7 +412,7 @@ export default function PlanTripPage() {
         onAiBuild={handleAiBuild}
         aiLoading={aiLoading}
         onCheckout={() => setCheckoutOpen(true)}
-        checkoutDisabled={!selectedRoom || !selectedVehicle || quoteLoading}
+        checkoutDisabled={!hasCheckoutSelection || quoteLoading}
         redeemPoints={redeemPoints}
         onRedeemChange={setRedeemPoints}
         pointsBalance={quote?.points_balance}
