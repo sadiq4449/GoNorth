@@ -49,7 +49,7 @@ export default function TouristLayout() {
       <ChatWidget />
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span>© 2026 GoNorth — Baltistan travel marketplace</span>
+          <span>© 2026 GoNorth — Gilgit-Baltistan travel marketplace</span>
           <NavLink to="/vendor/login" className="footer-portal-link">List your business</NavLink>
         </div>
       </footer>

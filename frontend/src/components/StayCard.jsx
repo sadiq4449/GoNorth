@@ -1,21 +1,18 @@
 import { useState } from 'react'
+import AppIcon from './AppIcon'
 
 const AMENITY_ICONS = {
-  WiFi: '📶',
-  'Hot Shower': '🚿',
-  Breakfast: '🍳',
-  'Mountain View': '🏔️',
-  'K2 View': '⛰️',
-  Garden: '🌿',
-  Pool: '🏊',
-  'Fine Dine': '🍽️',
-  Boating: '🚣',
-  Heritage: '🏛️',
-  'Valley View': '🌄',
-}
-
-function amenityIcon(name) {
-  return AMENITY_ICONS[name] || '✓'
+  WiFi: 'wifi',
+  'Hot Shower': 'shower',
+  Breakfast: 'coffee',
+  'Mountain View': 'mountain',
+  'K2 View': 'mountain',
+  Garden: 'trees',
+  Pool: 'ship',
+  'Fine Dine': 'utensils',
+  Boating: 'ship',
+  Heritage: 'landmark',
+  'Valley View': 'eye',
 }
 
 export function StayCard({ room, selected, onSelect }) {
@@ -34,8 +31,16 @@ export function StayCard({ room, selected, onSelect }) {
       role="button"
       tabIndex={0}
     >
-      {room.featured && <span className="featured-badge">⭐ Featured</span>}
-      {room.ai_recommended && <span className="ai-badge">✨ AI Pick</span>}
+      {room.featured && (
+        <span className="featured-badge">
+          <AppIcon name="star" size={12} /> Featured
+        </span>
+      )}
+      {room.ai_recommended && (
+        <span className="ai-badge">
+          <AppIcon name="sparkles" size={12} /> AI Pick
+        </span>
+      )}
       {room.within_budget && !room.ai_recommended && <span className="budget-badge">Within budget</span>}
       <h3>{room.property_name}</h3>
       <p className="meta">{room.name} · {room.valley} · up to {room.capacity} guests</p>
@@ -53,7 +58,7 @@ export function StayCard({ room, selected, onSelect }) {
           <ul className="amenity-icon-list">
             {room.amenities.map((a) => (
               <li key={a}>
-                <span className="amenity-icon" aria-hidden>{amenityIcon(a)}</span>
+                <AppIcon name={AMENITY_ICONS[a] || 'check'} size={14} className="amenity-icon-svg" />
                 {a}
               </li>
             ))}

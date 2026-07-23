@@ -9,6 +9,7 @@ import TerrainWarning from '../components/TerrainWarning'
 import SafetyProfileModal from '../components/SafetyProfileModal'
 import PaymentMethodModal from '../components/PaymentMethodModal'
 import PromoBanner from '../components/PromoBanner'
+import { VEHICLE_CATEGORIES } from '../lib/vehicleCategories'
 
 const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
 const STOP_OPTIONS = ['Shigar', 'Hunza', 'Khaplu', 'Deosai']
@@ -31,6 +32,7 @@ export default function PlanTripPage() {
   const [womenFriendly, setWomenFriendly] = useState(false)
   const [featuredOnly, setFeaturedOnly] = useState(false)
   const [enablePooling, setEnablePooling] = useState(false)
+  const [vehicleCategory, setVehicleCategory] = useState('all')
 
   const [search, setSearch] = useState(null)
   const [selectedRoom, setSelectedRoom] = useState(draft?.roomId || null)
@@ -69,6 +71,7 @@ export default function PlanTripPage() {
         soloSafe,
         womenFriendly,
         featuredOnly,
+        vehicleCategory,
       })
       setSearch(data)
       if (data.ai_package && !appliedDraft.current && !selectedRoom) {
@@ -79,7 +82,7 @@ export default function PlanTripPage() {
     } finally {
       setLoading(false)
     }
-  }, [destination, nights, guests, budget, vibe, stops, soloSafe, womenFriendly, featuredOnly])
+  }, [destination, nights, guests, budget, vibe, stops, soloSafe, womenFriendly, featuredOnly, vehicleCategory])
 
   function applyAiPackage(pkg) {
     setSelectedRoom(pkg.room_id)
@@ -309,6 +312,22 @@ export default function PlanTripPage() {
 
             <section className="listing-section">
               <h2>2. Select transport</h2>
+              <p className="plan-lead section-hint">
+                Prado, Land Cruiser, Hilux, Hiace, Coaster, sedans, and more — filter by vehicle type.
+              </p>
+              <div className="vehicle-category-filters">
+                {VEHICLE_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`chip ${vehicleCategory === cat.id ? 'active' : ''}`}
+                    onClick={() => setVehicleCategory(cat.id)}
+                    title={cat.description}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
               <div className="listing-grid">
                 {search.vehicles.map((v) => (
                   <RideCard

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.models import Guide, Property, Room, Vehicle, Vendor
 from app.models.schemas import GuideOut, RoomOut, VehicleOut
 from app.services.pricing import date_range, effective_room_price, room_blocked_on_dates
+from app.services.vehicle_categories import category_label
 
 
 def load_approved_listings(
@@ -73,6 +74,9 @@ def load_approved_listings(
                     driver_name=v.driver_name,
                     is_4x4=v.is_4x4,
                     has_ac=v.has_ac,
+                    vehicle_category=v.vehicle_category or "sedan",
+                    category_label=category_label(v.vehicle_category or "sedan"),
+                    seats=v.seats or 4,
                     daily_rate=v.daily_rate,
                     languages=v.get_languages(),
                     features=v.get_features(),

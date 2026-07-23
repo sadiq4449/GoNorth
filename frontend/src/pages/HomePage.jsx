@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import HeroSearch from '../components/HeroSearch'
 import FeaturesSection from '../components/FeaturesSection'
 import PromoBanner from '../components/PromoBanner'
+import AppIcon from '../components/AppIcon'
 import { fetchListings } from '../api/client'
 
 export default function HomePage() {
@@ -32,7 +33,7 @@ export default function HomePage() {
           </div>
           <div className="home-trust-item">
             <strong>{stats.rides}+</strong>
-            <span>4x4 & transport</span>
+            <span>Transport options</span>
           </div>
           <div className="home-trust-item">
             <strong>{stats.guides}+</strong>
@@ -46,9 +47,12 @@ export default function HomePage() {
       <FeaturesSection />
 
       <section className="container home-cta home-cta-final">
-        <h2>Your Baltistan trip starts here</h2>
-        <p>Use AI Magic Build above, or hand-pick every stay, ride, and guide yourself.</p>
-        <Link to="/plan" className="btn-ai home-cta-btn">✨ Build my trip</Link>
+        <h2>Your Gilgit-Baltistan trip starts here</h2>
+        <p>Use AI Magic Build above, or hand-pick every stay, vehicle, and guide yourself.</p>
+        <Link to="/plan" className="btn-ai home-cta-btn btn-with-icon">
+          <AppIcon name="sparkles" size={18} />
+          Build my trip
+        </Link>
       </section>
     </>
   )

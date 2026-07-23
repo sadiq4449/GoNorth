@@ -10,6 +10,7 @@ import {
   submitVendorKyc,
   uploadVendorImage,
 } from '../api/client'
+import { VEHICLE_CATEGORIES } from '../lib/vehicleCategories'
 import { useAuth } from '../context/AuthContext'
 
 const AMENITIES = ['WiFi', 'Hot Shower', 'Breakfast', 'Mountain View', 'K2 View']
@@ -40,9 +41,11 @@ export default function VendorOnboardingPage() {
   })
 
   const [vehicleForm, setVehicleForm] = useState({
-    model: 'Toyota Prado',
+    model: 'Toyota Prado TX',
     plate: '',
     driver_name: user?.full_name || '',
+    vehicle_category: 'suv_4x4',
+    seats: 5,
     is_4x4: true,
     has_ac: true,
     daily_rate: 12000,
@@ -259,7 +262,18 @@ export default function VendorOnboardingPage() {
 
           {vendorType === 'transport' && (
             <>
+              <label>Vehicle category
+                <select
+                  value={vehicleForm.vehicle_category}
+                  onChange={(e) => setVehicleForm({ ...vehicleForm, vehicle_category: e.target.value })}
+                >
+                  {VEHICLE_CATEGORIES.filter((c) => c.id !== 'all').map((c) => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
+              </label>
               <label>Vehicle model<input value={vehicleForm.model} onChange={(e) => setVehicleForm({ ...vehicleForm, model: e.target.value })} required /></label>
+              <label>Seats<input type="number" min={2} max={50} value={vehicleForm.seats} onChange={(e) => setVehicleForm({ ...vehicleForm, seats: Number(e.target.value) })} /></label>
               <label>Number plate<input value={vehicleForm.plate} onChange={(e) => setVehicleForm({ ...vehicleForm, plate: e.target.value })} required /></label>
               <label>Driver name<input value={vehicleForm.driver_name} onChange={(e) => setVehicleForm({ ...vehicleForm, driver_name: e.target.value })} required /></label>
               <label>Daily rate (PKR)<input type="number" min={1000} value={vehicleForm.daily_rate} onChange={(e) => setVehicleForm({ ...vehicleForm, daily_rate: Number(e.target.value) })} /></label>

@@ -172,6 +172,8 @@ class Vehicle(Base):
     driver_name: Mapped[str] = mapped_column(String(255))
     is_4x4: Mapped[bool] = mapped_column(Boolean, default=False)
     has_ac: Mapped[bool] = mapped_column(Boolean, default=False)
+    vehicle_category: Mapped[str] = mapped_column(String(32), default="sedan")
+    seats: Mapped[int] = mapped_column(Integer, default=4)
     daily_rate: Mapped[int] = mapped_column(Integer)
     languages_json: Mapped[str] = mapped_column(Text, default="[]")
     images_json: Mapped[str] = mapped_column(Text, default="[]")
@@ -608,6 +610,8 @@ def _migrate_sqlite(eng) -> None:
             ("model_year", "INTEGER"),
             ("fleet_driver_id", "VARCHAR(36)"),
             ("hidden", "BOOLEAN DEFAULT 0"),
+            ("vehicle_category", "VARCHAR(32) DEFAULT 'sedan'"),
+            ("seats", "INTEGER DEFAULT 4"),
         ],
         "vendors": [
             ("kyc_status", "VARCHAR(20) DEFAULT 'none'"),

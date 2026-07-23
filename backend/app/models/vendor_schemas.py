@@ -132,6 +132,8 @@ class VendorVehicleOut(BaseModel):
     driver_name: str
     is_4x4: bool
     has_ac: bool
+    vehicle_category: str = "sedan"
+    seats: int = 4
     daily_rate: int
     languages: list[str]
     features: list[str]
@@ -147,6 +149,8 @@ class VendorVehicleCreate(BaseModel):
     driver_name: str
     is_4x4: bool = False
     has_ac: bool = False
+    vehicle_category: str = "sedan"
+    seats: int = Field(4, ge=2, le=50)
     daily_rate: int = Field(ge=1000)
     languages: list[str] = []
     features: list[str] = []
@@ -161,6 +165,8 @@ class VendorVehicleUpdate(BaseModel):
     driver_name: str | None = None
     is_4x4: bool | None = None
     has_ac: bool | None = None
+    vehicle_category: str | None = None
+    seats: int | None = Field(None, ge=2, le=50)
     daily_rate: int | None = Field(None, ge=1000)
     languages: list[str] | None = None
     features: list[str] | None = None

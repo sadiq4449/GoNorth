@@ -1,6 +1,6 @@
 # GoNorth
 
-AI-powered trip builder and marketplace for Baltistan — **React** frontend + **FastAPI** backend.
+AI-powered trip builder and marketplace for **Gilgit-Baltistan** — **React** frontend + **FastAPI** backend.
 
 GoNorth connects tourists with verified local vendors (hostels, 4x4 drivers, guides) through an AI-assisted trip builder, escrow-protected payments, and offline-ready vouchers. The platform earns **10% commission** on every booking while vendors receive automated wallet payouts after trip completion.
 

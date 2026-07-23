@@ -17,7 +17,7 @@ export default function PromoBanner({ valley }) {
     <section className="promo-banner-section container" aria-label="Seasonal promotions">
       <div className="promo-banner-header">
         <span className="section-eyebrow">Off-season offers</span>
-        <h2>Save on your next Baltistan trip</h2>
+        <h2>Save on your next Gilgit-Baltistan trip</h2>
       </div>
       <div className="promo-banner-grid">
         {campaigns.map((c) => (

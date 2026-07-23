@@ -53,7 +53,7 @@ export async function fetchRecommendation({ destination, nights, budget, vibe })
   })
 }
 
-export async function fetchSearch({ destination, nights, guests, budget, vibe, stops, soloSafe, womenFriendly, featuredOnly }) {
+export async function fetchSearch({ destination, nights, guests, budget, vibe, stops, soloSafe, womenFriendly, featuredOnly, vehicleCategory }) {
   const params = new URLSearchParams({
     destination,
     nights: String(nights),
@@ -65,6 +65,7 @@ export async function fetchSearch({ destination, nights, guests, budget, vibe, s
   if (soloSafe) params.set('solo_safe', 'true')
   if (womenFriendly) params.set('women_friendly', 'true')
   if (featuredOnly) params.set('featured_only', 'true')
+  if (vehicleCategory && vehicleCategory !== 'all') params.set('vehicle_category', vehicleCategory)
   return apiFetch(`/api/search?${params}`)
 }
 

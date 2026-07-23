@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchRecommendation } from '../api/client'
+import AppIcon from './AppIcon'
 
 const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
 const VIBES = [
@@ -54,8 +55,8 @@ export default function HeroSearch() {
     <section className="hero">
       <div className="hero-content">
         <span className="hero-tag">AI Dynamic Trip Builder</span>
-        <h1>Build your Baltistan adventure</h1>
-        <p>Mix hostels, 4x4 rides, and local guides — priced instantly for your budget.</p>
+        <h1>Build your Gilgit-Baltistan adventure</h1>
+        <p>Mix hostels, transport, and local guides — priced instantly for your budget.</p>
       </div>
 
       <div className="quick-search">
@@ -90,8 +91,13 @@ export default function HeroSearch() {
             ))}
           </div>
         </div>
-        <button type="button" className="btn-ai" onClick={handleAiBuild} disabled={loading}>
-          {loading ? 'Consulting AI…' : '✨ AI Magic Build'}
+        <button type="button" className="btn-ai btn-with-icon" onClick={handleAiBuild} disabled={loading}>
+          {loading ? 'Consulting AI…' : (
+            <>
+              <AppIcon name="sparkles" size={18} />
+              AI Magic Build
+            </>
+          )}
         </button>
       </div>
       {error && <p className="hero-error">{error}</p>}

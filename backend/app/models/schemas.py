@@ -37,6 +37,9 @@ class VehicleOut(BaseModel):
     driver_name: str
     is_4x4: bool
     has_ac: bool
+    vehicle_category: str = "sedan"
+    category_label: str = "Sedan"
+    seats: int = 4
     daily_rate: int
     languages: list[str]
     solo_safe: bool = False

@@ -61,7 +61,7 @@ def _build_ai_prompt(data: RecommendRequest, rooms, vehicles, guides) -> str:
 
     terrain_note = "4x4 vehicle REQUIRED." if requires_4x4(data.destination) else "Highway vehicles OK."
 
-    return f"""Pick the best Baltistan trip package.
+    return f"""Pick the best Gilgit-Baltistan trip package.
 
 Destination: {data.destination}
 Nights: {data.nights}

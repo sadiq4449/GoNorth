@@ -44,6 +44,7 @@ def search_trip(
     solo_safe: bool = Query(False),
     women_friendly: bool = Query(False),
     featured_only: bool = Query(False),
+    vehicle_category: str | None = Query(None, description="suv_4x4|pickup|suv|van|coaster|sedan"),
 ):
     stop_list = [s.strip() for s in (stops or "").split(",") if s.strip()]
     all_stops = [destination] + stop_list
@@ -96,6 +97,7 @@ def search_trip(
             within_budget=_estimate_within_budget(v.daily_rate, nights, budget, min_room * nights),
         )
         for v in vehicles
+        if not vehicle_category or v.vehicle_category == vehicle_category
     ]
 
     guide_results = [

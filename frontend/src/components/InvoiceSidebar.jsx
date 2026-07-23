@@ -1,3 +1,5 @@
+import AppIcon from './AppIcon'
+
 export default function InvoiceSidebar({
   quote,
   loading,
@@ -91,8 +93,13 @@ export default function InvoiceSidebar({
           <p className="invoice-empty">Select a stay and vehicle to see pricing.</p>
         )}
 
-        <button type="button" className="btn-ai sidebar-ai" onClick={onAiBuild} disabled={aiLoading}>
-          {aiLoading ? 'Consulting AI…' : '✨ AI Magic Build'}
+        <button type="button" className="btn-ai sidebar-ai btn-with-icon" onClick={onAiBuild} disabled={aiLoading}>
+          {aiLoading ? 'Consulting AI…' : (
+            <>
+              <AppIcon name="sparkles" size={16} />
+              AI Magic Build
+            </>
+          )}
         </button>
       </div>
     </aside>

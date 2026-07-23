@@ -98,12 +98,13 @@ def seed():
             "email": "prado@skardu.com",
             "password": "vendor123",
             "name": "Ali Murad",
-            "business": "Murad 4x4 Services",
+            "business": "Murad Mountain Transport",
             "valley": "Skardu",
             "solo_safe": True,
             "vehicles": [
-                ("Toyota Prado TX 4x4", "GB-8921", "Ali Murad", True, True, 15000, ["Urdu", "English", "Balti"]),
-                ("Toyota HiAce Grand Cabin", "GB-4412", "Junaid Khan", False, True, 12000, ["Urdu", "English"]),
+                ("Toyota Prado TX", "GB-8921", "Ali Murad", True, True, 15000, ["Urdu", "English", "Balti"], "suv_4x4", 5),
+                ("Toyota Land Cruiser V8", "GB-8922", "Sajjad Murad", True, True, 22000, ["Urdu", "English"], "suv_4x4", 7),
+                ("Toyota Hilux Double Cab", "GB-8923", "Imran Ali", True, True, 14000, ["Urdu", "Balti"], "pickup", 4),
             ],
         },
         {
@@ -113,18 +114,22 @@ def seed():
             "business": "Skardu Fleet Rentals",
             "valley": "Skardu",
             "vehicles": [
-                ("Toyota Corolla GLI", "GB-2201", "Raza Haider", False, True, 7000, ["Urdu"]),
-                ("Suzuki Alto", "GB-1109", "Imran Balti", False, False, 4500, ["Urdu", "Balti"]),
+                ("Toyota Corolla GLI", "GB-2201", "Raza Haider", False, True, 7000, ["Urdu"], "sedan", 4),
+                ("Toyota Surf", "GB-2202", "Nasir Khan", True, True, 13000, ["Urdu", "English"], "suv_4x4", 5),
+                ("Toyota HiAce Grand Cabin", "GB-4412", "Junaid Khan", False, True, 12000, ["Urdu", "English"], "van", 12),
+                ("Toyota Coaster", "GB-4413", "Bashir Ahmed", False, True, 18000, ["Urdu"], "coaster", 25),
             ],
         },
         {
             "email": "hunza@transport.com",
             "password": "vendor123",
             "name": "Hunza Car Rentals",
-            "business": "Hunza Mountain Transport",
+            "business": "Hunza Valley Transport",
             "valley": "Hunza",
             "vehicles": [
-                ("Toyota Prado TX 4x4", "GB-7733", "Karim Shah", True, True, 16000, ["Urdu", "English"]),
+                ("Toyota Prado TX", "GB-7733", "Karim Shah", True, True, 16000, ["Urdu", "English"], "suv_4x4", 5),
+                ("Toyota TZ", "GB-7734", "Shah Khan", False, True, 11000, ["Urdu", "English"], "suv", 5),
+                ("Toyota 5-Door", "GB-7735", "Ali Raza", False, True, 9000, ["Urdu"], "suv", 5),
             ],
         },
     ]
@@ -213,9 +218,9 @@ def seed():
         )
         db.add(vendor)
         db.flush()
-        if item["business"] == "Murad 4x4 Services":
+        if item["business"] == "Murad Mountain Transport":
             vendor.featured_until = datetime.now(timezone.utc) + timedelta(days=30)
-        for model, plate, driver, is4, ac, rate, langs in item["vehicles"]:
+        for model, plate, driver, is4, ac, rate, langs, cat, seats in item["vehicles"]:
             v = Vehicle(
                 vendor_id=vendor.id,
                 model=model,
@@ -223,6 +228,8 @@ def seed():
                 driver_name=driver,
                 is_4x4=is4,
                 has_ac=ac,
+                vehicle_category=cat,
+                seats=seats,
                 daily_rate=rate,
             )
             v.languages_json = json.dumps(langs)

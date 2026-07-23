@@ -1,3 +1,5 @@
+import AppIcon from './AppIcon'
+
 export default function AiResultCard({ recommendation, onClear }) {
   if (!recommendation) return null
 
@@ -6,7 +8,10 @@ export default function AiResultCard({ recommendation, onClear }) {
   return (
     <div className="ai-result-card">
       <div className="ai-result-header">
-        <h3>✨ AI Recommended Package</h3>
+        <h3 className="btn-with-icon">
+          <AppIcon name="sparkles" size={18} />
+          AI Recommended Package
+        </h3>
         <span className={`source-badge ${recommendation.source}`}>{sourceLabel}</span>
       </div>
       <div className="ai-result-grid">

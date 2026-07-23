@@ -1,29 +1,30 @@
 import { Link } from 'react-router-dom'
+import AppIcon from './AppIcon'
 
 const QUICK_ACTIONS = [
   {
-    icon: '🗺️',
+    icon: 'map',
     title: 'Plan your trip',
-    desc: 'Mix hostels, 4x4 rides, and guides — see your total price instantly.',
+    desc: 'Mix hostels, transport, and guides — see your total price instantly.',
     to: '/plan',
     cta: 'Open Trip Builder',
   },
   {
-    icon: '🚗',
+    icon: 'car',
     title: 'Ride pools',
     desc: 'Share a vehicle with other travelers and split the fare.',
     to: '/pools',
     cta: 'Browse pools',
   },
   {
-    icon: '🎫',
+    icon: 'ticket',
     title: 'My trip',
     desc: 'Your QR pass, driver contact, and day-by-day itinerary — even offline.',
     to: '/trip',
     cta: 'View my booking',
   },
   {
-    icon: '💬',
+    icon: 'message',
     title: 'Traveler forum',
     desc: 'Ask locals, find trekking partners, and get route tips.',
     to: '/forum',
@@ -33,32 +34,32 @@ const QUICK_ACTIONS = [
 
 const BENEFITS = [
   {
-    icon: '✨',
+    icon: 'sparkles',
     title: 'AI trip builder',
-    desc: 'Enter your budget and vibe — get a full package in one click.',
+    desc: 'Enter your budget and vibe — get a full Gilgit-Baltistan package in one click.',
   },
   {
-    icon: '🏨',
-    title: 'Verified stays & drivers',
-    desc: 'Real hostels, 4x4 fleets, and mountain guides — not random WhatsApp deals.',
+    icon: 'car',
+    title: 'Full transport fleet',
+    desc: 'Prado, Land Cruiser, Hilux, Hiace, Coaster, sedans, and more — pick what fits your group.',
   },
   {
-    icon: '🛡️',
+    icon: 'shield',
     title: 'Built for the mountains',
-    desc: 'SOS button, road alerts, and 4x4 warnings for Deosai and Basho routes.',
+    desc: 'SOS button, road alerts, and smart vehicle matching for Deosai and Basho routes.',
   },
   {
-    icon: '📴',
+    icon: 'wifiOff',
     title: 'Works with weak signal',
     desc: 'Download your voucher before you leave Skardu — access it with no data.',
   },
   {
-    icon: '⭐',
+    icon: 'star',
     title: 'BaltiPoints rewards',
     desc: 'Earn points on every booking and redeem on your next adventure.',
   },
   {
-    icon: '🤝',
+    icon: 'users',
     title: 'Solo & women-friendly filters',
     desc: 'Find stays and drivers marked safe for solo travelers.',
   },
@@ -66,7 +67,7 @@ const BENEFITS = [
 
 const STEPS = [
   { num: '1', title: 'Pick your route', desc: 'Skardu, Shigar, Khaplu, Deosai, Hunza — add multi-leg stops.' },
-  { num: '2', title: 'Build your package', desc: 'Choose stay, transport, and guides. Price updates as you tap.' },
+  { num: '2', title: 'Build your package', desc: 'Choose stay, transport type, and guides. Price updates as you tap.' },
   { num: '3', title: 'Book & go', desc: 'Pay with JazzCash, EasyPaisa, or card. Get your QR pass instantly.' },
 ]
 
@@ -75,13 +76,13 @@ export default function FeaturesSection() {
     <>
       <section className="container home-features" id="features">
         <div className="home-features-header">
-          <h2>Everything you need for Baltistan</h2>
+          <h2>Everything you need for Gilgit-Baltistan</h2>
           <p>One place to plan, book, and travel — from your first search to your last mountain pass.</p>
         </div>
         <div className="home-benefits-grid">
           {BENEFITS.map((b) => (
             <div key={b.title} className="home-benefit-card">
-              <span className="home-benefit-icon" aria-hidden>{b.icon}</span>
+              <AppIcon name={b.icon} size={22} className="home-benefit-icon" />
               <h3>{b.title}</h3>
               <p>{b.desc}</p>
             </div>
@@ -108,7 +109,7 @@ export default function FeaturesSection() {
         <div className="home-feature-grid">
           {QUICK_ACTIONS.map((f) => (
             <Link key={f.to} to={f.to} className="home-feature-card">
-              <span className="home-feature-icon" aria-hidden>{f.icon}</span>
+              <AppIcon name={f.icon} size={22} className="home-feature-icon" />
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
               <span className="home-feature-cta">{f.cta} →</span>

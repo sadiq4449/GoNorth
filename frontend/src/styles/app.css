@@ -943,6 +943,9 @@ body {
 }
 
 .terrain-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   background: var(--danger-bg, #fdf2f2);
   color: #b91c1c;
   border: 1px solid #fecaca;
@@ -950,6 +953,71 @@ body {
   padding: 12px 16px;
   margin-bottom: 16px;
   font-size: 0.88rem;
+}
+
+.terrain-warning p {
+  margin: 4px 0 0;
+  font-weight: 400;
+  color: #991b1b;
+  line-height: 1.45;
+}
+
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.app-icon {
+  flex-shrink: 0;
+}
+
+.home-benefit-icon,
+.home-feature-icon {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.vehicle-category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.section-hint {
+  margin: -4px 0 12px;
+}
+
+.ride-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.vehicle-category-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--light);
+  color: var(--navy);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.amenity-icon-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.amenity-icon-svg {
+  color: var(--accent);
 }
 
 .listing-card.selectable {
@@ -972,7 +1040,9 @@ body {
 }
 
 .ai-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.68rem;
   font-weight: 800;
   background: #fef3c7;
@@ -2791,7 +2861,9 @@ body {
 }
 
 .featured-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: #fef3c7;
   color: #92400e;
   font-size: 0.72rem;

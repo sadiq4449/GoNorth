@@ -23,6 +23,7 @@ from app.models.vendor_schemas import (
     VendorVehicleOut,
 )
 from app.services.kyc import get_kyc
+from app.services.vehicle_categories import default_seats, infer_vehicle_category
 from app.services.pricing import (
     date_range,
     effective_room_price,
@@ -64,6 +65,8 @@ def _vehicle_out(v: Vehicle) -> VendorVehicleOut:
         driver_name=v.driver_name,
         is_4x4=v.is_4x4,
         has_ac=v.has_ac,
+        vehicle_category=v.vehicle_category or "sedan",
+        seats=v.seats or 4,
         daily_rate=v.daily_rate,
         languages=v.get_languages(),
         features=v.get_features(),
@@ -482,6 +485,7 @@ def list_vehicles(db: Session, vendor: Vendor) -> list[VendorVehicleOut]:
 def create_vehicle(db: Session, vendor: Vendor, data) -> VendorVehicleOut:
     if vendor.vendor_type not in ("transport", "mixed"):
         raise HTTPException(status_code=400, detail="Only transport vendors manage vehicles")
+    cat = data.vehicle_category or infer_vehicle_category(data.model, data.is_4x4)
     v = Vehicle(
         vendor_id=vendor.id,
         model=data.model,
@@ -489,6 +493,8 @@ def create_vehicle(db: Session, vendor: Vendor, data) -> VendorVehicleOut:
         driver_name=data.driver_name,
         is_4x4=data.is_4x4,
         has_ac=data.has_ac,
+        vehicle_category=cat,
+        seats=data.seats or default_seats(cat),
         daily_rate=data.daily_rate,
         model_year=data.model_year,
         fleet_driver_id=data.fleet_driver_id,
@@ -506,7 +512,7 @@ def update_vehicle(db: Session, vendor: Vendor, vehicle_id: str, data) -> Vendor
     v = db.query(Vehicle).filter(Vehicle.id == vehicle_id, Vehicle.vendor_id == vendor.id).first()
     if not v:
         raise HTTPException(status_code=404, detail="Vehicle not found")
-    for field in ("model", "plate", "driver_name", "is_4x4", "has_ac", "daily_rate", "model_year", "fleet_driver_id", "hidden"):
+    for field in ("model", "plate", "driver_name", "is_4x4", "has_ac", "vehicle_category", "seats", "daily_rate", "model_year", "fleet_driver_id", "hidden"):
         val = getattr(data, field, None)
         if val is not None:
             setattr(v, field, val)

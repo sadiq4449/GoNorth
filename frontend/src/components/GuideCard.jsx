@@ -1,3 +1,5 @@
+import AppIcon from './AppIcon'
+
 export function GuideCard({ guide, selected, onToggle }) {
   return (
     <article
@@ -7,7 +9,11 @@ export function GuideCard({ guide, selected, onToggle }) {
       role="button"
       tabIndex={0}
     >
-      {guide.ai_recommended && <span className="ai-badge">✨ AI Pick</span>}
+      {guide.ai_recommended && (
+        <span className="ai-badge">
+          <AppIcon name="sparkles" size={12} /> AI Pick
+        </span>
+      )}
       <h3>{guide.name}</h3>
       <p className="meta">{guide.specialty} · {guide.valley}</p>
       <p>{guide.vendor_name}</p>

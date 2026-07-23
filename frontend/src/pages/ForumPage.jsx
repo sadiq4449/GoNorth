@@ -49,7 +49,7 @@ export default function ForumPage() {
       <header className="forum-header">
         <h1>Traveler Forum</h1>
         <p className="plan-lead">
-          Ask locals and fellow travelers about routes, weather, and stays in Baltistan.
+          Ask locals and fellow travelers about routes, weather, and stays in Gilgit-Baltistan.
         </p>
       </header>
 
