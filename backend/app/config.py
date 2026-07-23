@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     public_web_url: str = "http://localhost:5173"
     allow_direct_booking: bool = True
 
+    # Live travel advisories (Open-Meteo weather — no API key required)
+    advisory_live_weather: bool = True
+
     # Observability
     sentry_dsn: str = ""
 

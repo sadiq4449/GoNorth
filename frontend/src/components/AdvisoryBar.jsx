@@ -23,7 +23,11 @@ export default function AdvisoryBar() {
         <div className="advisory-ticker">
           {items.map((a) => (
             <span key={a.id} className={`advisory-item severity-${a.severity}`}>
+              {a.category && a.category !== 'road' && (
+                <span className="advisory-category">{a.category}</span>
+              )}
               <strong>{a.region}:</strong> {a.message}
+              {a.live && <span className="advisory-live-dot" title="Live data" />}
             </span>
           ))}
         </div>

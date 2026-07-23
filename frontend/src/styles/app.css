@@ -3131,6 +3131,29 @@ body {
   color: #fcd34d;
 }
 
+.advisory-category {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.12);
+  color: #93c5fd;
+}
+
+.advisory-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  vertical-align: middle;
+}
+
 .advisory-item.severity-critical {
   color: #fca5a5;
 }

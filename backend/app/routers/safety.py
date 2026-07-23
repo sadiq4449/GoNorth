@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.db.models import get_db
 from app.models.safety_schemas import AdvisoryOut, SosCreateRequest, SosOut
-from app.services.safety import create_sos_alert, list_advisories
+from app.services.safety import create_sos_alert, list_advisories_merged
 
 router = APIRouter(prefix="/api", tags=["safety"])
 
@@ -38,4 +38,4 @@ def get_advisories(
     db: Annotated[Session, Depends(get_db)],
     region: str | None = Query(None),
 ):
-    return list_advisories(db, region)
+    return list_advisories_merged(db, region)

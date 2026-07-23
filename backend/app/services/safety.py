@@ -71,6 +71,14 @@ def list_advisories(db: Session, region: str | None = None) -> list[RoadAdvisory
     return q.order_by(RoadAdvisory.severity.desc(), RoadAdvisory.updated_at.desc()).all()
 
 
+def list_advisories_merged(db: Session, region: str | None = None) -> list[dict]:
+    """DB advisories plus live weather feed (admin overrides take precedence)."""
+    from app.services.advisory_feed import merge_advisories
+
+    db_rows = list_advisories(db)
+    return merge_advisories(db_rows, region=region, include_live=True)
+
+
 def upsert_advisory(db: Session, *, region: str, message: str, severity: str, active: bool = True, admin_override: bool = False) -> RoadAdvisory:
     row = db.query(RoadAdvisory).filter(RoadAdvisory.region == region).first()
     if not row:

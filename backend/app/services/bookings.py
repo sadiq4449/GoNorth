@@ -214,11 +214,11 @@ def build_timeline(db: Session, booking: Booking) -> list[dict]:
                 events.append({"icon": "🏔️", "text": f"Explore {booking.destination}"})
 
         advisory = "Road clear"
-        from app.services.safety import list_advisories
+        from app.services.safety import list_advisories_merged
 
-        advisories = list_advisories(db, booking.destination)
+        advisories = list_advisories_merged(db, booking.destination)
         if advisories:
-            advisory = advisories[0].message
+            advisory = advisories[0]["message"]
         elif booking.destination.lower() in ("deosai", "basho") and d > 1:
             advisory = "Monitor weather — high altitude route"
 

@@ -25,8 +25,11 @@ class AdvisoryOut(BaseModel):
     region: str
     message: str
     severity: str
+    source: str = "BaltiTour"
+    category: str = "road"  # weather|road|disaster|flight|access|seasonal|emergency
     admin_override: bool
     updated_at: datetime
+    live: bool = False
 
     class Config:
         from_attributes = True
