@@ -1,301 +1,119 @@
 import { Link } from 'react-router-dom'
 
-/** Quick-start actions — drive conversion to core flows */
 const QUICK_ACTIONS = [
   {
+    icon: '🗺️',
     title: 'Plan your trip',
-    desc: 'Pick stays, 4x4 rides, and local guides with live pricing.',
+    desc: 'Mix hostels, 4x4 rides, and guides — see your total price instantly.',
     to: '/plan',
     cta: 'Open Trip Builder',
   },
   {
+    icon: '🚗',
     title: 'Ride pools',
-    desc: 'Split transport costs with other travelers heading the same way.',
+    desc: 'Share a vehicle with other travelers and split the fare.',
     to: '/pools',
     cta: 'Browse pools',
   },
   {
+    icon: '🎫',
     title: 'My trip',
-    desc: 'View your booking pass, QR voucher, and day-by-day itinerary.',
+    desc: 'Your QR pass, driver contact, and day-by-day itinerary — even offline.',
     to: '/trip',
-    cta: 'View trip',
+    cta: 'View my booking',
   },
   {
+    icon: '💬',
     title: 'Traveler forum',
-    desc: 'Find trekking partners and share tips with other Baltistan travelers.',
+    desc: 'Ask locals, find trekking partners, and get route tips.',
     to: '/forum',
-    cta: 'Join forum',
+    cta: 'Join the forum',
   },
 ]
 
-/** Revenue & platform economics — visible to investors and partners */
-const BUSINESS_PILLARS = [
+const BENEFITS = [
   {
-    label: 'Platform commission',
-    value: '10%',
-    detail: 'Transparent fee on every booking; vendors keep 90% in escrow.',
+    icon: '✨',
+    title: 'AI trip builder',
+    desc: 'Enter your budget and vibe — get a full package in one click.',
   },
   {
-    label: 'Escrow payouts',
-    value: '12–48h',
-    detail: 'Tiered release after trip completion — protects tourists and vendors.',
+    icon: '🏨',
+    title: 'Verified stays & drivers',
+    desc: 'Real hostels, 4x4 fleets, and mountain guides — not random WhatsApp deals.',
   },
   {
-    label: 'Ride pool model',
-    value: '120%',
-    detail: 'Shared fares earn drivers more while passengers save up to 70%.',
+    icon: '🛡️',
+    title: 'Built for the mountains',
+    desc: 'SOS button, road alerts, and 4x4 warnings for Deosai and Basho routes.',
   },
   {
-    label: 'Loyalty (BaltiPoints)',
-    value: 'Earn & redeem',
-    detail: 'Repeat travelers redeem up to 20% at checkout.',
+    icon: '📴',
+    title: 'Works with weak signal',
+    desc: 'Download your voucher before you leave Skardu — access it with no data.',
   },
   {
-    label: 'Vendor boost',
-    value: 'Featured slots',
-    detail: 'Paid visibility for hostels and transporters in peak valleys.',
+    icon: '⭐',
+    title: 'BaltiPoints rewards',
+    desc: 'Earn points on every booking and redeem on your next adventure.',
   },
   {
-    label: 'Payments',
-    value: 'PK + global',
-    detail: 'JazzCash · EasyPaisa (PKR) · Stripe cards (USD) for foreign tourists.',
+    icon: '🤝',
+    title: 'Solo & women-friendly filters',
+    desc: 'Find stays and drivers marked safe for solo travelers.',
   },
 ]
 
-/** Full SRS feature map — aligned with features.md / userstories.md */
-const FEATURE_MODULES = [
-  {
-    id: 'tourist',
-    icon: '🏔️',
-    title: 'Tourist Application',
-    subtitle: 'Discovery, booking, safety, and retention for travelers',
-    groups: [
-      {
-        name: 'Smart Search & AI Onboarding',
-        items: [
-          'Multi-destination hubs: Skardu, Shigar, Khaplu, Deosai, Basho, Hunza',
-          'Budget-aware AI Magic Build with Backpacker, Adventure, and Luxury vibes',
-          'Live meta filters: dates, guests, max budget (PKR), solo-safe & women-friendly',
-        ],
-      },
-      {
-        name: 'Dynamic Package Builder',
-        items: [
-          'Stay deck with expandable room cards, amenity icons, and per-night rates',
-          'Transport marketplace: 4x4 Prado, HiAce, Corolla, Alto with driver profiles',
-          'Multi-leg route builder — add stops across valleys on one invoice',
-          'Real-time cart: stay + transport + guides with instant 10% platform fee',
-          'Seat pooling toggle at checkout for shared transport savings',
-        ],
-      },
-      {
-        name: 'Seat Pooling Marketplace',
-        items: [
-          'Active pool feed with seats left and cost-per-seat (120% economics)',
-          'Join or leave pools; fare recalculates as passengers change',
-          'Driver earns more on pooled trips; passengers save vs private hire',
-        ],
-      },
-      {
-        name: 'Offline Survivor Kit',
-        items: [
-          'IndexedDB cache of confirmed bookings for zero-signal valleys',
-          'Cryptographic QR vouchers — check-in without live database hits',
-          'Auto-redirect to My Trip when offline; GSM tel: links to call drivers',
-        ],
-      },
-      {
-        name: 'Safety & Utility',
-        items: [
-          'Global SOS button — GPS + SMS to 1122 and control tower',
-          'Live road & weather advisory ticker (NDMA-style alerts)',
-          '4x4 terrain engine — Deosai/Basho enforce compatible vehicles',
-          'Optional Trip Safety Profile: emergency contact & blood group',
-        ],
-      },
-      {
-        name: 'Community & Retention',
-        items: [
-          'BaltiPoints loyalty — earn per PKR spent, redeem up to 20% at checkout',
-          'Visual trek reviews with optional photo links',
-          'Cart abandonment SMS reminders for incomplete bookings',
-          'Traveler forum — find partners beyond ride pooling',
-        ],
-      },
-      {
-        name: 'Trip Experience',
-        items: [
-          'Day-by-day Trip Flow timeline with advisory badges per segment',
-          'Vendor chat per booking — negotiate routes and custom requests',
-          'Trust badges: Solo-safe, Women-friendly, Gold Partner, Featured',
-        ],
-      },
-    ],
-  },
-  {
-    id: 'vendor',
-    icon: '💼',
-    title: 'Vendor Management',
-    subtitle: 'Onboarding, inventory, compliance, and growth for local operators',
-    groups: [
-      {
-        name: 'Multi-Channel Onboarding',
-        items: [
-          '4-step KYC wizard: profile, inventory, payout wallet, document upload',
-          'SMS-lite registration (REG HOTEL / REG TRANSPORT) for zero-data areas',
-          'Physical vetting at Skardu/Hunza hubs → Gold Partner badge',
-        ],
-      },
-      {
-        name: 'Hotel & Hostel Operators',
-        items: [
-          'Room-level inventory: dorms, suites, family rooms with amenity tags',
-          'Calendar block/unblock for walk-ins vs online availability',
-          'Seasonal pricing multipliers (peak cherry blossom, off-season discounts)',
-          'Supabase Storage image uploads for property and room galleries',
-        ],
-      },
-      {
-        name: 'Drivers & Fleet Owners',
-        items: [
-          'Multi-vehicle fleet with driver profiles, languages, and experience tags',
-          'Route tariff matrix — flat rates per destination and terrain difficulty',
-          'Offline trip completion queue — syncs when signal returns',
-        ],
-      },
-      {
-        name: 'Compliance & Payouts',
-        items: [
-          'Document portal: CNIC, licenses, insurance, trekking certifications',
-          'Penny-test wallet verification (JazzCash/EasyPaisa title match)',
-          'Vendor wallet + escrow release after QR completion handshake',
-        ],
-      },
-      {
-        name: 'Marketing & Visibility',
-        items: [
-          'Featured vendor boost — paid top-of-search placement by valley',
-          'Platform Verified and Gold Partner badges on tourist listings',
-        ],
-      },
-    ],
-  },
-  {
-    id: 'admin',
-    icon: '👑',
-    title: 'Admin Control Tower',
-    subtitle: 'Platform operations, finance, safety, and market control',
-    groups: [
-      {
-        name: 'Inventory & Registry',
-        items: [
-          'Global asset registry — create vendors, hide rooms/vehicles instantly',
-          'Vendor lifecycle: approve, suspend, physical vet, featured status',
-          'Global pricing override — category caps and surge multipliers',
-        ],
-      },
-      {
-        name: 'Financial Ledger & Escrow',
-        items: [
-          'Automated 10% commission split on every confirmed booking',
-          'Escrow FSM: pending → held → release_scheduled → paid | disputed',
-          'Payout batches to IBFT, JazzCash, or EasyPaisa for approved KYC vendors',
-        ],
-      },
-      {
-        name: 'Operations & Safety',
-        items: [
-          'Live fleet map — active trips with last-known GPS pings',
-          'Dispute center — hold escrow, resolve refund or release',
-          'KYC review queue with document checklist',
-          'SOS alert log, road advisory management, audit trail on trip edits',
-        ],
-      },
-    ],
-  },
+const STEPS = [
+  { num: '1', title: 'Pick your route', desc: 'Skardu, Shigar, Khaplu, Deosai, Hunza — add multi-leg stops.' },
+  { num: '2', title: 'Build your package', desc: 'Choose stay, transport, and guides. Price updates as you tap.' },
+  { num: '3', title: 'Book & go', desc: 'Pay with JazzCash, EasyPaisa, or card. Get your QR pass instantly.' },
 ]
 
 export default function FeaturesSection() {
   return (
     <>
-      <section className="container home-business" id="business-model">
-        <div className="home-business-header">
-          <span className="section-eyebrow">Business model</span>
-          <h2>Built to scale revenue and trust</h2>
-          <p>
-            GoNorth is a marketplace — not a tour agency. Vendors set inventory and rates;
-            the platform earns commission, escrow protects both sides, and loyalty drives repeat bookings.
-          </p>
+      <section className="container home-features" id="features">
+        <div className="home-features-header">
+          <h2>Everything you need for Baltistan</h2>
+          <p>One place to plan, book, and travel — from your first search to your last mountain pass.</p>
         </div>
-        <div className="home-business-grid">
-          {BUSINESS_PILLARS.map((p) => (
-            <div key={p.label} className="home-business-card">
-              <span className="home-business-label">{p.label}</span>
-              <strong>{p.value}</strong>
-              <p>{p.detail}</p>
+        <div className="home-benefits-grid">
+          {BENEFITS.map((b) => (
+            <div key={b.title} className="home-benefit-card">
+              <span className="home-benefit-icon" aria-hidden>{b.icon}</span>
+              <h3>{b.title}</h3>
+              <p>{b.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="container home-features" id="features">
-        <div className="home-features-header">
-          <span className="section-eyebrow">Features</span>
-          <h2>Everything in one platform</h2>
-          <p>
-            Core and advanced capabilities from the product specification — tourist booking,
-            vendor operations, and admin control in a single Baltistan-focused marketplace.
-          </p>
+      <section className="container home-how">
+        <h2>How it works</h2>
+        <div className="home-steps-grid">
+          {STEPS.map((s) => (
+            <div key={s.num} className="home-step-card">
+              <span className="home-step-num">{s.num}</span>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+            </div>
+          ))}
         </div>
+        <Link to="/plan" className="btn-secondary-link home-how-cta">Start planning →</Link>
+      </section>
+
+      <section className="container home-features home-explore">
+        <h2>Explore GoNorth</h2>
         <div className="home-feature-grid">
           {QUICK_ACTIONS.map((f) => (
             <Link key={f.to} to={f.to} className="home-feature-card">
+              <span className="home-feature-icon" aria-hidden>{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
               <span className="home-feature-cta">{f.cta} →</span>
             </Link>
           ))}
-        </div>
-      </section>
-
-      <section className="home-features-deep">
-        <div className="container">
-          {FEATURE_MODULES.map((mod) => (
-            <article key={mod.id} className="feature-module" id={`features-${mod.id}`}>
-              <header className="feature-module-header">
-                <span className="feature-module-icon" aria-hidden>{mod.icon}</span>
-                <div>
-                  <h3>{mod.title}</h3>
-                  <p>{mod.subtitle}</p>
-                </div>
-              </header>
-              <div className="feature-module-grid">
-                {mod.groups.map((group) => (
-                  <div key={group.name} className="feature-group-card">
-                    <h4>{group.name}</h4>
-                    <ul>
-                      {group.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="container home-vendor-cta">
-        <div className="home-vendor-cta-inner">
-          <div>
-            <h2>Grow with GoNorth</h2>
-            <p>
-              List rooms, vehicles, or guide services. Complete KYC once, receive escrow payouts
-              after every trip, and boost visibility during off-season.
-            </p>
-          </div>
-          <Link to="/vendor/login" className="btn-secondary-link">Vendor portal →</Link>
         </div>
       </section>
     </>

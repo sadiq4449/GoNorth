@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import HeroSearch from '../components/HeroSearch'
 import FeaturesSection from '../components/FeaturesSection'
 import PromoBanner from '../components/PromoBanner'
-import { fetchHealth, fetchListings } from '../api/client'
+import { fetchListings } from '../api/client'
 
 export default function HomePage() {
-  const [health, setHealth] = useState(null)
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
-    fetchHealth()
-      .then(setHealth)
-      .catch(() => setHealth({ status: 'offline', ai_configured: false }))
-
     fetchListings()
       .then((data) => {
         setStats({
@@ -25,41 +20,23 @@ export default function HomePage() {
       .catch(() => setStats(null))
   }, [])
 
-  const aiLabel = health?.ai_configured ? 'OpenRouter AI ready' : 'Smart Match active'
-
   return (
     <>
       <HeroSearch />
 
-      <div className="status-bar container">
-        <span className={`status-dot ${health?.status === 'ok' ? 'online' : 'offline'}`} />
-        API: {health?.status === 'ok' ? 'Connected' : 'Offline — check backend'}
-        {health?.status === 'ok' && (
-          <span className="ai-status">· Trip matching: {aiLabel}</span>
-        )}
-      </div>
-
       {stats && (
-        <section className="container home-kpi-grid">
-          <div className="home-kpi-card">
-            <span className="home-kpi-label">Verified stays</span>
-            <strong>{stats.stays}</strong>
-            <span className="home-kpi-badge">Live inventory</span>
+        <section className="container home-trust-strip" aria-label="Live marketplace inventory">
+          <div className="home-trust-item">
+            <strong>{stats.stays}+</strong>
+            <span>Verified stays</span>
           </div>
-          <div className="home-kpi-card">
-            <span className="home-kpi-label">4x4 & transport</span>
-            <strong>{stats.rides}</strong>
-            <span className="home-kpi-badge">Vetted drivers</span>
+          <div className="home-trust-item">
+            <strong>{stats.rides}+</strong>
+            <span>4x4 & transport</span>
           </div>
-          <div className="home-kpi-card">
-            <span className="home-kpi-label">Local guides</span>
-            <strong>{stats.guides}</strong>
-            <span className="home-kpi-badge">Mountain experts</span>
-          </div>
-          <div className="home-kpi-card">
-            <span className="home-kpi-label">Platform fee</span>
-            <strong>10%</strong>
-            <span className="home-kpi-badge">Transparent pricing</span>
+          <div className="home-trust-item">
+            <strong>{stats.guides}+</strong>
+            <span>Local guides</span>
           </div>
         </section>
       )}
@@ -68,11 +45,11 @@ export default function HomePage() {
 
       <FeaturesSection />
 
-      <div className="container home-cta">
-        <h2>Ready to build your trip?</h2>
-        <p>Use AI Magic Build on the hero above, or pick your own stay, 4x4, and guides manually.</p>
-        <Link to="/plan" className="btn-secondary-link">Open Trip Builder →</Link>
-      </div>
+      <section className="container home-cta home-cta-final">
+        <h2>Your Baltistan trip starts here</h2>
+        <p>Use AI Magic Build above, or hand-pick every stay, ride, and guide yourself.</p>
+        <Link to="/plan" className="btn-ai home-cta-btn">✨ Build my trip</Link>
+      </section>
     </>
   )
 }

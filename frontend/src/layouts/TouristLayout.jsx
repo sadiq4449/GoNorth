@@ -35,7 +35,6 @@ export default function TouristLayout() {
             <NavLink to="/trip">My Trip</NavLink>
             <NavLink to="/pools">Ride Pools</NavLink>
             <NavLink to="/forum">Forum</NavLink>
-            <NavLink to="/#features">Features</NavLink>
           </nav>
           <div className="header-actions">
             <SosButton />
