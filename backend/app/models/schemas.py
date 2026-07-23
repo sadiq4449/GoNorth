@@ -115,6 +115,26 @@ class RecommendResponse(BaseModel):
     quote: CartQuoteResponse
 
 
+class TourPackageOut(BaseModel):
+    id: str
+    title: str
+    destination: str
+    nights: int
+    duration_label: str
+    vibe: str
+    badge: str
+    badge_style: str = "trending"
+    rating: float
+    image_layout: str = "single"
+    image_colors: list[str] = []
+    starting_price: int
+    room_id: str
+    vehicle_id: str
+    guide_ids: list[str] = []
+    reason: str = ""
+    quote: CartQuoteResponse
+
+
 class RoomSearchOut(RoomOut):
     ai_recommended: bool = False
     within_budget: bool = False

@@ -12,7 +12,7 @@ from app.services.community import ensure_community_demo, ensure_featured_vendor
 from app.services.campaigns import ensure_default_campaigns
 from app.services.pools import ensure_demo_pools
 from app.services.vehicle_categories import backfill_vehicle_categories
-from app.routers import admin, auth, bookings, campaigns, cart, community, health, listings, payments, points, pools, recommend, safety, search, vendor_portal, vendors
+from app.routers import admin, auth, bookings, campaigns, cart, community, health, listings, packages, payments, points, pools, recommend, safety, search, vendor_portal, vendors
 from app.services.escrow import process_due_escrows
 from app.services.safety import ensure_default_advisories
 
@@ -68,6 +68,7 @@ app.include_router(points.router)
 app.include_router(bookings.router)
 app.include_router(safety.router)
 app.include_router(campaigns.router)
+app.include_router(packages.router)
 app.include_router(community.router)
 app.include_router(pools.router)
 app.include_router(vendor_portal.router)

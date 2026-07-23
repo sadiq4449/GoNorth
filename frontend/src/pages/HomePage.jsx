@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import HeroSearch from '../components/HeroSearch'
 import FeaturesSection from '../components/FeaturesSection'
 import PromoBanner from '../components/PromoBanner'
+import TourPackagesSection from '../components/TourPackagesSection'
 import AppIcon from '../components/AppIcon'
 import { fetchListings } from '../api/client'
 
@@ -41,6 +42,8 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      <TourPackagesSection />
 
       <PromoBanner />
 

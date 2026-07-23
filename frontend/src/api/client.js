@@ -159,6 +159,10 @@ export async function fetchAdvisories(region) {
   return apiFetch(`/api/advisories${q}`)
 }
 
+export async function fetchFeaturedPackages() {
+  return apiFetch('/api/packages/featured')
+}
+
 export async function fetchActiveCampaigns(valley) {
   const q = valley ? `?valley=${encodeURIComponent(valley)}` : ''
   return apiFetch(`/api/campaigns/active${q}`)
