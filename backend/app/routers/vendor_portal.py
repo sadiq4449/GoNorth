@@ -11,6 +11,7 @@ from app.models.vendor_schemas import (
     FleetDriverCreate,
     FleetDriverOut,
     FleetDriverUpdate,
+    OnboardingStatusOut,
     RouteTariffCreate,
     RouteTariffOut,
     RouteTariffUpdate,
@@ -20,6 +21,9 @@ from app.models.vendor_schemas import (
     SeasonRuleOut,
     UploadResponse,
     VendorDashboardOut,
+    VendorGuideCreate,
+    VendorGuideOut,
+    VendorProfileUpdate,
     VendorRoomCreate,
     VendorRoomOut,
     VendorRoomUpdate,
@@ -59,6 +63,35 @@ def vendor_dashboard(
     user: Annotated[User, Depends(require_roles("vendor"))],
 ):
     return svc.dashboard_summary(db, _vendor(db, user))
+
+
+@router.get("/onboarding", response_model=OnboardingStatusOut)
+def vendor_onboarding_status(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    vendor = _vendor(db, user)
+    return svc.onboarding_status(db, vendor, user)
+
+
+@router.patch("/profile", response_model=OnboardingStatusOut)
+def update_vendor_profile(
+    data: VendorProfileUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    vendor = _vendor(db, user)
+    svc.update_vendor_profile(db, vendor, user, data)
+    return svc.onboarding_status(db, vendor, user)
+
+
+@router.post("/guides", response_model=VendorGuideOut)
+def create_guide(
+    data: VendorGuideCreate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("vendor"))],
+):
+    return svc.create_guide(db, _vendor(db, user), data)
 
 
 @router.get("/rooms", response_model=list[VendorRoomOut])

@@ -35,7 +35,7 @@ def create_stripe_checkout(
                     "currency": "usd",
                     "unit_amount": usd_cents,
                     "product_data": {
-                        "name": f"BaltiTour — {booking_reference}",
+                        "name": f"GoNorth — {booking_reference}",
                         "description": f"Trip booking (≈ Rs. {amount_pkr:,} PKR)",
                     },
                 },

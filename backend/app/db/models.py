@@ -555,6 +555,24 @@ class SmsVendorLead(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
+class PromoCampaign(Base):
+    __tablename__ = "promo_campaigns"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    title: Mapped[str] = mapped_column(String(255))
+    message: Mapped[str] = mapped_column(Text)
+    valley: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    discount_label: Mapped[str] = mapped_column(String(64), default="")
+    cta_url: Mapped[str] = mapped_column(String(255), default="/plan")
+    cta_label: Mapped[str] = mapped_column(String(64), default="Book now")
+    season: Mapped[str] = mapped_column(String(32), default="off-season")
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    starts_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
 engine = create_engine(
     settings.resolved_database_url,
     **(

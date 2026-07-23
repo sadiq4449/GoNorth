@@ -28,6 +28,8 @@ import AdminFleetPage from './pages/AdminFleetPage'
 import AdminRegistryPage from './pages/AdminRegistryPage'
 import ForumPage from './pages/ForumPage'
 import VendorTripsPage from './pages/VendorTripsPage'
+import VendorOnboardingPage from './pages/VendorOnboardingPage'
+import AdminCampaignsPage from './pages/AdminCampaignsPage'
 import './styles/app.css'
 
 export default function App() {
@@ -51,6 +53,7 @@ export default function App() {
           <Route path="/vendor/login" element={<VendorLoginPage />} />
           <Route path="/vendor" element={<ProtectedRoute roles={['vendor']}><VendorLayout /></ProtectedRoute>}>
             <Route index element={<VendorDashboardPage />} />
+            <Route path="onboarding" element={<VendorOnboardingPage />} />
             <Route path="inventory" element={<VendorInventoryPage />} />
             <Route path="tariffs" element={<VendorTariffsPage />} />
             <Route path="kyc" element={<VendorKycPage />} />
@@ -68,6 +71,7 @@ export default function App() {
             <Route path="pricing" element={<AdminPricingPage />} />
             <Route path="trips" element={<AdminTripsPage />} />
             <Route path="payouts" element={<AdminPayoutsPage />} />
+            <Route path="campaigns" element={<AdminCampaignsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

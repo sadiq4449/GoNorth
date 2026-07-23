@@ -1,6 +1,5 @@
 import json
 import re
-from typing import Any
 
 import requests
 from fastapi import HTTPException
@@ -12,6 +11,8 @@ from app.services.catalog import load_approved_listings
 from app.services.cart import quote_cart
 from app.services.recommend_rules import _pick_by_vibe
 from app.services.terrain import requires_4x4, vehicle_compatible
+
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
 def _rules_recommend_live(
@@ -97,6 +98,17 @@ def _parse_ai_json(content: str, valid_room_ids: set, valid_vehicle_ids: set, va
     }
 
 
+def _openrouter_headers() -> dict:
+    headers = {
+        "Authorization": f"Bearer {settings.openrouter_api_key}",
+        "Content-Type": "application/json",
+    }
+    if settings.public_web_url:
+        headers["HTTP-Referer"] = settings.public_web_url
+    headers["X-Title"] = "GoNorth Trip Builder"
+    return headers
+
+
 def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
     rooms, vehicles, guides = load_approved_listings(db, valley=data.destination)
     if not rooms or not vehicles:
@@ -110,30 +122,25 @@ def recommend_live_package(db: Session, data: RecommendRequest) -> dict:
         valid_vehicles = {v.id for v in vehicles}
     valid_guides = {g.id for g in guides}
 
-    api_key = settings.nvidia_api_key
-    if not api_key or api_key == "nvapi-your-key-here":
-        result = _rules_recommend_live(db, data, rooms, vehicles, guides)
-        result["reason"] = f"[Set NVIDIA_API_KEY for live AI] {result['reason']}"
-        return result
+    if not settings.ai_configured:
+        return _rules_recommend_live(db, data, rooms, vehicles, guides)
 
-    headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
     payload = {
-        "model": "minimaxai/minimax-m3",
+        "model": settings.openrouter_model,
         "messages": [{"role": "user", "content": _build_ai_prompt(data, rooms, vehicles, guides)}],
         "max_tokens": 1024,
         "temperature": 0.1,
-        "stream": False,
     }
 
     try:
         response = requests.post(
-            "https://integrate.api.nvidia.com/v1/chat/completions",
-            headers=headers,
+            OPENROUTER_URL,
+            headers=_openrouter_headers(),
             json=payload,
-            timeout=30,
+            timeout=45,
         )
         if response.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"NVIDIA API error: {response.text}")
+            raise HTTPException(status_code=502, detail=f"OpenRouter API error: {response.text}")
 
         ai_response = response.json()["choices"][0]["message"]["content"]
         parsed = _parse_ai_json(ai_response, valid_rooms, valid_vehicles, valid_guides)

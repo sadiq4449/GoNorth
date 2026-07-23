@@ -8,6 +8,7 @@ import InvoiceSidebar from '../components/InvoiceSidebar'
 import TerrainWarning from '../components/TerrainWarning'
 import SafetyProfileModal from '../components/SafetyProfileModal'
 import PaymentMethodModal from '../components/PaymentMethodModal'
+import PromoBanner from '../components/PromoBanner'
 
 const DESTINATIONS = ['Skardu', 'Shigar', 'Khaplu', 'Deosai', 'Basho', 'Hunza']
 const STOP_OPTIONS = ['Shigar', 'Hunza', 'Khaplu', 'Deosai']
@@ -219,6 +220,8 @@ export default function PlanTripPage() {
       <div className="builder-main">
         <h1>Plan Your Trip</h1>
         <p className="plan-lead">Select stay, transport, and guides — invoice updates instantly.</p>
+
+        <PromoBanner valley={destination} />
 
         <div className="builder-filters">
           <label>

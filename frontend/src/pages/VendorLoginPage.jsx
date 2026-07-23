@@ -52,7 +52,7 @@ export default function VendorLoginPage() {
         throw new Error('This account is not a vendor. Use the correct portal.')
       }
       loginSuccess(result.access_token, result.user)
-      navigate('/vendor')
+      navigate(mode === 'register' ? '/vendor/onboarding' : '/vendor')
     } catch (err) {
       setError(err.message)
     } finally {

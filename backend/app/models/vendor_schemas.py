@@ -182,6 +182,43 @@ class VendorDashboardOut(BaseModel):
     blocked_nights: int
     featured: bool = False
     featured_until: datetime | None = None
+    onboarding_complete: bool = False
+
+
+class OnboardingStepOut(BaseModel):
+    id: str
+    title: str
+    complete: bool
+    description: str
+
+
+class OnboardingStatusOut(BaseModel):
+    steps: list[OnboardingStepOut]
+    current_step: str
+    complete: bool
+    vendor_type: str
+
+
+class VendorProfileUpdate(BaseModel):
+    phone: str | None = None
+    description: str | None = None
+    solo_safe: bool | None = None
+    women_friendly: bool | None = None
+
+
+class VendorGuideOut(BaseModel):
+    id: str
+    name: str
+    specialty: str
+    daily_rate: int
+    languages: list[str]
+
+
+class VendorGuideCreate(BaseModel):
+    name: str = Field(min_length=2)
+    specialty: str = Field(min_length=2)
+    daily_rate: int = Field(ge=1000)
+    languages: list[str] = []
 
 
 class UploadResponse(BaseModel):

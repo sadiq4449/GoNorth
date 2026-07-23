@@ -10,6 +10,7 @@ const ADMIN_NAV = [
   { to: '/admin/payouts', label: 'Payouts' },
   { to: '/admin/disputes', label: 'Disputes' },
   { to: '/admin/pricing', label: 'Pricing' },
+  { to: '/admin/campaigns', label: 'Campaigns' },
 ]
 
 export default function AdminLayout() {
@@ -20,7 +21,7 @@ export default function AdminLayout() {
           <NavLink to="/admin" className="brand">
             <span className="brand-mark admin-mark">SA</span>
             <span>
-              <strong>BaltiTour Control Tower</strong>
+              <strong>GoNorth Control Tower</strong>
               <small>Super Admin</small>
             </span>
           </NavLink>

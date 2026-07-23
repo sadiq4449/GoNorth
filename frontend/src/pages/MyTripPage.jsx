@@ -8,21 +8,23 @@ export default function MyTripPage() {
   const [pointsBalance, setPointsBalance] = useState(null)
   const [reviews, setReviews] = useState([])
   const [disputeReason, setDisputeReason] = useState('')
-  const [reviewForm, setReviewForm] = useState({ author_name: '', rating: 5, body: '' })
+  const [reviewForm, setReviewForm] = useState({ author_name: '', rating: 5, body: '', photo_url: '' })
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
-    getCachedBooking().then((b) => {
-      setBooking(b)
-      if (b?.email) {
-        fetchPointsBalance(b.email, b.subtotal || 0)
-          .then((p) => setPointsBalance(p.balance))
-          .catch(() => {})
-      }
-      if (b?.traveler_name) {
-        setReviewForm((f) => ({ ...f, author_name: b.traveler_name }))
-      }
-    })
+    getCachedBooking()
+      .then((b) => {
+        setBooking(b)
+        if (b?.email) {
+          fetchPointsBalance(b.email, b.subtotal || 0)
+            .then((p) => setPointsBalance(p.balance))
+            .catch(() => {})
+        }
+        if (b?.traveler_name) {
+          setReviewForm((f) => ({ ...f, author_name: b.traveler_name }))
+        }
+      })
+      .catch(() => setBooking(null))
     fetchReviews().then(setReviews).catch(() => {})
   }, [])
 
@@ -43,7 +45,7 @@ export default function MyTripPage() {
     await postReview({ ...reviewForm, booking_reference: booking.reference })
     setMsg('Thanks — your review is live for other travelers.')
     fetchReviews().then(setReviews)
-    setReviewForm((f) => ({ ...f, body: '' }))
+    setReviewForm((f) => ({ ...f, body: '', photo_url: '' }))
   }
 
   if (!booking) {
@@ -92,6 +94,11 @@ export default function MyTripPage() {
               <strong>{r.author_name}</strong>
               <span className="meta">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
               <p>{r.body}</p>
+              {r.photo_url && (
+                <a href={r.photo_url} target="_blank" rel="noreferrer" className="review-photo-link">
+                  View trek photo
+                </a>
+              )}
             </article>
           ))}
         </div>
@@ -100,6 +107,15 @@ export default function MyTripPage() {
             <label>
               Your review
               <textarea value={reviewForm.body} onChange={(e) => setReviewForm({ ...reviewForm, body: e.target.value })} required minLength={5} rows={3} />
+            </label>
+            <label>
+              Trek photo URL (optional)
+              <input
+                type="url"
+                value={reviewForm.photo_url}
+                onChange={(e) => setReviewForm({ ...reviewForm, photo_url: e.target.value })}
+                placeholder="https://…"
+              />
             </label>
             <label>
               Rating
@@ -115,7 +131,7 @@ export default function MyTripPage() {
       {navigator.onLine && (
         <form className="vendor-panel dispute-form" onSubmit={submitDispute}>
           <h2>File a dispute</h2>
-          <p className="plan-lead">Opens a ticket and holds escrow until BaltiTour admin resolves it.</p>
+          <p className="plan-lead">Opens a ticket and holds escrow until GoNorth admin resolves it.</p>
           {msg && <p className="toast-info">{msg}</p>}
           <textarea
             value={disputeReason}

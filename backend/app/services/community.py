@@ -42,7 +42,7 @@ def save_cart_abandonment(db: Session, email: str, phone: str | None, draft: dic
     db.refresh(row)
     sms_ok = send_sms(
         phone or email,
-        f"BaltiTour: your trip to {draft.get('destination', 'Baltistan')} is saved. Complete booking at baltitour.com/plan",
+        f"GoNorth: your trip to {draft.get('destination', 'Baltistan')} is saved. Complete booking at gonorth.vercel.app/plan",
     )
     row.sms_sent = sms_ok
     db.commit()

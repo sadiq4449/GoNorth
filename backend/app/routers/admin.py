@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session
 from app.auth.security import require_roles
 from app.db.models import Booking, User, Vendor, get_db
 from app.models.kyc_schemas import EscrowAdminOut, KycOut, KycReviewRequest
+from app.models.campaign_schemas import PromoCampaignOut, PromoCampaignUpsert
 from app.models.safety_schemas import AdvisoryOut, AdvisoryUpsertRequest, SosOut
+from app.services.campaigns import list_all_campaigns, upsert_campaign
 from app.services.safety import list_advisories, list_sos_alerts, upsert_advisory
 from app.models.admin_schemas import (
     AuditLogOut,
@@ -477,3 +479,32 @@ def admin_delete_vehicle(
     db.commit()
     log_audit(db, admin_user_id=user.id, action="vehicle_hide", entity_type="vehicle", entity_id=vehicle_id, details={})
     return {"ok": True}
+
+
+@router.get("/campaigns", response_model=list[PromoCampaignOut])
+def admin_list_campaigns(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    return list_all_campaigns(db)
+
+
+@router.put("/campaigns", response_model=PromoCampaignOut)
+def admin_upsert_campaign(
+    data: PromoCampaignUpsert,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    try:
+        row = upsert_campaign(db, data.model_dump())
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="campaign_upsert",
+        entity_type="campaign",
+        entity_id=row.id,
+        details={"title": row.title, "active": row.active},
+    )
+    return row

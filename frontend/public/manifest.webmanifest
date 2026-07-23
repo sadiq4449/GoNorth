@@ -1,6 +1,6 @@
 {
-  "name": "BaltiTour",
-  "short_name": "BaltiTour",
+  "name": "GoNorth",
+  "short_name": "GoNorth",
   "description": "AI trip builder for Baltistan — works offline in valleys",
   "start_url": "/",
   "display": "standalone",

@@ -23,9 +23,9 @@ export default function TouristLayout() {
       <header className="site-header">
         <div className="container header-inner">
           <NavLink to="/" className="brand">
-            <span className="brand-mark">BT</span>
+            <span className="brand-mark">GN</span>
             <span>
-              <strong>BaltiTour</strong>
+              <strong>GoNorth</strong>
               <small>Plan your trip</small>
             </span>
           </NavLink>
@@ -35,6 +35,7 @@ export default function TouristLayout() {
             <NavLink to="/trip">My Trip</NavLink>
             <NavLink to="/pools">Ride Pools</NavLink>
             <NavLink to="/forum">Forum</NavLink>
+            <NavLink to="/#features">Features</NavLink>
           </nav>
           <div className="header-actions">
             <SosButton />
@@ -49,7 +50,7 @@ export default function TouristLayout() {
       <ChatWidget />
       <footer className="site-footer">
         <div className="container footer-inner">
-          <span>© 2026 BaltiTour — Baltistan travel marketplace</span>
+          <span>© 2026 GoNorth — Baltistan travel marketplace</span>
           <NavLink to="/vendor/login" className="footer-portal-link">List your business</NavLink>
         </div>
       </footer>

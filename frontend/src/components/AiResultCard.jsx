@@ -1,7 +1,7 @@
 export default function AiResultCard({ recommendation, onClear }) {
   if (!recommendation) return null
 
-  const sourceLabel = recommendation.source === 'ai' ? 'NVIDIA AI' : 'Smart Fallback'
+  const sourceLabel = recommendation.source === 'ai' ? 'OpenRouter AI' : 'Smart Fallback'
 
   return (
     <div className="ai-result-card">

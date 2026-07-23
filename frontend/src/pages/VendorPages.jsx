@@ -40,6 +40,16 @@ export function VendorDashboardPage() {
       {error && <p className="form-error">{error}</p>}
       {msg && <p className="toast-info">{msg}</p>}
 
+      {dash && !dash.onboarding_complete && (
+        <div className="onboarding-banner">
+          <div>
+            <strong>Complete your vendor setup</strong>
+            <p>Finish profile, inventory, payout wallet, and KYC to receive bookings and escrow payouts.</p>
+          </div>
+          <Link to="/vendor/onboarding" className="btn-secondary-link">Continue setup →</Link>
+        </div>
+      )}
+
       {dash && (
         <>
           <div className="status-card">

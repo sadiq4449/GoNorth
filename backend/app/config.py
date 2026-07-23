@@ -2,7 +2,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    nvidia_api_key: str = ""
+    openrouter_api_key: str = ""
+    openrouter_model: str = "openai/gpt-4o-mini"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     database_url: str = "sqlite:///./baltitour.db"
     jwt_secret: str = "change-me-in-production-baltitour-dev-secret"
@@ -58,6 +59,11 @@ class Settings(BaseSettings):
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    @property
+    def ai_configured(self) -> bool:
+        key = self.openrouter_api_key.strip()
+        return bool(key and key not in {"sk-or-your-key-here", "your-openrouter-key-here"})
 
 
 settings = Settings()

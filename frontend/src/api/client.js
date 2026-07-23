@@ -158,6 +158,31 @@ export async function fetchAdvisories(region) {
   return apiFetch(`/api/advisories${q}`)
 }
 
+export async function fetchActiveCampaigns(valley) {
+  const q = valley ? `?valley=${encodeURIComponent(valley)}` : ''
+  return apiFetch(`/api/campaigns/active${q}`)
+}
+
+export async function fetchAdminCampaigns() {
+  return apiFetch('/api/admin/campaigns')
+}
+
+export async function upsertAdminCampaign(payload) {
+  return apiFetch('/api/admin/campaigns', { method: 'PUT', body: JSON.stringify(payload) })
+}
+
+export async function fetchVendorOnboarding() {
+  return apiFetch('/api/vendor/onboarding')
+}
+
+export async function updateVendorProfile(payload) {
+  return apiFetch('/api/vendor/profile', { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export async function createVendorGuide(payload) {
+  return apiFetch('/api/vendor/guides', { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export async function fetchAdminAdvisories() {
   return apiFetch('/api/admin/advisories')
 }

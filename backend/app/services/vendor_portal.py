@@ -6,17 +6,23 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.db.models import FleetDriver, Property, Room, RoomBlock, RouteTariff, SeasonPricing, User, Vehicle, Vendor
+from app.db.models import FleetDriver, Guide, Property, Room, RoomBlock, RouteTariff, SeasonPricing, User, Vehicle, Vendor
 from app.models.vendor_schemas import (
     CalendarDayOut,
     FleetDriverOut,
+    OnboardingStatusOut,
+    OnboardingStepOut,
     RouteTariffOut,
     SeasonPricingPreview,
     SeasonRuleOut,
     VendorDashboardOut,
+    VendorGuideCreate,
+    VendorGuideOut,
+    VendorProfileUpdate,
     VendorRoomOut,
     VendorVehicleOut,
 )
+from app.services.kyc import get_kyc
 from app.services.pricing import (
     date_range,
     effective_room_price,
@@ -81,6 +87,99 @@ def _driver_out(d: FleetDriver) -> FleetDriverOut:
     )
 
 
+def _inventory_complete(db: Session, vendor: Vendor) -> bool:
+    if vendor.vendor_type == "hotel":
+        return len(vendor_rooms(db, vendor.id)) > 0
+    if vendor.vendor_type == "transport":
+        return db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).count() > 0
+    if vendor.vendor_type == "guide":
+        return db.query(Guide).filter(Guide.vendor_id == vendor.id).count() > 0
+    rooms = len(vendor_rooms(db, vendor.id))
+    vehicles = db.query(Vehicle).filter(Vehicle.vendor_id == vendor.id).count()
+    guides = db.query(Guide).filter(Guide.vendor_id == vendor.id).count()
+    return rooms > 0 or vehicles > 0 or guides > 0
+
+
+def onboarding_status(db: Session, vendor: Vendor, user: User) -> OnboardingStatusOut:
+    kyc = get_kyc(db, vendor.id)
+    profile_complete = bool(vendor.description and len(vendor.description) >= 10 and user.phone)
+    inventory_complete = _inventory_complete(db, vendor)
+    financial_complete = bool(
+        kyc and kyc.account_title and kyc.account_number and kyc.payout_method and kyc.cnic_name
+    )
+    kyc_complete = vendor.kyc_status in ("submitted", "approved")
+
+    steps = [
+        OnboardingStepOut(
+            id="profile",
+            title="Profile setup",
+            complete=profile_complete,
+            description="Business description and contact phone for tourists.",
+        ),
+        OnboardingStepOut(
+            id="inventory",
+            title="Asset inventory",
+            complete=inventory_complete,
+            description="At least one room, vehicle, or guide listing.",
+        ),
+        OnboardingStepOut(
+            id="financial",
+            title="Financial setup",
+            complete=financial_complete,
+            description="Payout wallet details for JazzCash, EasyPaisa, or bank.",
+        ),
+        OnboardingStepOut(
+            id="kyc",
+            title="Document KYC",
+            complete=kyc_complete,
+            description="CNIC and compliance documents submitted for review.",
+        ),
+    ]
+    current = next((s.id for s in steps if not s.complete), "done")
+    return OnboardingStatusOut(
+        steps=steps,
+        current_step=current,
+        complete=all(s.complete for s in steps),
+        vendor_type=vendor.vendor_type,
+    )
+
+
+def update_vendor_profile(db: Session, vendor: Vendor, user: User, data: VendorProfileUpdate) -> Vendor:
+    if data.phone is not None:
+        user.phone = data.phone.strip()
+    if data.description is not None:
+        vendor.description = data.description.strip()
+    if data.solo_safe is not None:
+        vendor.solo_safe = data.solo_safe
+    if data.women_friendly is not None:
+        vendor.women_friendly = data.women_friendly
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def create_guide(db: Session, vendor: Vendor, data: VendorGuideCreate) -> VendorGuideOut:
+    import json
+
+    row = Guide(
+        vendor_id=vendor.id,
+        name=data.name,
+        specialty=data.specialty,
+        daily_rate=data.daily_rate,
+        languages_json=json.dumps(data.languages or []),
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return VendorGuideOut(
+        id=row.id,
+        name=row.name,
+        specialty=row.specialty,
+        daily_rate=row.daily_rate,
+        languages=row.get_languages(),
+    )
+
+
 def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
     ensure_default_tariffs(db, vendor)
     rooms = vendor_rooms(db, vendor.id)
@@ -91,6 +190,9 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
     blocked = 0
     if room_ids:
         blocked = db.query(RoomBlock).filter(RoomBlock.room_id.in_(room_ids)).count()
+
+    user = db.query(User).filter(User.id == vendor.user_id).first()
+    onboarding = onboarding_status(db, vendor, user) if user else None
 
     return VendorDashboardOut(
         business_name=vendor.business_name,
@@ -104,6 +206,7 @@ def dashboard_summary(db: Session, vendor: Vendor) -> VendorDashboardOut:
         blocked_nights=blocked,
         featured=vendor.is_featured,
         featured_until=vendor.featured_until,
+        onboarding_complete=onboarding.complete if onboarding else True,
     )
 
 

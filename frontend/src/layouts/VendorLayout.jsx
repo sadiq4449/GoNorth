@@ -8,12 +8,13 @@ export default function VendorLayout() {
           <NavLink to="/vendor" className="brand">
             <span className="brand-mark vendor-mark">VN</span>
             <span>
-              <strong>BaltiTour Vendor</strong>
+              <strong>GoNorth Vendor</strong>
               <small>Manage your listings</small>
             </span>
           </NavLink>
           <nav className="main-nav">
             <NavLink to="/vendor" end>Dashboard</NavLink>
+            <NavLink to="/vendor/onboarding">Setup</NavLink>
             <NavLink to="/vendor/inventory">Inventory</NavLink>
             <NavLink to="/vendor/tariffs">Tariffs</NavLink>
             <NavLink to="/vendor/trips">Trips</NavLink>

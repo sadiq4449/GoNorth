@@ -1,4 +1,4 @@
-const CACHE = 'baltitour-shell-v1'
+const CACHE = 'gonorth-shell-v2'
 const SHELL = ['/', '/index.html', '/favicon.svg', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {
