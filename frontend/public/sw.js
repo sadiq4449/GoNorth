@@ -1,4 +1,4 @@
-const CACHE = 'gonorth-shell-v5'
+const CACHE = 'gonorth-shell-v6'
 const SHELL = ['/', '/index.html', '/assets/gonorth-logo.png', '/manifest.webmanifest']
 
 self.addEventListener('install', (event) => {

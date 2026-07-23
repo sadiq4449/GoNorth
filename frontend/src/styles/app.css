@@ -49,7 +49,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 64px;
+  min-height: 88px;
+  padding: 10px 0;
   position: relative;
   flex-wrap: wrap;
 }
@@ -144,7 +145,7 @@ body {
 }
 
 .portal-brand-logo {
-  height: 44px;
+  height: 76px;
   width: auto;
   max-width: 100%;
   object-fit: contain;
@@ -1775,12 +1776,13 @@ body {
 
 .brand--logo {
   flex-shrink: 0;
+  line-height: 0;
 }
 
 .brand-logo {
-  height: 44px;
+  height: 76px;
   width: auto;
-  max-width: min(240px, 52vw);
+  max-width: min(220px, 46vw);
   object-fit: contain;
   display: block;
 }
@@ -1792,11 +1794,11 @@ body {
 }
 
 .footer-logo {
-  height: 32px;
+  height: 56px;
   width: auto;
-  max-width: 200px;
+  max-width: 220px;
   object-fit: contain;
-  opacity: 0.92;
+  opacity: 1;
 }
 
 .brand-mark {
@@ -2330,13 +2332,18 @@ body {
   }
 
   .brand-logo {
-    height: 36px;
-    max-width: 170px;
+    height: 60px;
+    max-width: min(180px, 42vw);
+  }
+
+  .site-header .header-inner {
+    min-height: 76px;
+    padding: 8px 0;
   }
 
   .footer-logo {
-    height: 28px;
-    max-width: 160px;
+    height: 48px;
+    max-width: 180px;
   }
 
   .header-portal-link {
