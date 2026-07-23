@@ -1,5 +1,36 @@
 import { Link } from 'react-router-dom'
 import { DESTINATIONS } from '../lib/destinations'
+import { resolveDestinationImageUrl } from '../lib/destinationImages'
+
+function DestinationHero({ destination, priority = false }) {
+  const url = resolveDestinationImageUrl(destination)
+
+  if (url) {
+    return (
+      <div className="destination-card-hero destination-card-hero--photo">
+        <img
+          src={url}
+          alt={`${destination.name}, Gilgit-Baltistan`}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="destination-card-hero destination-card-hero--gradient"
+      style={{
+        background: `linear-gradient(135deg, ${destination.colors[0]}, ${destination.colors[1] || destination.colors[0]})`,
+      }}
+      role="img"
+      aria-label={`${destination.name} — photo coming soon`}
+    />
+  )
+}
 
 export default function DestinationsPage() {
   return (
@@ -13,12 +44,9 @@ export default function DestinationsPage() {
       </header>
 
       <div className="destinations-grid">
-        {DESTINATIONS.map((d) => (
+        {DESTINATIONS.map((d, index) => (
           <article key={d.id} className="destination-card">
-            <div
-              className="destination-card-hero"
-              style={{ background: `linear-gradient(135deg, ${d.colors[0]}, ${d.colors[1] || d.colors[0]})` }}
-            />
+            <DestinationHero destination={d} priority={index < 3} />
             <div className="destination-card-body">
               <h2>{d.name}</h2>
               <p className="destination-tagline">{d.tagline}</p>
