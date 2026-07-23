@@ -40,6 +40,11 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
     seed()
+    db = SessionLocal()
+    try:
+        backfill_vendor_slugs(db)
+    finally:
+        db.close()
     yield
 
 

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.auth.security import hash_password
 from app.db.models import Guide, Property, Room, SessionLocal, User, Vehicle, Vendor, init_db
+from app.services.vendor_slugs import ensure_unique_slug
 
 
 def seed():
@@ -180,6 +181,7 @@ def seed():
         vendor = Vendor(
             user_id=user.id,
             business_name=item["business"],
+            slug=ensure_unique_slug(db, item["business"]),
             vendor_type="hotel",
             valley=item["valley"],
             status="approved",
@@ -211,6 +213,7 @@ def seed():
         vendor = Vendor(
             user_id=user.id,
             business_name=item["business"],
+            slug=ensure_unique_slug(db, item["business"]),
             vendor_type="transport",
             valley=item["valley"],
             status="approved",
@@ -247,6 +250,7 @@ def seed():
         vendor = Vendor(
             user_id=user.id,
             business_name=item["business"],
+            slug=ensure_unique_slug(db, item["business"]),
             vendor_type="guide",
             valley=item["valley"],
             status="approved",

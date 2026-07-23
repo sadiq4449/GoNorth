@@ -25,6 +25,11 @@ def ensure_unique_slug(db: Session, base: str, exclude_id: str | None = None) ->
 
 
 def backfill_vendor_slugs(db: Session) -> None:
-    for vendor in db.query(Vendor).filter((Vendor.slug == "") | (Vendor.slug.is_(None))).all():
-        vendor.slug = ensure_unique_slug(db, vendor.business_name, vendor.id)
+    seen: set[str] = set()
+    for vendor in db.query(Vendor).order_by(Vendor.created_at).all():
+        slug = (vendor.slug or "").strip()
+        if not slug or slug in seen:
+            vendor.slug = ensure_unique_slug(db, vendor.business_name, vendor.id)
+            slug = vendor.slug
+        seen.add(slug)
     db.commit()
