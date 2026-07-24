@@ -5,6 +5,7 @@ import { StayCard } from '../components/StayCard'
 import { RideCard } from '../components/RideCard'
 import { GuideCard } from '../components/GuideCard'
 import { ExperienceCard } from '../components/ExperienceCard'
+import AppIcon from '../components/AppIcon'
 
 export default function VendorStorefrontPage() {
   const { slug } = useParams()
@@ -35,12 +36,23 @@ export default function VendorStorefrontPage() {
       <Link to="/explore" className="back-link">← Explore marketplace</Link>
 
       <header className="storefront-hero">
-        <div>
-          <span className="listing-badge">{store.vendor_type.replace('_', ' ')}</span>
-          {store.featured && <span className="listing-badge featured">Featured</span>}
-          {store.gold_badge && <span className="listing-badge">Gold</span>}
-          <h1>{store.business_name}</h1>
-          <p className="plan-lead">{store.description || `Verified ${store.vendor_type} in ${store.valley}.`}</p>
+        <div className="storefront-hero-main">
+          <div className="storefront-badge-row">
+            <span className="listing-badge">{store.vendor_type.replace('_', ' ')}</span>
+            {store.featured && <span className="listing-badge featured">Featured</span>}
+            {store.gold_badge && <span className="listing-badge gold">Gold</span>}
+          </div>
+          <h1 className="storefront-title">
+            <span>{store.business_name}</span>
+            <span
+              className="verified-badge verified-badge--inline"
+              title={store.physically_vetted ? 'Physically vetted partner' : 'Approved marketplace partner'}
+            >
+              <AppIcon name="check" size={12} strokeWidth={2.5} />
+              Verified
+            </span>
+          </h1>
+          <p className="plan-lead">{store.description || `Verified ${store.vendor_type.replace('_', ' ')} in ${store.valley}.`}</p>
           <p className="listing-meta">
             {store.valley}
             {store.avg_rating && ` · ★ ${store.avg_rating} (${store.review_count} reviews)`}

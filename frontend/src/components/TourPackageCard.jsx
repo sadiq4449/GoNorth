@@ -72,7 +72,15 @@ export default function TourPackageCard({ pkg, booking = false, onBook, imagePri
       </div>
 
       <div className="tour-package-body">
-        {pkg.operator_name && <span className="tour-package-operator">{pkg.operator_name}</span>}
+        {pkg.operator_name && (
+          <div className="tour-package-operator-row">
+            <span className="tour-package-operator">{pkg.operator_name}</span>
+            <span className="verified-badge verified-badge--compact">
+              <AppIcon name="check" size={11} strokeWidth={2.5} />
+              Verified
+            </span>
+          </div>
+        )}
         <h3 className="tour-package-title">
           {pkg.slug ? (
             <Link to={`/packages/${pkg.slug}`}>{pkg.title}</Link>

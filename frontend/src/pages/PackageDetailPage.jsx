@@ -117,7 +117,13 @@ export default function PackageDetailPage() {
           </div>
 
           <header className="package-detail-header">
-            <span className="meta">{pkg.operator_name} · {pkg.valley}</span>
+            <div className="package-detail-operator">
+              <span className="meta">{pkg.operator_name} · {pkg.valley}</span>
+              <span className="verified-badge">
+                <AppIcon name="check" size={12} strokeWidth={2.5} />
+                Verified
+              </span>
+            </div>
             <h1>{pkg.title}</h1>
             <div className="package-detail-meta">
               <span><AppIcon name="star" size={14} className="tour-package-star" /> {pkg.rating.toFixed(1)}</span>

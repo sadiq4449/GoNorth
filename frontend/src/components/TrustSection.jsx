@@ -30,8 +30,10 @@ export default function TrustSection({ stats }) {
       </div>
       <div className="trust-cta">
         <p>Still deciding where to go?</p>
-        <Link to="/forum" className="btn-secondary-link">Ask a traveler →</Link>
-        <Link to="/packages" className="btn-secondary-link">Browse packages →</Link>
+        <div className="trust-cta-actions">
+          <Link to="/forum" className="btn-secondary-link">Ask a traveler →</Link>
+          <Link to="/packages" className="btn-secondary-link">Browse packages →</Link>
+        </div>
       </div>
     </section>
   )
