@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminPayouts, runAdminPayouts } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 export default function AdminPayoutsPage() {
   const [batches, setBatches] = useState([])
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   function load() {
-    fetchAdminPayouts().then(setBatches).catch(() => {})
+    loadAdminData(fetchAdminPayouts, setBatches, setError)
   }
 
   useEffect(() => {
@@ -17,15 +19,17 @@ export default function AdminPayoutsPage() {
 
   async function runBatch() {
     setLoading(true)
-    try {
-      const batch = await runAdminPayouts()
-      setMsg(`Batch sent — Rs. ${batch.total_amount.toLocaleString()} to ${batch.vendor_count} vendors`)
-      load()
-    } catch (e) {
-      setMsg(e.message)
-    } finally {
-      setLoading(false)
-    }
+    await runAdminMutation({
+      action: runAdminPayouts,
+      setError,
+      setMsg,
+      successMsg: null,
+      onSuccess: (batch) => {
+        setMsg(`Batch sent — Rs. ${batch.total_amount.toLocaleString()} to ${batch.vendor_count} vendors`)
+        load()
+      },
+    })
+    setLoading(false)
   }
 
   return (
@@ -34,6 +38,7 @@ export default function AdminPayoutsPage() {
       <h1>Vendor payout batch</h1>
       <p className="plan-lead">Disburse wallet balances via JazzCash/EasyPaisa or IBFT (sandbox refs in dev).</p>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
       <button type="button" className="btn-primary btn-enabled" onClick={runBatch} disabled={loading}>
         {loading ? 'Running…' : 'Run payout batch'}
       </button>

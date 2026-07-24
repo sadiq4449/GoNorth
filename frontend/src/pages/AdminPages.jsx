@@ -7,23 +7,23 @@ import {
   fetchAllVendors,
   updateVendorStatus,
 } from '../api/client'
-import { useAuth } from '../context/AuthContext'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 export function AdminOverviewPage() {
-  const { user, logout } = useAuth()
   const [reports, setReports] = useState(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    fetchAdminReports().then(setReports).catch(() => {})
+    loadAdminData(fetchAdminReports, setReports, setError)
   }, [])
 
   return (
     <div className="container admin-page">
       <div className="page-toolbar">
         <h1>Super Admin — Platform Overview</h1>
-        <button type="button" className="btn-secondary admin-outline" onClick={logout}>Sign out</button>
       </div>
-      <p className="admin-lead">Signed in as {user?.email}. Control Tower at <code>/admin</code>.</p>
+      <p className="admin-lead">Control Tower at <code>/admin</code>.</p>
+      {error && <p className="form-error">{error}</p>}
 
       {reports && (
         <div className="admin-kpi-row">
@@ -60,32 +60,41 @@ export function AdminVendorsPage() {
   const [tab, setTab] = useState('vendors')
   const [filter, setFilter] = useState('')
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   function load() {
-    fetchAllVendors(filter || undefined).then(setVendors)
-    fetchAdminSmsLeads().then(setSmsLeads).catch(() => {})
+    setError('')
+    Promise.all([
+      fetchAllVendors(filter || undefined),
+      fetchAdminSmsLeads(),
+    ])
+      .then(([vendorRows, leadRows]) => {
+        setVendors(vendorRows)
+        setSmsLeads(leadRows)
+      })
+      .catch((e) => setError(e.message || 'Failed to load vendors'))
   }
 
   useEffect(() => { load() }, [filter])
 
   async function setStatus(id, status) {
-    try {
-      await updateVendorStatus(id, status)
-      setMsg(`Vendor ${status}`)
-      load()
-    } catch (e) {
-      setMsg(e.message)
-    }
+    await runAdminMutation({
+      action: () => updateVendorStatus(id, status),
+      setError,
+      setMsg,
+      successMsg: `Vendor ${status}`,
+      onSuccess: load,
+    })
   }
 
   async function toggleVet(v, vetted) {
-    try {
-      await adminPhysicalVet(v.id, vetted)
-      setMsg(vetted ? 'Physical vet + gold badge granted' : 'Physical vet removed')
-      load()
-    } catch (e) {
-      setMsg(e.message)
-    }
+    await runAdminMutation({
+      action: () => adminPhysicalVet(v.id, vetted),
+      setError,
+      setMsg,
+      successMsg: vetted ? 'Physical vet + gold badge granted' : 'Physical vet removed',
+      onSuccess: load,
+    })
   }
 
   return (
@@ -104,7 +113,8 @@ export function AdminVendorsPage() {
             <button type="button" className={filter === 'pending' ? 'active' : ''} onClick={() => setFilter('pending')}>Pending</button>
             <button type="button" className={filter === 'approved' ? 'active' : ''} onClick={() => setFilter('approved')}>Approved</button>
           </div>
-          {msg && <p className="portal-note">{msg}</p>}
+          {msg && <p className="toast-info">{msg}</p>}
+          {error && <p className="form-error">{error}</p>}
           <div className="vendor-admin-list">
             {vendors.map((v) => (
               <div key={v.id} className="vendor-admin-card">

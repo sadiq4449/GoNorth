@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminDisputes, resolveAdminDispute } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
+
+const ACTION_LABELS = { release: 'released', dismiss: 'dismissed' }
 
 export default function AdminDisputesPage() {
   const [disputes, setDisputes] = useState([])
   const [filter, setFilter] = useState('open')
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   function load() {
-    fetchAdminDisputes(filter || undefined).then(setDisputes).catch(() => {})
+    loadAdminData(() => fetchAdminDisputes(filter || undefined), setDisputes, setError)
   }
 
   useEffect(() => {
@@ -16,9 +20,13 @@ export default function AdminDisputesPage() {
   }, [filter])
 
   async function resolve(id, action) {
-    await resolveAdminDispute(id, action)
-    setMsg(`Dispute ${action}d`)
-    load()
+    await runAdminMutation({
+      action: () => resolveAdminDispute(id, action),
+      setError,
+      setMsg,
+      successMsg: `Dispute ${ACTION_LABELS[action]}`,
+      onSuccess: load,
+    })
   }
 
   return (
@@ -27,6 +35,7 @@ export default function AdminDisputesPage() {
       <h1>Dispute center</h1>
       <p className="plan-lead">Open disputes hold escrow until resolved. Release to pay vendor or dismiss.</p>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
 
       <div className="filter-row">
         {['open', 'resolved', 'dismissed', ''].map((s) => (

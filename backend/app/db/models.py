@@ -451,6 +451,20 @@ class PricingOverride(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
+class PlatformConfig(Base):
+    """Single-row admin-editable platform flags persisted across restarts."""
+
+    __tablename__ = "platform_config"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default="default")
+    advisory_live_weather: Mapped[bool] = mapped_column(Boolean, default=True)
+    advisory_ndma_sync: Mapped[bool] = mapped_column(Boolean, default=True)
+    advisory_seasonal_rules: Mapped[bool] = mapped_column(Boolean, default=True)
+    allow_direct_booking: Mapped[bool] = mapped_column(Boolean, default=True)
+    usd_pkr_rate: Mapped[float] = mapped_column(default=280.0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
 class AuditLog(Base):
     __tablename__ = "audit_logs"
 

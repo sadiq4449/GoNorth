@@ -12,6 +12,7 @@ import {
   upsertAdminAdvisory,
   fetchAdvisories,
 } from '../api/client'
+import { loadAdminData, resolveDocUrl, runAdminMutation } from '../lib/adminPage'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -20,15 +21,26 @@ export default function AdminEscrowPage() {
   const [kycQueue, setKycQueue] = useState([])
   const [filter, setFilter] = useState('')
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
   const [advisories, setAdvisories] = useState([])
   const [liveFeed, setLiveFeed] = useState([])
   const [advForm, setAdvForm] = useState({ region: 'Skardu', message: '', severity: 'info' })
 
   function load() {
-    fetchAdminEscrow(filter || undefined).then(setEscrows).catch(() => {})
-    fetchAdminKyc('submitted').then(setKycQueue).catch(() => {})
-    fetchAdminAdvisories().then(setAdvisories).catch(() => {})
-    fetchAdvisories().then(setLiveFeed).catch(() => {})
+    setError('')
+    Promise.all([
+      fetchAdminEscrow(filter || undefined),
+      fetchAdminKyc('submitted'),
+      fetchAdminAdvisories(),
+      fetchAdvisories(),
+    ])
+      .then(([escrowRows, kycRows, advisoryRows, liveRows]) => {
+        setEscrows(escrowRows)
+        setKycQueue(kycRows)
+        setAdvisories(advisoryRows)
+        setLiveFeed(liveRows)
+      })
+      .catch((e) => setError(e.message || 'Failed to load escrow data'))
   }
 
   useEffect(() => {
@@ -36,22 +48,76 @@ export default function AdminEscrowPage() {
   }, [filter])
 
   async function processDue() {
-    const res = await processDueEscrow()
-    setMsg(`Processed ${res.processed} escrow releases`)
-    load()
+    await runAdminMutation({
+      action: async () => {
+        const res = await processDueEscrow()
+        return res
+      },
+      setError,
+      setMsg,
+      successMsg: null,
+      onSuccess: (res) => {
+        setMsg(`Processed ${res.processed} escrow releases`)
+        load()
+      },
+    })
   }
 
   async function review(kycId, approved) {
-    await reviewAdminKyc(kycId, { approved, notes: approved ? 'Approved' : 'Rejected' })
-    setMsg(approved ? 'KYC approved' : 'KYC rejected')
-    load()
+    await runAdminMutation({
+      action: () => reviewAdminKyc(kycId, { approved, notes: approved ? 'Approved' : 'Rejected' }),
+      setError,
+      setMsg,
+      successMsg: approved ? 'KYC approved' : 'KYC rejected',
+      onSuccess: load,
+    })
   }
 
   async function saveAdvisory(e) {
     e.preventDefault()
-    await upsertAdminAdvisory({ ...advForm, active: true, admin_override: true })
-    setMsg('Advisory updated')
-    load()
+    await runAdminMutation({
+      action: () => upsertAdminAdvisory({ ...advForm, active: true, admin_override: true }),
+      setError,
+      setMsg,
+      successMsg: 'Advisory updated',
+      onSuccess: load,
+    })
+  }
+
+  async function handleDispute(escrowId) {
+    await runAdminMutation({
+      action: () => disputeEscrow(escrowId),
+      setError,
+      setMsg,
+      successMsg: 'Escrow marked as disputed',
+      onSuccess: load,
+    })
+  }
+
+  async function handleResolve(escrowId, action) {
+    const label = action === 'release' ? 'Escrow scheduled for release' : 'Escrow returned to held'
+    await runAdminMutation({
+      action: () => resolveEscrow(escrowId, action),
+      setError,
+      setMsg,
+      successMsg: label,
+      onSuccess: load,
+    })
+  }
+
+  async function handleForcePayout(escrow) {
+    let overrideGeofence = false
+    if (escrow.geofence_flag) {
+      if (!window.confirm('Geofence flag is set. Override and pay out early?')) return
+      overrideGeofence = true
+    }
+    await runAdminMutation({
+      action: () => forceEscrowPayout(escrow.id, { overrideGeofence }),
+      setError,
+      setMsg,
+      successMsg: 'Escrow paid out',
+      onSuccess: load,
+    })
   }
 
   return (
@@ -59,6 +125,7 @@ export default function AdminEscrowPage() {
       <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Escrow, KYC & advisories</h1>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
 
       <section className="vendor-panel">
         <h2>Road advisories (admin override)</h2>
@@ -117,9 +184,15 @@ export default function AdminEscrowPage() {
                 Title match: {k.title_match_ok ? '✓' : '✗'} · Penny: {k.penny_verified ? '✓' : '✗'}
               </p>
               <div className="kyc-docs">
-                {k.cnic_front_url && <a href={`${API_BASE}${k.cnic_front_url}`} target="_blank" rel="noreferrer">CNIC front</a>}
-                {k.cnic_back_url && <a href={`${API_BASE}${k.cnic_back_url}`} target="_blank" rel="noreferrer">CNIC back</a>}
-                {k.insurance_url && <a href={`${API_BASE}${k.insurance_url}`} target="_blank" rel="noreferrer">Insurance</a>}
+                {k.cnic_front_url && (
+                  <a href={resolveDocUrl(API_BASE, k.cnic_front_url)} target="_blank" rel="noreferrer">CNIC front</a>
+                )}
+                {k.cnic_back_url && (
+                  <a href={resolveDocUrl(API_BASE, k.cnic_back_url)} target="_blank" rel="noreferrer">CNIC back</a>
+                )}
+                {k.insurance_url && (
+                  <a href={resolveDocUrl(API_BASE, k.insurance_url)} target="_blank" rel="noreferrer">Insurance</a>
+                )}
               </div>
             </div>
             <div className="card-actions">
@@ -165,16 +238,16 @@ export default function AdminEscrowPage() {
                 <td>{e.geofence_flag ? '⚠ Geofence' : '—'}</td>
                 <td className="card-actions">
                   {e.status !== 'disputed' && e.status !== 'paid' && (
-                    <button type="button" className="danger" onClick={() => disputeEscrow(e.id).then(load)}>Dispute</button>
+                    <button type="button" className="danger" onClick={() => handleDispute(e.id)}>Dispute</button>
                   )}
                   {e.status === 'disputed' && (
                     <>
-                      <button type="button" onClick={() => resolveEscrow(e.id, 'release').then(load)}>Release</button>
-                      <button type="button" onClick={() => resolveEscrow(e.id, 'refund_hold').then(load)}>Hold</button>
+                      <button type="button" onClick={() => handleResolve(e.id, 'release')}>Release</button>
+                      <button type="button" onClick={() => handleResolve(e.id, 'refund_hold')}>Return to held</button>
                     </>
                   )}
                   {e.status === 'release_scheduled' && (
-                    <button type="button" onClick={() => forceEscrowPayout(e.id).then(load)}>Pay now</button>
+                    <button type="button" onClick={() => handleForcePayout(e)}>Pay now</button>
                   )}
                 </td>
               </tr>

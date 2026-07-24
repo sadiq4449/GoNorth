@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminBookings, updateAdminBooking, fetchAdminAuditLog } from '../api/client'
+import { runAdminMutation } from '../lib/adminPage'
 
 export default function AdminTripsPage() {
   const [bookings, setBookings] = useState([])
@@ -9,10 +10,16 @@ export default function AdminTripsPage() {
   const [selected, setSelected] = useState(null)
   const [edit, setEdit] = useState({ destination: '', nights: 5, guests: 2, status: 'confirmed', traveler_name: '' })
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   function load(q = search) {
-    fetchAdminBookings(q).then(setBookings).catch(() => {})
-    fetchAdminAuditLog().then(setAudit).catch(() => {})
+    setError('')
+    Promise.all([fetchAdminBookings(q), fetchAdminAuditLog()])
+      .then(([bookingRows, auditRows]) => {
+        setBookings(bookingRows)
+        setAudit(auditRows)
+      })
+      .catch((e) => setError(e.message || 'Failed to load bookings'))
   }
 
   useEffect(() => {
@@ -32,9 +39,13 @@ export default function AdminTripsPage() {
 
   async function saveEdit(e) {
     e.preventDefault()
-    await updateAdminBooking(selected, edit)
-    setMsg('Booking updated — logged to audit trail')
-    load()
+    await runAdminMutation({
+      action: () => updateAdminBooking(selected, edit),
+      setError,
+      setMsg,
+      successMsg: 'Booking updated — logged to audit trail',
+      onSuccess: () => load(),
+    })
   }
 
   return (
@@ -42,6 +53,7 @@ export default function AdminTripsPage() {
       <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Trip editor & audit log</h1>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
 
       <div className="panel-head-row">
         <input

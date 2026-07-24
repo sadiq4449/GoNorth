@@ -40,6 +40,9 @@ async def lifespan(app: FastAPI):
         ensure_featured_vendors(db)
         backfill_vehicle_categories(db)
         process_due_escrows(db)
+        from app.services.platform_settings import load_platform_config
+
+        load_platform_config(db)
     finally:
         db.close()
     seed()

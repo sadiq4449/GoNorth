@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchAdminCampaigns, upsertAdminCampaign } from '../api/client'
 
 const EMPTY = {
@@ -64,6 +65,7 @@ export default function AdminCampaignsPage() {
 
   return (
     <div className="container admin-page">
+      <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Promo campaigns</h1>
       <p className="plan-lead">
         Manage off-season and peak promotional banners shown on the homepage and trip builder.

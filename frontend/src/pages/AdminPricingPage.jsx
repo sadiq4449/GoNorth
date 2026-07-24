@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminPricing, upsertAdminPricing } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 const CATEGORIES = [
   { id: 'all', label: 'All listings' },
@@ -19,9 +20,10 @@ export default function AdminPricingPage() {
     active: true,
   })
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   function load() {
-    fetchAdminPricing().then(setRules).catch(() => {})
+    loadAdminData(fetchAdminPricing, setRules, setError)
   }
 
   useEffect(() => {
@@ -30,15 +32,19 @@ export default function AdminPricingPage() {
 
   async function handleSave(e) {
     e.preventDefault()
-    await upsertAdminPricing({
-      label: form.label,
-      category: form.category,
-      fixed_rate: form.fixed_rate ? Number(form.fixed_rate) : null,
-      surge_multiplier: Number(form.surge_multiplier),
-      active: form.active,
+    await runAdminMutation({
+      action: () => upsertAdminPricing({
+        label: form.label,
+        category: form.category,
+        fixed_rate: form.fixed_rate ? Number(form.fixed_rate) : null,
+        surge_multiplier: Number(form.surge_multiplier),
+        active: form.active,
+      }),
+      setError,
+      setMsg,
+      successMsg: 'Pricing rule saved',
+      onSuccess: load,
     })
-    setMsg('Pricing rule saved')
-    load()
   }
 
   return (
@@ -47,6 +53,7 @@ export default function AdminPricingPage() {
       <h1>Global pricing override</h1>
       <p className="plan-lead">Set fixed rates or surge multipliers across categories (e.g. cap all 4x4 at Rs. 18,000).</p>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
 
       <form className="vendor-panel vendor-form inline-grid" onSubmit={handleSave}>
         <label>Label<input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} required /></label>

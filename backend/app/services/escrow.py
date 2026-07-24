@@ -103,7 +103,9 @@ def dispute_escrow(db: Session, escrow_id: str, reason: str) -> EscrowEntry:
         raise ValueError("Escrow not found")
     if escrow.status == "paid":
         raise ValueError("Cannot dispute paid escrow")
-    escrow.status = "disputed"
+    if escrow.status not in ("held", "release_scheduled"):
+        raise ValueError(f"Cannot dispute escrow in status {escrow.status}")
+    _transition(escrow, "disputed")
     escrow.dispute_reason = reason
     db.commit()
     db.refresh(escrow)
@@ -175,3 +177,21 @@ def list_escrows(db: Session, status: str | None = None) -> list[EscrowEntry]:
     if status:
         q = q.filter(EscrowEntry.status == status)
     return q.limit(100).all()
+
+
+def force_payout_escrow(db: Session, escrow_id: str, *, override_geofence: bool = False) -> EscrowEntry:
+    escrow = db.get(EscrowEntry, escrow_id)
+    if not escrow:
+        raise ValueError("Escrow not found")
+    if escrow.status == "paid":
+        raise ValueError("Already paid")
+    if escrow.status not in ("held", "release_scheduled", "disputed"):
+        raise ValueError(f"Cannot force payout from status {escrow.status}")
+    if escrow.geofence_flag and not override_geofence:
+        raise ValueError("Geofence flag is set — confirm override to pay out early")
+
+    booking = db.get(Booking, escrow.booking_id)
+    if not booking:
+        raise ValueError("Booking not found")
+
+    return payout_escrow(db, escrow, booking)

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { login } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 
@@ -10,6 +10,8 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const { loginSuccess } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo = location.state?.from?.pathname || '/admin'
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -21,7 +23,7 @@ export default function AdminLoginPage() {
         throw new Error('Admin access only.')
       }
       loginSuccess(result.access_token, result.user)
-      navigate('/admin')
+      navigate(redirectTo, { replace: true })
     } catch (err) {
       setError(err.message)
     } finally {

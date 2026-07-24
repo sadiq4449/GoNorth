@@ -150,8 +150,9 @@ export async function resolveEscrow(escrowId, action) {
   return apiFetch(`/api/admin/escrow/${escrowId}/resolve?action=${action}`, { method: 'POST' })
 }
 
-export async function forceEscrowPayout(escrowId) {
-  return apiFetch(`/api/admin/escrow/${escrowId}/force-payout`, { method: 'POST' })
+export async function forceEscrowPayout(escrowId, { overrideGeofence = false } = {}) {
+  const params = overrideGeofence ? '?override_geofence=true' : ''
+  return apiFetch(`/api/admin/escrow/${escrowId}/force-payout${params}`, { method: 'POST' })
 }
 
 export async function fetchAdvisories(region) {

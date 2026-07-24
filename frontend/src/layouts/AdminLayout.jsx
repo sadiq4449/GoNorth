@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const ADMIN_NAV = [
   { to: '/admin', end: true, label: 'Overview' },
@@ -17,10 +18,18 @@ const ADMIN_NAV = [
 ]
 
 export default function AdminLayout() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleSignOut() {
+    logout()
+    navigate('/admin/login', { replace: true })
+  }
+
   return (
     <div className="app-shell admin-shell">
       <header className="site-header admin-header">
-        <div className="container header-inner">
+        <div className="container header-inner admin-header-inner">
           <NavLink to="/admin" className="brand">
             <span className="brand-mark admin-mark">SA</span>
             <span>
@@ -33,6 +42,9 @@ export default function AdminLayout() {
               <NavLink key={to} to={to} end={end}>{label}</NavLink>
             ))}
           </nav>
+          <button type="button" className="btn-secondary admin-outline admin-signout" onClick={handleSignOut}>
+            Sign out
+          </button>
         </div>
       </header>
       <main><Outlet /></main>

@@ -30,7 +30,8 @@ from app.models.booking_schemas import BookingOut
 from app.services.admin_tools import get_active_overrides, log_audit, upsert_override
 from app.services.disputes import list_disputes
 from app.services.payouts import list_payout_batches, run_vendor_payout_batch
-from app.services.escrow import dispute_escrow, list_escrows, payout_escrow, process_due_escrows, resolve_dispute
+from app.services.escrow import dispute_escrow, force_payout_escrow, list_escrows, payout_escrow, process_due_escrows, resolve_dispute
+from app.services.platform_settings import load_platform_config, update_platform_config
 from app.services.kyc import list_kyc_queue, review_kyc
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -77,7 +78,11 @@ def admin_reports(
 
 
 @router.get("/settings", response_model=PlatformSettingsOut)
-def admin_settings(user: Annotated[User, Depends(require_roles("admin"))]):
+def admin_settings(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    load_platform_config(db)
     return PlatformSettingsOut(
         ai_configured=settings.ai_configured,
         ai_model=settings.openrouter_model,
@@ -107,11 +112,11 @@ def admin_update_settings(
     ):
         val = getattr(data, field)
         if val is not None:
-            setattr(settings, field, val)
             changes[field] = val
     if changes:
+        update_platform_config(db, changes)
         log_audit(db, admin_user_id=user.id, action="settings_update", entity_type="platform", entity_id="settings", details=changes)
-    return admin_settings(user)
+    return admin_settings(db, user)
 
 
 @router.get("/packages", response_model=list[AdminPackageOut])
@@ -298,18 +303,20 @@ def force_payout(
     escrow_id: str,
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(require_roles("admin"))],
+    override_geofence: bool = Query(False),
 ):
-    from app.db.models import EscrowEntry
-
-    escrow = db.get(EscrowEntry, escrow_id)
-    if not escrow:
-        raise HTTPException(status_code=404, detail="Escrow not found")
-    booking = db.get(Booking, escrow.booking_id)
-    if not booking:
-        raise HTTPException(status_code=404, detail="Booking not found")
-    if escrow.status == "paid":
-        raise HTTPException(status_code=400, detail="Already paid")
-    escrow = payout_escrow(db, escrow, booking)
+    try:
+        escrow = force_payout_escrow(db, escrow_id, override_geofence=override_geofence)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="escrow_force_payout",
+        entity_type="escrow",
+        entity_id=escrow_id,
+        details={"override_geofence": override_geofence},
+    )
     return _escrow_out(db, escrow)
 
 
@@ -467,7 +474,7 @@ def resolve_dispute_ticket(
     user: Annotated[User, Depends(require_roles("admin"))],
     action: str = Query("release", pattern="^(release|dismiss)$"),
 ):
-    from app.db.models import DisputeTicket
+    from app.db.models import DisputeTicket, EscrowEntry
     from app.services.escrow import resolve_dispute as resolve_escrow
 
     ticket = db.get(DisputeTicket, ticket_id)
@@ -475,7 +482,12 @@ def resolve_dispute_ticket(
         raise HTTPException(status_code=404, detail="Dispute not found")
     if action == "release":
         resolve_escrow(db, ticket.escrow_id, "release")
-    ticket.status = "resolved" if action == "release" else "dismissed"
+        ticket.status = "resolved"
+    else:
+        escrow = db.get(EscrowEntry, ticket.escrow_id)
+        if escrow and escrow.status == "disputed":
+            resolve_escrow(db, ticket.escrow_id, "refund_hold")
+        ticket.status = "dismissed"
     db.commit()
     log_audit(db, admin_user_id=user.id, action=f"dispute_{action}", entity_type="dispute", entity_id=ticket_id, details={"reference": ticket.booking_reference})
     return {"ok": True}

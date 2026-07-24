@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminPackages, updateAdminPackage } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 export default function AdminApprovalsPage() {
   const [packages, setPackages] = useState([])
   const [filter, setFilter] = useState('all')
   const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   function load() {
-    fetchAdminPackages().then(setPackages).catch(() => {})
+    loadAdminData(fetchAdminPackages, setPackages, setError)
   }
 
   useEffect(() => {
@@ -16,9 +18,13 @@ export default function AdminApprovalsPage() {
   }, [])
 
   async function toggle(pkg, field, value) {
-    await updateAdminPackage(pkg.id, { [field]: value })
-    setMsg(`${pkg.title}: ${field} ${value ? 'enabled' : 'disabled'}`)
-    load()
+    await runAdminMutation({
+      action: () => updateAdminPackage(pkg.id, { [field]: value }),
+      setError,
+      setMsg,
+      successMsg: `${pkg.title}: ${field} ${value ? 'enabled' : 'disabled'}`,
+      onSuccess: load,
+    })
   }
 
   const visible = packages.filter((p) => {
@@ -35,6 +41,7 @@ export default function AdminApprovalsPage() {
         Approve tour packages for the marketplace. Hotels, transport, and guides inherit vendor approval from Vendors & KYC.
       </p>
       {msg && <p className="toast-info">{msg}</p>}
+      {error && <p className="form-error">{error}</p>}
 
       <div className="filter-row">
         <button type="button" className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All packages</button>

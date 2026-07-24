@@ -1735,6 +1735,25 @@ body {
   background: rgba(220, 38, 38, 0.12);
 }
 
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-header-inner .admin-nav {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.admin-signout {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .admin-page {
   padding: 32px 20px 64px;
   color: #e2e8f0;
