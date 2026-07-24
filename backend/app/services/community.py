@@ -81,6 +81,62 @@ def list_sms_leads(db: Session) -> list[SmsVendorLead]:
     return db.query(SmsVendorLead).order_by(SmsVendorLead.created_at.desc()).limit(100).all()
 
 
+def convert_sms_lead_to_vendor(
+    db: Session,
+    lead_id: str,
+    *,
+    email: str,
+    password: str,
+    full_name: str | None = None,
+    valley: str = "Skardu",
+) -> tuple[SmsVendorLead, Vendor]:
+    from app.auth.security import hash_password
+    from app.db.models import User
+    from app.services.vendor_slugs import ensure_unique_slug
+
+    lead = db.get(SmsVendorLead, lead_id)
+    if not lead:
+        raise ValueError("SMS lead not found")
+    if lead.status == "converted":
+        raise ValueError("Lead already converted to vendor")
+
+    vendor_type = lead.parsed_type if lead.parsed_type in ("hotel", "transport", "guide") else "hotel"
+    if db.query(User).filter(User.email == email.lower()).first():
+        raise ValueError("Email already registered")
+
+    user = User(
+        email=email.lower(),
+        password_hash=hash_password(password),
+        full_name=full_name or lead.business_name,
+        role="vendor",
+    )
+    db.add(user)
+    db.flush()
+    vendor = Vendor(
+        user_id=user.id,
+        business_name=lead.business_name,
+        slug=ensure_unique_slug(db, lead.business_name),
+        vendor_type=vendor_type,
+        valley=valley,
+        status="pending",
+        whatsapp=lead.phone,
+    )
+    db.add(vendor)
+    lead.status = "converted"
+    db.commit()
+    db.refresh(lead)
+    db.refresh(vendor)
+    return lead, vendor
+
+
+def delete_review(db: Session, review_id: str) -> None:
+    row = db.get(TripReview, review_id)
+    if not row:
+        raise ValueError("Review not found")
+    db.delete(row)
+    db.commit()
+
+
 def set_vendor_featured(db: Session, vendor, days: int = 14) -> None:
     vendor.featured_until = datetime.now(timezone.utc) + timedelta(days=days)
     db.commit()

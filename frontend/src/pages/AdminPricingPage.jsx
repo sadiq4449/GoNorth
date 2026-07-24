@@ -10,15 +10,17 @@ const CATEGORIES = [
   { id: 'vehicle_4x4', label: '4x4 vehicles only' },
 ]
 
+const DEFAULT_FORM = {
+  label: 'Global surge',
+  category: 'vehicle_4x4',
+  fixed_rate: '',
+  surge_multiplier: 1.0,
+  active: true,
+}
+
 export default function AdminPricingPage() {
   const [rules, setRules] = useState([])
-  const [form, setForm] = useState({
-    label: 'Global surge',
-    category: 'vehicle_4x4',
-    fixed_rate: '',
-    surge_multiplier: 1.0,
-    active: true,
-  })
+  const [form, setForm] = useState(DEFAULT_FORM)
   const [msg, setMsg] = useState('')
   const [error, setError] = useState('')
 
@@ -30,21 +32,40 @@ export default function AdminPricingPage() {
     load()
   }, [])
 
-  async function handleSave(e) {
-    e.preventDefault()
+  function editRule(rule) {
+    setForm({
+      label: rule.label,
+      category: rule.category,
+      fixed_rate: rule.fixed_rate ?? '',
+      surge_multiplier: rule.surge_multiplier,
+      active: rule.active,
+    })
+  }
+
+  async function saveRule(payload, successMsg) {
     await runAdminMutation({
       action: () => upsertAdminPricing({
-        label: form.label,
-        category: form.category,
-        fixed_rate: form.fixed_rate ? Number(form.fixed_rate) : null,
-        surge_multiplier: Number(form.surge_multiplier),
-        active: form.active,
+        label: payload.label,
+        category: payload.category,
+        fixed_rate: payload.fixed_rate ? Number(payload.fixed_rate) : null,
+        surge_multiplier: Number(payload.surge_multiplier),
+        active: payload.active,
       }),
       setError,
       setMsg,
-      successMsg: 'Pricing rule saved',
+      successMsg,
       onSuccess: load,
     })
+  }
+
+  async function handleSave(e) {
+    e.preventDefault()
+    await saveRule(form, form.active ? 'Pricing rule saved' : 'Pricing rule deactivated')
+  }
+
+  async function deactivateRule(rule) {
+    if (!window.confirm(`Deactivate pricing rule "${rule.label}"?`)) return
+    await saveRule({ ...rule, fixed_rate: rule.fixed_rate ?? '', active: false }, 'Pricing rule deactivated')
   }
 
   return (
@@ -71,10 +92,18 @@ export default function AdminPricingPage() {
       <ul className="pricing-rules-list">
         {rules.map((r) => (
           <li key={r.id}>
-            <strong>{r.label}</strong> · {r.category}
-            {r.fixed_rate && <> · fixed Rs. {r.fixed_rate.toLocaleString()}</>}
-            {r.surge_multiplier !== 1 && <> · ×{r.surge_multiplier}</>}
-            {!r.active && <span className="pool-pill">Inactive</span>}
+            <div>
+              <strong>{r.label}</strong> · {r.category}
+              {r.fixed_rate && <> · fixed Rs. {r.fixed_rate.toLocaleString()}</>}
+              {r.surge_multiplier !== 1 && <> · ×{r.surge_multiplier}</>}
+              {!r.active && <span className="pool-pill">Inactive</span>}
+            </div>
+            <div className="pricing-rule-actions">
+              <button type="button" className="btn-link-sm" onClick={() => editRule(r)}>Edit</button>
+              {r.active && (
+                <button type="button" className="btn-link-sm danger" onClick={() => deactivateRule(r)}>Deactivate</button>
+              )}
+            </div>
           </li>
         ))}
       </ul>

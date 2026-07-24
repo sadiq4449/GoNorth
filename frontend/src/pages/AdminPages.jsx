@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   adminPhysicalVet,
+  adminConvertSmsLead,
   fetchAdminKyc,
   fetchAdminReports,
   fetchAdminSmsLeads,
@@ -49,7 +50,7 @@ export function AdminOverviewPage() {
         <Link to="/admin/trips" className="admin-action-link">Booking oversight & trip editor →</Link>
         <Link to="/admin/payouts" className="admin-action-link">Payment & payout batches →</Link>
         <Link to="/admin/disputes" className="admin-action-link">Dispute center →</Link>
-        <Link to="/admin/fleet" className="admin-action-link">Fleet operations map →</Link>
+        <Link to="/admin/fleet" className="admin-action-link">Fleet map (demo telemetry) →</Link>
         <Link to="/admin/campaigns" className="admin-action-link">Content & promo campaigns →</Link>
         <Link to="/admin/settings" className="admin-action-link">Platform & AI settings →</Link>
         <Link to="/admin/security" className="admin-action-link">Security & audit logs →</Link>
@@ -62,6 +63,8 @@ export function AdminVendorsPage() {
   const [vendors, setVendors] = useState([])
   const [smsLeads, setSmsLeads] = useState([])
   const [kycQueue, setKycQueue] = useState([])
+  const [convertLead, setConvertLead] = useState(null)
+  const [convertForm, setConvertForm] = useState({ email: '', password: '', full_name: '', valley: 'Skardu' })
   const [tab, setTab] = useState('vendors')
   const [filter, setFilter] = useState('')
   const [msg, setMsg] = useState('')
@@ -111,6 +114,22 @@ export function AdminVendorsPage() {
       setMsg,
       successMsg: approved ? 'KYC approved' : 'KYC rejected',
       onSuccess: load,
+    })
+  }
+
+  async function convertLeadToVendor(e) {
+    e.preventDefault()
+    if (!convertLead) return
+    await runAdminMutation({
+      action: () => adminConvertSmsLead(convertLead.id, convertForm),
+      setError,
+      setMsg,
+      successMsg: `Vendor account created for ${convertLead.business_name}`,
+      onSuccess: () => {
+        setConvertLead(null)
+        setConvertForm({ email: '', password: '', full_name: '', valley: 'Skardu' })
+        load()
+      },
     })
   }
 
@@ -206,6 +225,23 @@ export function AdminVendorsPage() {
                 <strong>{l.business_name}</strong>
                 <span className="meta">{l.phone} · {l.parsed_type}</span>
                 <p className="meta">{l.raw_message}</p>
+                {convertLead?.id === l.id ? (
+                  <form className="sms-convert-form" onSubmit={convertLeadToVendor}>
+                    <label>Email<input type="email" value={convertForm.email} onChange={(e) => setConvertForm({ ...convertForm, email: e.target.value })} required /></label>
+                    <label>Password<input type="password" value={convertForm.password} onChange={(e) => setConvertForm({ ...convertForm, password: e.target.value })} required minLength={6} /></label>
+                    <label>Contact name<input value={convertForm.full_name} onChange={(e) => setConvertForm({ ...convertForm, full_name: e.target.value })} placeholder={l.business_name} /></label>
+                    <label>Valley<input value={convertForm.valley} onChange={(e) => setConvertForm({ ...convertForm, valley: e.target.value })} /></label>
+                    <button type="submit" className="btn-primary">Create vendor</button>
+                    <button type="button" className="btn-secondary" onClick={() => setConvertLead(null)}>Cancel</button>
+                  </form>
+                ) : l.status !== 'converted' ? (
+                  <button type="button" className="btn-secondary" onClick={() => {
+                    setConvertLead(l)
+                    setConvertForm({ email: '', password: '', full_name: l.business_name, valley: 'Skardu' })
+                  }}>
+                    Convert to vendor
+                  </button>
+                ) : null}
               </div>
               <span className="status-pill">{l.status}</span>
             </div>

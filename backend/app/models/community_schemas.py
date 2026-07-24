@@ -72,6 +72,13 @@ class SmsVendorLeadOut(BaseModel):
         from_attributes = True
 
 
+class SmsLeadConvertRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=6)
+    full_name: str | None = None
+    valley: str = "Skardu"
+
+
 class FleetTripOut(BaseModel):
     reference: str
     destination: str

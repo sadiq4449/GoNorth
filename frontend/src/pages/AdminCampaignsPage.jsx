@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminCampaigns, upsertAdminCampaign } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 const EMPTY = {
   id: '',
@@ -13,6 +14,29 @@ const EMPTY = {
   season: 'off-season',
   active: true,
   sort_order: 0,
+  starts_at: '',
+  ends_at: '',
+}
+
+function toLocalInput(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function toIsoOrNull(value) {
+  if (!value) return null
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString()
+}
+
+function formatSchedule(c) {
+  if (!c.starts_at && !c.ends_at) return 'Always on'
+  const start = c.starts_at ? new Date(c.starts_at).toLocaleDateString() : '—'
+  const end = c.ends_at ? new Date(c.ends_at).toLocaleDateString() : '—'
+  return `${start} → ${end}`
 }
 
 export default function AdminCampaignsPage() {
@@ -22,7 +46,7 @@ export default function AdminCampaignsPage() {
   const [msg, setMsg] = useState('')
 
   function load() {
-    fetchAdminCampaigns().then(setCampaigns).catch((e) => setError(e.message))
+    loadAdminData(fetchAdminCampaigns, setCampaigns, setError)
   }
 
   useEffect(() => {
@@ -41,33 +65,37 @@ export default function AdminCampaignsPage() {
       season: c.season || 'off-season',
       active: c.active,
       sort_order: c.sort_order || 0,
+      starts_at: toLocalInput(c.starts_at),
+      ends_at: toLocalInput(c.ends_at),
     })
   }
 
   async function save(e) {
     e.preventDefault()
-    setError('')
-    setMsg('')
-    try {
-      await upsertAdminCampaign({
+    await runAdminMutation({
+      action: () => upsertAdminCampaign({
         ...form,
         id: form.id || undefined,
         valley: form.valley || null,
         sort_order: Number(form.sort_order),
-      })
-      setMsg(form.id ? 'Campaign updated' : 'Campaign created')
-      setForm(EMPTY)
-      load()
-    } catch (err) {
-      setError(err.message)
-    }
+        starts_at: toIsoOrNull(form.starts_at),
+        ends_at: toIsoOrNull(form.ends_at),
+      }),
+      setError,
+      setMsg,
+      successMsg: form.id ? 'Campaign updated' : 'Campaign created',
+      onSuccess: () => {
+        setForm(EMPTY)
+        load()
+      },
+    })
   }
 
   return (
     <div className="container admin-page">
       <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Promo campaigns</h1>
-      <p className="plan-lead">
+      <p className="admin-lead">
         Manage off-season and peak promotional banners shown on the homepage and trip builder.
       </p>
 
@@ -89,6 +117,8 @@ export default function AdminCampaignsPage() {
             <option value="general">General</option>
           </select>
         </label>
+        <label>Starts at<input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></label>
+        <label>Ends at<input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} /></label>
         <label>Sort order<input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /></label>
         <label className="check-inline">
           <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
@@ -105,7 +135,7 @@ export default function AdminCampaignsPage() {
           <tr>
             <th>Title</th>
             <th>Valley</th>
-            <th>Discount</th>
+            <th>Schedule</th>
             <th>Season</th>
             <th>Status</th>
             <th />
@@ -116,7 +146,7 @@ export default function AdminCampaignsPage() {
             <tr key={c.id}>
               <td>{c.title}</td>
               <td>{c.valley || 'All'}</td>
-              <td>{c.discount_label || '—'}</td>
+              <td>{formatSchedule(c)}</td>
               <td>{c.season}</td>
               <td>{c.active ? 'Active' : 'Inactive'}</td>
               <td><button type="button" className="btn-link-sm" onClick={() => edit(c)}>Edit</button></td>

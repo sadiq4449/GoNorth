@@ -568,8 +568,28 @@ export async function adminHideRoom(roomId) {
   return apiFetch(`/api/admin/rooms/${roomId}`, { method: 'DELETE' })
 }
 
+export async function adminRestoreRoom(roomId) {
+  return apiFetch(`/api/admin/rooms/${roomId}/restore`, { method: 'POST' })
+}
+
 export async function adminHideVehicle(vehicleId) {
   return apiFetch(`/api/admin/vehicles/${vehicleId}`, { method: 'DELETE' })
+}
+
+export async function adminRestoreVehicle(vehicleId) {
+  return apiFetch(`/api/admin/vehicles/${vehicleId}/restore`, { method: 'POST' })
+}
+
+export async function adminConvertSmsLead(leadId, payload) {
+  return apiFetch(`/api/admin/sms-leads/${leadId}/convert`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function fetchAdminReviews() {
+  return apiFetch('/api/admin/reviews')
+}
+
+export async function deleteAdminReview(reviewId) {
+  return apiFetch(`/api/admin/reviews/${reviewId}`, { method: 'DELETE' })
 }
 
 export async function fetchVendorPendingTrips() {

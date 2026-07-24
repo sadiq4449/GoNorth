@@ -1,27 +1,48 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchAdminAuditLog, fetchAdminSosLog } from '../api/client'
+import { deleteAdminReview, fetchAdminAuditLog, fetchAdminReviews, fetchAdminSosLog } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 export default function AdminSecurityPage() {
   const [sos, setSos] = useState([])
   const [audit, setAudit] = useState([])
+  const [reviews, setReviews] = useState([])
   const [error, setError] = useState('')
+  const [msg, setMsg] = useState('')
+
+  function loadReviews() {
+    loadAdminData(fetchAdminReviews, setReviews, setError)
+  }
 
   useEffect(() => {
-    Promise.all([fetchAdminSosLog(), fetchAdminAuditLog()])
-      .then(([sosRows, auditRows]) => {
+    setError('')
+    Promise.all([fetchAdminSosLog(), fetchAdminAuditLog(), fetchAdminReviews()])
+      .then(([sosRows, auditRows, reviewRows]) => {
         setSos(sosRows)
         setAudit(auditRows)
+        setReviews(reviewRows)
       })
       .catch((e) => setError(e.message))
   }, [])
+
+  async function removeReview(review) {
+    if (!window.confirm(`Remove review by ${review.author_name}?`)) return
+    await runAdminMutation({
+      action: () => deleteAdminReview(review.id),
+      setError,
+      setMsg,
+      successMsg: 'Review removed',
+      onSuccess: loadReviews,
+    })
+  }
 
   return (
     <div className="container admin-page">
       <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Security & activity monitoring</h1>
-      <p className="admin-lead">SOS dispatch log and immutable admin audit trail.</p>
+      <p className="admin-lead">SOS dispatch log, admin audit trail, and trip review moderation.</p>
       {error && <p className="form-error">{error}</p>}
+      {msg && <p className="toast-info">{msg}</p>}
 
       <section className="vendor-panel">
         <h2>SOS alerts</h2>
@@ -36,6 +57,25 @@ export default function AdminSecurityPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="vendor-panel">
+        <h2>Trip review moderation</h2>
+        {!reviews.length && <p className="meta">No public trip reviews yet.</p>}
+        <div className="vendor-admin-list">
+          {reviews.map((review) => (
+            <div key={review.id} className="kyc-review-card">
+              <div>
+                <strong>{review.author_name}</strong> · {review.rating}/5 · {review.booking_reference}
+                <p>{review.body}</p>
+                <span className="meta">{new Date(review.created_at).toLocaleString()}</span>
+              </div>
+              <div className="card-actions">
+                <button type="button" className="danger" onClick={() => removeReview(review)}>Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="vendor-panel">

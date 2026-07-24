@@ -4,8 +4,11 @@ import {
   adminCreateVendor,
   adminHideRoom,
   adminHideVehicle,
+  adminRestoreRoom,
+  adminRestoreVehicle,
   fetchAdminRegistry,
 } from '../api/client'
+import { loadAdminData, runAdminMutation } from '../lib/adminPage'
 
 export default function AdminRegistryPage() {
   const [rows, setRows] = useState([])
@@ -13,7 +16,7 @@ export default function AdminRegistryPage() {
   const [error, setError] = useState('')
   const [form, setForm] = useState({
     email: '',
-    password: 'vendor123',
+    password: '',
     full_name: '',
     business_name: '',
     vendor_type: 'hotel',
@@ -21,7 +24,7 @@ export default function AdminRegistryPage() {
   })
 
   function load() {
-    fetchAdminRegistry().then(setRows).catch((e) => setError(e.message))
+    loadAdminData(fetchAdminRegistry, setRows, setError)
   }
 
   useEffect(() => {
@@ -29,34 +32,45 @@ export default function AdminRegistryPage() {
   }, [])
 
   async function hideAsset(row) {
-    try {
-      if (row.type === 'room') await adminHideRoom(row.id)
-      else await adminHideVehicle(row.id)
-      setMsg(`${row.label} hidden from tourist search`)
-      load()
-    } catch (e) {
-      setError(e.message)
-    }
+    if (!window.confirm(`Hide ${row.label} from tourist search?`)) return
+    await runAdminMutation({
+      action: () => (row.type === 'room' ? adminHideRoom(row.id) : adminHideVehicle(row.id)),
+      setError,
+      setMsg,
+      successMsg: `${row.label} hidden from tourist search`,
+      onSuccess: load,
+    })
+  }
+
+  async function restoreAsset(row) {
+    await runAdminMutation({
+      action: () => (row.type === 'room' ? adminRestoreRoom(row.id) : adminRestoreVehicle(row.id)),
+      setError,
+      setMsg,
+      successMsg: `${row.label} restored to live listings`,
+      onSuccess: load,
+    })
   }
 
   async function createVendor(e) {
     e.preventDefault()
-    setError('')
-    try {
-      await adminCreateVendor(form)
-      setMsg(`Vendor ${form.business_name} created`)
-      setForm({ ...form, email: '', full_name: '', business_name: '' })
-      load()
-    } catch (err) {
-      setError(err.message)
-    }
+    await runAdminMutation({
+      action: () => adminCreateVendor(form),
+      setError,
+      setMsg,
+      successMsg: `Vendor ${form.business_name} created`,
+      onSuccess: () => {
+        setForm({ ...form, email: '', password: '', full_name: '', business_name: '' })
+        load()
+      },
+    })
   }
 
   return (
     <div className="container admin-page">
       <Link to="/admin" className="back-link">← Overview</Link>
       <h1>Asset Registry</h1>
-      <p className="admin-lead">Create vendor accounts and hide rooms/vehicles from public listings.</p>
+      <p className="admin-lead">Create vendor accounts and hide or restore rooms/vehicles from public listings.</p>
       {msg && <p className="toast-info">{msg}</p>}
       {error && <p className="form-error">{error}</p>}
 
@@ -64,7 +78,7 @@ export default function AdminRegistryPage() {
         <h2>Add vendor</h2>
         <div className="form-grid">
           <label>Email<input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></label>
-          <label>Password<input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required /></label>
+          <label>Password<input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={6} /></label>
           <label>Contact name<input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required /></label>
           <label>Business<input value={form.business_name} onChange={(e) => setForm({ ...form, business_name: e.target.value })} required /></label>
           <label>
@@ -94,7 +108,9 @@ export default function AdminRegistryPage() {
                 <td>{r.valley}</td>
                 <td>{r.hidden ? 'Hidden' : 'Live'}</td>
                 <td>
-                  {!r.hidden && (
+                  {r.hidden ? (
+                    <button type="button" onClick={() => restoreAsset(r)}>Restore</button>
+                  ) : (
                     <button type="button" className="danger" onClick={() => hideAsset(r)}>Hide</button>
                   )}
                 </td>

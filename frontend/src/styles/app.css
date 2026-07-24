@@ -1754,6 +1754,135 @@ body {
   white-space: nowrap;
 }
 
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.admin-signout--mobile {
+  display: none;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.admin-nav-toggle {
+  border-color: #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.admin-nav-toggle:hover {
+  border-color: #dc2626;
+  background: #1e293b;
+}
+
+@media (max-width: 960px) {
+  .admin-header-inner {
+    flex-wrap: nowrap;
+    position: relative;
+  }
+
+  .admin-header-inner .admin-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    background: #070b14;
+    border-bottom: 1px solid #1e293b;
+    padding: 12px 16px 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    z-index: 50;
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+  }
+
+  .admin-header-inner .admin-nav.is-open {
+    display: flex;
+  }
+
+  .admin-header-inner .admin-nav a {
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .admin-signout--desktop {
+    display: none;
+  }
+
+  .admin-signout--mobile {
+    display: inline-flex;
+    margin-left: 0;
+  }
+
+  .admin-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 961px) {
+  .admin-nav-toggle {
+    display: none;
+  }
+}
+
+.admin-demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  color: #fde68a;
+  font-size: 0.9rem;
+}
+
+.admin-booking-summary {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid #334155;
+}
+
+.line-items-compact {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.pricing-rules-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pricing-rule-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.sms-convert-form {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.sms-convert-form button {
+  align-self: end;
+}
+
 .admin-page {
   padding: 32px 20px 64px;
   color: #e2e8f0;

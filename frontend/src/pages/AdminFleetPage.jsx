@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchAdminFleet } from '../api/client'
+import { loadAdminData } from '../lib/adminPage'
 
 export default function AdminFleetPage() {
   const [trips, setTrips] = useState([])
@@ -8,19 +9,23 @@ export default function AdminFleetPage() {
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
-    fetchAdminFleet()
-      .then((rows) => {
-        setTrips(rows)
-        setSelected(rows[0] || null)
-      })
-      .catch((e) => setError(e.message))
+    loadAdminData(fetchAdminFleet, (rows) => {
+      setTrips(rows)
+      setSelected(rows[0] || null)
+    }, setError)
   }, [])
 
   return (
     <div className="container admin-page">
       <Link to="/admin" className="back-link">← Overview</Link>
-      <h1>Live Fleet Map</h1>
-      <p className="admin-lead">Confirmed trips with last-known destination coordinates (demo telemetry).</p>
+      <h1>Fleet Map (Demo)</h1>
+      <div className="admin-demo-banner">
+        <span aria-hidden>⚠</span>
+        <span>
+          Demo telemetry only — coordinates are static destination pins, not live GPS.
+          Integrate a telematics provider for production fleet tracking.
+        </span>
+      </div>
       {error && <p className="form-error">{error}</p>}
 
       <div className="fleet-layout">
@@ -32,6 +37,7 @@ export default function AdminFleetPage() {
                 <strong>{selected.destination}</strong>
                 <p>{selected.traveler_name} · {selected.driver_name || 'Unassigned'}</p>
                 <p className="meta">Lat {selected.lat.toFixed(3)}, Lng {selected.lng.toFixed(3)}</p>
+                <p className="meta">Last ping: {selected.last_ping ? new Date(selected.last_ping).toLocaleString() : '—'}</p>
               </>
             ) : (
               <p>No active confirmed trips</p>

@@ -22,7 +22,8 @@ from app.models.admin_schemas import (
     PricingOverrideOut,
     PricingOverrideUpsert,
 )
-from app.models.community_schemas import AdminVendorCreate, FleetTripOut
+from app.models.community_schemas import AdminVendorCreate, FleetTripOut, SmsLeadConvertRequest
+from app.models.community_schemas import ReviewOut
 from app.models.payment_schemas import PayoutBatchOut
 from app.models.schemas import VendorOut
 from app.services.vendor_helpers import vendor_out
@@ -684,6 +685,97 @@ def admin_delete_vehicle(
     vehicle.hidden = True
     db.commit()
     log_audit(db, admin_user_id=user.id, action="vehicle_hide", entity_type="vehicle", entity_id=vehicle_id, details={})
+    return {"ok": True}
+
+
+@router.post("/rooms/{room_id}/restore")
+def admin_restore_room(
+    room_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.db.models import Room
+
+    room = db.get(Room, room_id)
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    room.hidden = False
+    db.commit()
+    log_audit(db, admin_user_id=user.id, action="room_restore", entity_type="room", entity_id=room_id, details={})
+    return {"ok": True}
+
+
+@router.post("/vehicles/{vehicle_id}/restore")
+def admin_restore_vehicle(
+    vehicle_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.db.models import Vehicle
+
+    vehicle = db.get(Vehicle, vehicle_id)
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    vehicle.hidden = False
+    db.commit()
+    log_audit(db, admin_user_id=user.id, action="vehicle_restore", entity_type="vehicle", entity_id=vehicle_id, details={})
+    return {"ok": True}
+
+
+@router.post("/sms-leads/{lead_id}/convert", response_model=VendorOut)
+def admin_convert_sms_lead(
+    lead_id: str,
+    data: SmsLeadConvertRequest,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.services.community import convert_sms_lead_to_vendor
+
+    try:
+        lead, vendor = convert_sms_lead_to_vendor(
+            db,
+            lead_id,
+            email=data.email,
+            password=data.password,
+            full_name=data.full_name,
+            valley=data.valley,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="sms_lead_convert",
+        entity_type="sms_lead",
+        entity_id=lead_id,
+        details={"vendor_id": vendor.id, "business_name": lead.business_name},
+    )
+    return vendor_out(vendor)
+
+
+@router.get("/reviews", response_model=list[ReviewOut])
+def admin_list_reviews(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.services.community import list_reviews
+
+    return list_reviews(db, limit=100)
+
+
+@router.delete("/reviews/{review_id}")
+def admin_delete_review(
+    review_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.services.community import delete_review
+
+    try:
+        delete_review(db, review_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    log_audit(db, admin_user_id=user.id, action="review_delete", entity_type="review", entity_id=review_id, details={})
     return {"ok": True}
 
 
