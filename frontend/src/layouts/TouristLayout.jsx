@@ -40,33 +40,48 @@ export default function TouristLayout() {
     <div className="app-shell">
       <header className="site-header">
         <div className="container header-inner">
-          <NavLink to="/" className="brand brand--logo">
+          <NavLink to="/" className="brand brand--logo" aria-label="GoNorth home">
             <BrandLogo />
           </NavLink>
-          <button
-            type="button"
-            className="nav-toggle"
-            aria-expanded={navOpen}
-            aria-label={navOpen ? 'Close menu' : 'Open menu'}
-            onClick={() => setNavOpen((open) => !open)}
+
+          <nav
+            className={`main-nav ${navOpen ? 'is-open' : ''}`}
+            aria-label="Main navigation"
+            id="site-main-nav"
           >
-            {navOpen ? '✕' : '☰'}
-          </button>
-          <nav className={`main-nav ${navOpen ? 'is-open' : ''}`} aria-label="Main">
-            {NAV_LINKS.map((link) => (
-              <NavLink key={link.to} to={link.to} end={link.end}>
-                {link.label}
+            <div className="main-nav-links">
+              {NAV_LINKS.map((link) => (
+                <NavLink key={link.to} to={link.to} end={link.end}>
+                  {link.label}
+                </NavLink>
+              ))}
+            </div>
+            <div className="main-nav-mobile-actions">
+              <SosButton />
+              <NavLink to="/vendor/login" className="header-portal-link">
+                Partner login
               </NavLink>
-            ))}
+            </div>
           </nav>
-          <div className="header-actions">
-            <SosButton />
-            <NavLink to="/vendor/login" className="header-portal-link">
-              Partner login
-            </NavLink>
-            <NavLink to="/admin/login" className="header-portal-link header-portal-link--admin">
-              Control Tower
-            </NavLink>
+
+          <div className="header-end">
+            <div className="header-actions">
+              <SosButton />
+              <NavLink to="/vendor/login" className="header-portal-link">
+                Partner login
+              </NavLink>
+            </div>
+
+            <button
+              type="button"
+              className="nav-toggle"
+              aria-expanded={navOpen}
+              aria-controls="site-main-nav"
+              aria-label={navOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setNavOpen((open) => !open)}
+            >
+              <span className="nav-toggle-icon" aria-hidden>{navOpen ? '✕' : '☰'}</span>
+            </button>
           </div>
         </div>
       </header>
@@ -80,7 +95,6 @@ export default function TouristLayout() {
             <span>© 2026 GoNorth — The Gilgit-Baltistan travel marketplace</span>
           </div>
           <NavLink to="/vendor/login" className="footer-portal-link">List your business</NavLink>
-          <NavLink to="/admin/login" className="footer-portal-link">Control Tower (Super Admin)</NavLink>
         </div>
       </footer>
     </div>

@@ -41,34 +41,53 @@ body {
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 50;
+  box-shadow: 0 1px 0 rgba(11, 37, 69, 0.04);
 }
 
 .header-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 88px;
-  padding: 10px 0;
+  gap: 20px;
+  min-height: 72px;
+  padding: 12px 0;
   position: relative;
-  flex-wrap: wrap;
 }
 
 .header-portal-link {
   text-decoration: none;
-  color: var(--muted);
-  font-size: 0.82rem;
+  color: var(--navy);
+  font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;
-  padding: 8px 12px;
+  padding: 9px 16px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 999px;
+  background: var(--white);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .header-portal-link:hover {
   color: var(--accent);
-  border-color: var(--accent);
+  border-color: rgba(15, 98, 254, 0.35);
+  background: var(--light);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .footer-inner {
@@ -1790,8 +1809,7 @@ body {
 }
 
 .header-portal-link--admin {
-  border-color: #fecaca;
-  color: #991b1b;
+  display: none;
 }
 
 .admin-page .portal-note {
@@ -1823,9 +1841,9 @@ body {
 }
 
 .brand-logo {
-  height: 76px;
+  height: 58px;
   width: auto;
-  max-width: min(220px, 46vw);
+  max-width: min(200px, 40vw);
   object-fit: contain;
   display: block;
 }
@@ -1868,22 +1886,43 @@ body {
 
 .main-nav {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.main-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+}
+
+.main-nav-mobile-actions {
+  display: none;
 }
 
 .main-nav a {
   text-decoration: none;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
 }
 
 .main-nav a.active,
 .main-nav a:hover {
-  color: var(--accent);
+  color: var(--navy);
   background: var(--light);
+}
+
+.main-nav a.active {
+  color: var(--accent);
+  background: rgba(15, 98, 254, 0.08);
 }
 
 .hero {
@@ -2321,15 +2360,91 @@ body {
 
 .nav-toggle {
   display: none;
-  background: none;
+  background: var(--white);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  font-size: 1.1rem;
   cursor: pointer;
   color: var(--navy);
-  margin-left: auto;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.nav-toggle:hover {
+  border-color: var(--accent);
+  background: var(--light);
+}
+
+.nav-toggle-icon {
+  line-height: 1;
+}
+
+@media (max-width: 1100px) {
+  .main-nav a {
+    padding: 8px 10px;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .header-inner {
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    min-height: 64px;
+    padding: 10px 0;
+  }
+
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px 16px;
+    box-shadow: 0 12px 32px rgba(11, 37, 69, 0.08);
+    z-index: 40;
+  }
+
+  .main-nav.is-open {
+    display: flex;
+  }
+
+  .main-nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .main-nav a {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+  }
+
+  .main-nav-mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .header-actions {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .site-footer {
@@ -2342,49 +2457,15 @@ body {
 }
 
 @media (max-width: 640px) {
-  .nav-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .main-nav {
-    display: none;
-    position: absolute;
-    top: calc(100% + 1px);
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 20px 16px;
-    box-shadow: 0 8px 24px rgba(11, 37, 69, 0.08);
-    z-index: 20;
-  }
-
-  .main-nav.is-open {
-    display: flex;
-  }
-
-  .main-nav a {
-    padding: 10px 12px;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
   .brand-logo {
-    height: 60px;
-    max-width: min(180px, 42vw);
+    height: 50px;
+    max-width: min(168px, 42vw);
   }
 
   .site-header .header-inner {
-    min-height: 76px;
+    min-height: 60px;
     padding: 8px 0;
+    gap: 10px;
   }
 
   .footer-logo {
@@ -2392,9 +2473,9 @@ body {
     max-width: 180px;
   }
 
-  .header-portal-link {
-    font-size: 0.75rem;
-    padding: 6px 10px;
+  .main-nav-mobile-actions .btn-sos {
+    width: 100%;
+    text-align: center;
   }
 
   .tourist-page {
@@ -3121,12 +3202,14 @@ body {
   background: #dc2626;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 0.78rem;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  letter-spacing: 0.02em;
+  transition: background 0.15s;
 }
 
 .btn-sos:hover {
@@ -3352,12 +3435,6 @@ body {
 .advisory-admin-list li {
   padding: 8px 0;
   border-bottom: 1px solid var(--light);
-}
-
-@media (max-width: 720px) {
-  .header-actions .btn-sos {
-    display: none;
-  }
 }
 
 .points-earn-hint {

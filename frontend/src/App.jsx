@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import TouristLayout from './layouts/TouristLayout'
@@ -83,6 +83,7 @@ export default function App() {
           </Route>
 
           <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/super-admin" element={<Navigate to="/admin/login" replace />} />
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminLayout /></ProtectedRoute>}>
             <Route index element={<AdminOverviewPage />} />
             <Route path="vendors" element={<AdminVendorsPage />} />

@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
       <div className="portal-login-card">
         <span className="portal-badge admin-badge">Super Admin</span>
         <h1>Control Tower sign in</h1>
-        <p>Platform operators only — not linked from public tourist site.</p>
+        <p>Platform operators only — sign in via this direct URL. Admin access is not shown on the public site.</p>
         <form className="portal-login-form" onSubmit={handleSubmit}>
           <label>Admin email<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></label>
           <label>Password<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></label>
