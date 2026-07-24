@@ -44,6 +44,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
         <p className="portal-note">Demo: admin@baltitour.com / admin123</p>
+        <p className="portal-note">Run <code>python -m app.seed</code> in backend if the account does not exist yet.</p>
       </div>
     </div>
   )

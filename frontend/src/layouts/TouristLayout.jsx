@@ -64,6 +64,9 @@ export default function TouristLayout() {
             <NavLink to="/vendor/login" className="header-portal-link">
               Partner login
             </NavLink>
+            <NavLink to="/admin/login" className="header-portal-link header-portal-link--admin">
+              Control Tower
+            </NavLink>
           </div>
         </div>
       </header>
@@ -77,6 +80,7 @@ export default function TouristLayout() {
             <span>© 2026 GoNorth — The Gilgit-Baltistan travel marketplace</span>
           </div>
           <NavLink to="/vendor/login" className="footer-portal-link">List your business</NavLink>
+          <NavLink to="/admin/login" className="footer-portal-link">Control Tower (Super Admin)</NavLink>
         </div>
       </footer>
     </div>

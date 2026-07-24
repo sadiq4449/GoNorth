@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   adminPhysicalVet,
+  fetchAdminReports,
   fetchAdminSmsLeads,
   fetchAllVendors,
   updateVendorStatus,
@@ -10,35 +11,45 @@ import { useAuth } from '../context/AuthContext'
 
 export function AdminOverviewPage() {
   const { user, logout } = useAuth()
-  const [vendors, setVendors] = useState([])
+  const [reports, setReports] = useState(null)
 
   useEffect(() => {
-    fetchAllVendors().then(setVendors).catch(() => {})
+    fetchAdminReports().then(setReports).catch(() => {})
   }, [])
-
-  const pending = vendors.filter((v) => v.status === 'pending').length
-  const approved = vendors.filter((v) => v.status === 'approved').length
 
   return (
     <div className="container admin-page">
       <div className="page-toolbar">
-        <h1>Platform Overview</h1>
+        <h1>Super Admin — Platform Overview</h1>
         <button type="button" className="btn-secondary admin-outline" onClick={logout}>Sign out</button>
       </div>
-      <p className="admin-lead">Signed in as {user?.email}</p>
-      <div className="admin-kpi-row">
-        <div className="admin-kpi"><span className="kpi-label">Total vendors</span><span className="kpi-value">{vendors.length}</span></div>
-        <div className="admin-kpi"><span className="kpi-label">Approved</span><span className="kpi-value">{approved}</span></div>
-        <div className="admin-kpi"><span className="kpi-label">Pending KYC</span><span className="kpi-value">{pending}</span></div>
+      <p className="admin-lead">Signed in as {user?.email}. Control Tower at <code>/admin</code>.</p>
+
+      {reports && (
+        <div className="admin-kpi-row">
+          <div className="admin-kpi"><span className="kpi-label">Vendors</span><span className="kpi-value">{reports.vendors_total}</span></div>
+          <div className="admin-kpi"><span className="kpi-label">Pending approval</span><span className="kpi-value">{reports.vendors_pending}</span></div>
+          <div className="admin-kpi"><span className="kpi-label">Bookings</span><span className="kpi-value">{reports.bookings_total}</span></div>
+          <div className="admin-kpi"><span className="kpi-label">Escrow held</span><span className="kpi-value">{reports.escrow_held}</span></div>
+          <div className="admin-kpi"><span className="kpi-label">Open disputes</span><span className="kpi-value">{reports.disputes_open}</span></div>
+          <div className="admin-kpi"><span className="kpi-label">Platform revenue</span><span className="kpi-value">PKR {reports.revenue_platform.toLocaleString()}</span></div>
+        </div>
+      )}
+
+      <div className="admin-links-grid">
+        <Link to="/admin/vendors" className="admin-action-link">User & vendor management →</Link>
+        <Link to="/admin/approvals" className="admin-action-link">Package approvals →</Link>
+        <Link to="/admin/registry" className="admin-action-link">Asset registry →</Link>
+        <Link to="/admin/escrow" className="admin-action-link">Escrow, KYC & travel advisories →</Link>
+        <Link to="/admin/pricing" className="admin-action-link">Global pricing override →</Link>
+        <Link to="/admin/trips" className="admin-action-link">Booking oversight & trip editor →</Link>
+        <Link to="/admin/payouts" className="admin-action-link">Payment & payout batches →</Link>
+        <Link to="/admin/disputes" className="admin-action-link">Dispute center →</Link>
+        <Link to="/admin/fleet" className="admin-action-link">Fleet operations map →</Link>
+        <Link to="/admin/campaigns" className="admin-action-link">Content & promo campaigns →</Link>
+        <Link to="/admin/settings" className="admin-action-link">Platform & AI settings →</Link>
+        <Link to="/admin/security" className="admin-action-link">Security & audit logs →</Link>
       </div>
-      <Link to="/admin/vendors" className="admin-action-link">Review vendors →</Link>
-      <Link to="/admin/registry" className="admin-action-link">Asset registry & create vendor →</Link>
-      <Link to="/admin/fleet" className="admin-action-link">Live fleet map →</Link>
-      <Link to="/admin/escrow" className="admin-action-link">Escrow & KYC queue →</Link>
-      <Link to="/admin/pricing" className="admin-action-link">Global pricing override →</Link>
-      <Link to="/admin/trips" className="admin-action-link">Trip editor & audit log →</Link>
-      <Link to="/admin/disputes" className="admin-action-link">Dispute center →</Link>
-      <Link to="/admin/payouts" className="admin-action-link">Vendor payout batch →</Link>
     </div>
   )
 }

@@ -1762,6 +1762,38 @@ body {
   color: #f8fafc;
 }
 
+.admin-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.admin-links-grid .admin-action-link {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: #0f172a;
+}
+
+.admin-settings-list {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+.admin-settings-list .meta {
+  list-style: none;
+  margin-left: -18px;
+  padding-left: 0;
+}
+
+.header-portal-link--admin {
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
 .admin-page .portal-note {
   color: #64748b;
 }

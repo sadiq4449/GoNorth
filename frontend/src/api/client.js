@@ -446,6 +446,33 @@ export async function fetchAdminAuditLog() {
   return apiFetch('/api/admin/audit-log')
 }
 
+export async function fetchAdminReports() {
+  return apiFetch('/api/admin/reports')
+}
+
+export async function fetchAdminSettings() {
+  return apiFetch('/api/admin/settings')
+}
+
+export async function updateAdminSettings(payload) {
+  return apiFetch('/api/admin/settings', { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export async function fetchAdminSosLog() {
+  return apiFetch('/api/admin/sos')
+}
+
+export async function fetchAdminPackages() {
+  return apiFetch('/api/admin/packages')
+}
+
+export async function updateAdminPackage(packageId, { active, featured }) {
+  const params = new URLSearchParams()
+  if (active !== undefined) params.set('active', String(active))
+  if (featured !== undefined) params.set('featured', String(featured))
+  return apiFetch(`/api/admin/packages/${encodeURIComponent(packageId)}?${params}`, { method: 'PATCH' })
+}
+
 export async function fetchAdminDisputes(status) {
   const q = status ? `?status=${encodeURIComponent(status)}` : ''
   return apiFetch(`/api/admin/disputes${q}`)

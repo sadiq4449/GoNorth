@@ -61,3 +61,55 @@ class DisputeOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PlatformReportsOut(BaseModel):
+    vendors_total: int
+    vendors_pending: int
+    vendors_approved: int
+    vendors_suspended: int
+    bookings_total: int
+    bookings_confirmed: int
+    escrow_held: int
+    escrow_paid: int
+    disputes_open: int
+    kyc_pending: int
+    packages_active: int
+    packages_inactive: int
+    rooms_live: int
+    vehicles_live: int
+    guides_live: int
+    revenue_platform: int
+    revenue_vendor: int
+
+
+class PlatformSettingsOut(BaseModel):
+    ai_configured: bool
+    ai_model: str
+    advisory_live_weather: bool
+    advisory_ndma_sync: bool
+    advisory_seasonal_rules: bool
+    allow_direct_booking: bool
+    usd_pkr_rate: float
+    sms_configured: bool
+    stripe_configured: bool
+
+
+class PlatformSettingsUpdate(BaseModel):
+    advisory_live_weather: bool | None = None
+    advisory_ndma_sync: bool | None = None
+    advisory_seasonal_rules: bool | None = None
+    allow_direct_booking: bool | None = None
+    usd_pkr_rate: float | None = Field(None, ge=1.0, le=1000.0)
+
+
+class AdminPackageOut(BaseModel):
+    id: str
+    slug: str
+    title: str
+    destination: str
+    vendor_name: str
+    active: bool
+    featured: bool
+    starting_price: int
+    bookable: bool

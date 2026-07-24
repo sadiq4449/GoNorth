@@ -2,15 +2,18 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 const ADMIN_NAV = [
   { to: '/admin', end: true, label: 'Overview' },
-  { to: '/admin/escrow', label: 'Escrow' },
   { to: '/admin/vendors', label: 'Vendors & KYC' },
+  { to: '/admin/approvals', label: 'Approvals' },
   { to: '/admin/registry', label: 'Registry' },
+  { to: '/admin/escrow', label: 'Escrow & Advisories' },
   { to: '/admin/fleet', label: 'Fleet Map' },
   { to: '/admin/trips', label: 'Trips & Audit' },
   { to: '/admin/payouts', label: 'Payouts' },
   { to: '/admin/disputes', label: 'Disputes' },
   { to: '/admin/pricing', label: 'Pricing' },
   { to: '/admin/campaigns', label: 'Campaigns' },
+  { to: '/admin/settings', label: 'Settings' },
+  { to: '/admin/security', label: 'Security' },
 ]
 
 export default function AdminLayout() {

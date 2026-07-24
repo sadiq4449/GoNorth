@@ -10,10 +10,15 @@ from app.models.campaign_schemas import PromoCampaignOut, PromoCampaignUpsert
 from app.models.safety_schemas import AdvisoryOut, AdvisoryUpsertRequest, SosOut
 from app.services.campaigns import list_all_campaigns, upsert_campaign
 from app.services.safety import list_advisories, list_sos_alerts, upsert_advisory
+from app.config import settings
 from app.models.admin_schemas import (
+    AdminPackageOut,
     AuditLogOut,
     BookingAdminUpdate,
     DisputeOut,
+    PlatformReportsOut,
+    PlatformSettingsOut,
+    PlatformSettingsUpdate,
     PricingOverrideOut,
     PricingOverrideUpsert,
 )
@@ -29,6 +34,148 @@ from app.services.escrow import dispute_escrow, list_escrows, payout_escrow, pro
 from app.services.kyc import list_kyc_queue, review_kyc
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+
+@router.get("/reports", response_model=PlatformReportsOut)
+def admin_reports(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.db.models import DisputeTicket, EscrowEntry, Guide, Property, Room, TourPackage, Vehicle
+
+    vendors = db.query(Vendor).all()
+    bookings = db.query(Booking).all()
+    escrows = db.query(EscrowEntry).all()
+    disputes = db.query(DisputeTicket).filter(DisputeTicket.status == "open").count()
+    kyc_pending = len(list_kyc_queue(db, "submitted"))
+    packages = db.query(TourPackage).all()
+    rooms_live = db.query(Room).join(Property).filter(Room.hidden.is_(False)).count()
+    vehicles_live = db.query(Vehicle).filter(Vehicle.hidden.is_(False)).count()
+    guides_live = db.query(Guide).count()
+    platform_rev = sum(e.platform_share for e in escrows if e.status == "paid")
+    vendor_rev = sum(e.vendor_share for e in escrows if e.status == "paid")
+
+    return PlatformReportsOut(
+        vendors_total=len(vendors),
+        vendors_pending=sum(1 for v in vendors if v.status == "pending"),
+        vendors_approved=sum(1 for v in vendors if v.status == "approved"),
+        vendors_suspended=sum(1 for v in vendors if v.status == "suspended"),
+        bookings_total=len(bookings),
+        bookings_confirmed=sum(1 for b in bookings if b.status == "confirmed"),
+        escrow_held=sum(1 for e in escrows if e.status in {"pending", "held", "release_scheduled", "disputed"}),
+        escrow_paid=sum(1 for e in escrows if e.status == "paid"),
+        disputes_open=disputes,
+        kyc_pending=kyc_pending,
+        packages_active=sum(1 for p in packages if p.active),
+        packages_inactive=sum(1 for p in packages if not p.active),
+        rooms_live=rooms_live,
+        vehicles_live=vehicles_live,
+        guides_live=guides_live,
+        revenue_platform=platform_rev,
+        revenue_vendor=vendor_rev,
+    )
+
+
+@router.get("/settings", response_model=PlatformSettingsOut)
+def admin_settings(user: Annotated[User, Depends(require_roles("admin"))]):
+    return PlatformSettingsOut(
+        ai_configured=settings.ai_configured,
+        ai_model=settings.openrouter_model,
+        advisory_live_weather=settings.advisory_live_weather,
+        advisory_ndma_sync=settings.advisory_ndma_sync,
+        advisory_seasonal_rules=settings.advisory_seasonal_rules,
+        allow_direct_booking=settings.allow_direct_booking,
+        usd_pkr_rate=settings.usd_pkr_rate,
+        sms_configured=bool(settings.sms_api_url and settings.sms_api_key),
+        stripe_configured=bool(settings.stripe_secret_key),
+    )
+
+
+@router.patch("/settings", response_model=PlatformSettingsOut)
+def admin_update_settings(
+    data: PlatformSettingsUpdate,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    changes = {}
+    for field in (
+        "advisory_live_weather",
+        "advisory_ndma_sync",
+        "advisory_seasonal_rules",
+        "allow_direct_booking",
+        "usd_pkr_rate",
+    ):
+        val = getattr(data, field)
+        if val is not None:
+            setattr(settings, field, val)
+            changes[field] = val
+    if changes:
+        log_audit(db, admin_user_id=user.id, action="settings_update", entity_type="platform", entity_id="settings", details=changes)
+    return admin_settings(user)
+
+
+@router.get("/packages", response_model=list[AdminPackageOut])
+def admin_list_packages(
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+):
+    from app.db.models import TourPackage
+
+    rows = db.query(TourPackage).order_by(TourPackage.sort_order, TourPackage.title).all()
+    out = []
+    for pkg in rows:
+        vendor = db.get(Vendor, pkg.vendor_id) if pkg.vendor_id else None
+        out.append(
+            AdminPackageOut(
+                id=pkg.id,
+                slug=pkg.slug,
+                title=pkg.title,
+                destination=pkg.destination,
+                vendor_name=vendor.business_name if vendor else "GoNorth Curated",
+                active=pkg.active,
+                featured=pkg.featured,
+                starting_price=pkg.starting_price,
+                bookable=bool(pkg.room_id and pkg.vehicle_id),
+            )
+        )
+    return out
+
+
+@router.patch("/packages/{package_id}", response_model=AdminPackageOut)
+def admin_update_package(
+    package_id: str,
+    db: Annotated[Session, Depends(get_db)],
+    user: Annotated[User, Depends(require_roles("admin"))],
+    active: bool | None = Query(None),
+    featured: bool | None = Query(None),
+):
+    from app.db.models import TourPackage
+
+    pkg = db.get(TourPackage, package_id)
+    if not pkg:
+        raise HTTPException(status_code=404, detail="Package not found")
+    changes = {}
+    if active is not None:
+        pkg.active = active
+        changes["active"] = active
+    if featured is not None:
+        pkg.featured = featured
+        changes["featured"] = featured
+    db.commit()
+    db.refresh(pkg)
+    vendor = db.get(Vendor, pkg.vendor_id) if pkg.vendor_id else None
+    log_audit(db, admin_user_id=user.id, action="package_update", entity_type="package", entity_id=pkg.id, details=changes)
+    return AdminPackageOut(
+        id=pkg.id,
+        slug=pkg.slug,
+        title=pkg.title,
+        destination=pkg.destination,
+        vendor_name=vendor.business_name if vendor else "GoNorth Curated",
+        active=pkg.active,
+        featured=pkg.featured,
+        starting_price=pkg.starting_price,
+        bookable=bool(pkg.room_id and pkg.vehicle_id),
+    )
 
 
 def _kyc_out(kyc) -> KycOut:

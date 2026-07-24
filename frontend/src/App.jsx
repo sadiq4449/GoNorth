@@ -35,6 +35,9 @@ import VendorPackagesPage from './pages/VendorPackagesPage'
 import VendorExperiencesPage from './pages/VendorExperiencesPage'
 import VendorStorefrontPage from './pages/VendorStorefrontPage'
 import AdminCampaignsPage from './pages/AdminCampaignsPage'
+import AdminSettingsPage from './pages/AdminSettingsPage'
+import AdminSecurityPage from './pages/AdminSecurityPage'
+import AdminApprovalsPage from './pages/AdminApprovalsPage'
 import PackagesPage from './pages/PackagesPage'
 import PackageDetailPage from './pages/PackageDetailPage'
 import DestinationsPage from './pages/DestinationsPage'
@@ -91,6 +94,9 @@ export default function App() {
             <Route path="trips" element={<AdminTripsPage />} />
             <Route path="payouts" element={<AdminPayoutsPage />} />
             <Route path="campaigns" element={<AdminCampaignsPage />} />
+            <Route path="approvals" element={<AdminApprovalsPage />} />
+            <Route path="settings" element={<AdminSettingsPage />} />
+            <Route path="security" element={<AdminSecurityPage />} />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />
