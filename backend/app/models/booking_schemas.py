@@ -63,6 +63,8 @@ class BookingOut(BaseModel):
     check_in: str | None
     nights: int
     guests: int
+    room_id: str | None = None
+    vehicle_id: str | None = None
     subtotal: int
     platform_fee: int
     total: int

@@ -7,6 +7,7 @@ from app.auth.security import require_roles
 from app.db.models import User, Vendor, get_db
 from app.models.schemas import VendorOut, VendorStatusUpdate, VendorStorefrontOut
 from app.services.vendor_storefront import get_storefront
+from app.services.admin_tools import log_audit
 from app.services.vendor_helpers import vendor_out
 
 router = APIRouter(prefix="/api/vendors", tags=["vendors"])
@@ -58,4 +59,12 @@ def update_vendor_status(
     vendor.status = data.status
     db.commit()
     db.refresh(vendor)
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="vendor_status",
+        entity_type="vendor",
+        entity_id=vendor_id,
+        details={"status": data.status, "business_name": vendor.business_name},
+    )
     return vendor_out(vendor)

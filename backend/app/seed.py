@@ -8,15 +8,7 @@ from app.db.models import Guide, Property, Room, SessionLocal, User, Vehicle, Ve
 from app.services.vendor_slugs import ensure_unique_slug
 
 
-def seed():
-    init_db()
-    db = SessionLocal()
-
-    if db.query(User).filter(User.email == "admin@baltitour.com").first():
-        print("Database already seeded.")
-        db.close()
-        return
-
+def _seed_catalog(db) -> None:
     admin = User(
         email="admin@baltitour.com",
         password_hash=hash_password("admin123"),
@@ -263,8 +255,25 @@ def seed():
             db.add(g)
 
     db.commit()
-    db.close()
-    print("Seed complete.")
+
+
+def seed():
+    init_db()
+    db = SessionLocal()
+    try:
+        if not db.query(User).filter(User.email == "admin@baltitour.com").first():
+            _seed_catalog(db)
+            print("Catalog seed complete.")
+        else:
+            print("Catalog already seeded.")
+
+        from app.services.seed_admin_demo import seed_admin_workflows
+
+        seed_admin_workflows(db)
+        print("Admin demo workflows seeded (if not already present).")
+    finally:
+        db.close()
+
     print("  Admin:  admin@baltitour.com / admin123")
     print("  Vendor: hostel@skardu.com / vendor123")
 

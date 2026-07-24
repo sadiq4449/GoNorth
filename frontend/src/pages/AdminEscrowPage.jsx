@@ -6,19 +6,14 @@ import {
   disputeEscrow,
   resolveEscrow,
   forceEscrowPayout,
-  fetchAdminKyc,
-  reviewAdminKyc,
   fetchAdminAdvisories,
   upsertAdminAdvisory,
   fetchAdvisories,
 } from '../api/client'
-import { loadAdminData, resolveDocUrl, runAdminMutation } from '../lib/adminPage'
-
-const API_BASE = import.meta.env.VITE_API_URL || ''
+import { runAdminMutation } from '../lib/adminPage'
 
 export default function AdminEscrowPage() {
   const [escrows, setEscrows] = useState([])
-  const [kycQueue, setKycQueue] = useState([])
   const [filter, setFilter] = useState('')
   const [msg, setMsg] = useState('')
   const [error, setError] = useState('')
@@ -30,13 +25,11 @@ export default function AdminEscrowPage() {
     setError('')
     Promise.all([
       fetchAdminEscrow(filter || undefined),
-      fetchAdminKyc('submitted'),
       fetchAdminAdvisories(),
       fetchAdvisories(),
     ])
-      .then(([escrowRows, kycRows, advisoryRows, liveRows]) => {
+      .then(([escrowRows, advisoryRows, liveRows]) => {
         setEscrows(escrowRows)
-        setKycQueue(kycRows)
         setAdvisories(advisoryRows)
         setLiveFeed(liveRows)
       })
@@ -49,10 +42,7 @@ export default function AdminEscrowPage() {
 
   async function processDue() {
     await runAdminMutation({
-      action: async () => {
-        const res = await processDueEscrow()
-        return res
-      },
+      action: processDueEscrow,
       setError,
       setMsg,
       successMsg: null,
@@ -60,16 +50,6 @@ export default function AdminEscrowPage() {
         setMsg(`Processed ${res.processed} escrow releases`)
         load()
       },
-    })
-  }
-
-  async function review(kycId, approved) {
-    await runAdminMutation({
-      action: () => reviewAdminKyc(kycId, { approved, notes: approved ? 'Approved' : 'Rejected' }),
-      setError,
-      setMsg,
-      successMsg: approved ? 'KYC approved' : 'KYC rejected',
-      onSuccess: load,
     })
   }
 
@@ -123,7 +103,11 @@ export default function AdminEscrowPage() {
   return (
     <div className="container admin-page">
       <Link to="/admin" className="back-link">← Overview</Link>
-      <h1>Escrow, KYC & advisories</h1>
+      <h1>Escrow & advisories</h1>
+      <p className="admin-lead">
+        Manage escrow releases and road advisories. KYC payout reviews live on{' '}
+        <Link to="/admin/vendors">Vendors & KYC → KYC queue</Link>.
+      </p>
       {msg && <p className="toast-info">{msg}</p>}
       {error && <p className="form-error">{error}</p>}
 
@@ -169,38 +153,6 @@ export default function AdminEscrowPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section className="vendor-panel">
-        <div className="panel-head-row">
-          <h2>KYC submissions</h2>
-        </div>
-        {kycQueue.length === 0 && <p className="plan-lead">No pending KYC submissions.</p>}
-        {kycQueue.map((k) => (
-          <div key={k.id} className="kyc-review-card">
-            <div>
-              <strong>{k.cnic_name}</strong> · {k.payout_method} · {k.account_number}
-              <p className="meta">
-                Title match: {k.title_match_ok ? '✓' : '✗'} · Penny: {k.penny_verified ? '✓' : '✗'}
-              </p>
-              <div className="kyc-docs">
-                {k.cnic_front_url && (
-                  <a href={resolveDocUrl(API_BASE, k.cnic_front_url)} target="_blank" rel="noreferrer">CNIC front</a>
-                )}
-                {k.cnic_back_url && (
-                  <a href={resolveDocUrl(API_BASE, k.cnic_back_url)} target="_blank" rel="noreferrer">CNIC back</a>
-                )}
-                {k.insurance_url && (
-                  <a href={resolveDocUrl(API_BASE, k.insurance_url)} target="_blank" rel="noreferrer">Insurance</a>
-                )}
-              </div>
-            </div>
-            <div className="card-actions">
-              <button type="button" onClick={() => review(k.id, true)}>Approve</button>
-              <button type="button" className="danger" onClick={() => review(k.id, false)}>Reject</button>
-            </div>
-          </div>
-        ))}
       </section>
 
       <section className="vendor-panel">

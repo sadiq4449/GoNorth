@@ -44,6 +44,11 @@ class BookingAdminUpdate(BaseModel):
     guests: int | None = Field(None, ge=1, le=20)
     status: str | None = None
     traveler_name: str | None = None
+    phone: str | None = Field(None, min_length=10)
+    email: EmailStr | None = None
+    check_in: str | None = None
+    room_id: str | None = None
+    vehicle_id: str | None = None
 
 
 class DisputeCreateRequest(BaseModel):

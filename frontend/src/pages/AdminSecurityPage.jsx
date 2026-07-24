@@ -44,6 +44,9 @@ export default function AdminSecurityPage() {
           {audit.map((row) => (
             <li key={row.id}>
               <strong>{row.action}</strong> · {row.entity_type}/{row.entity_id}
+              {Object.keys(row.details || {}).length > 0 && (
+                <p className="meta">{JSON.stringify(row.details)}</p>
+              )}
               <span>{new Date(row.created_at).toLocaleString()}</span>
             </li>
           ))}

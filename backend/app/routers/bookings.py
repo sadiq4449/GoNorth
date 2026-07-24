@@ -68,6 +68,8 @@ def _booking_out(db: Session, booking: Booking) -> BookingOut:
         check_in=booking.check_in,
         nights=booking.nights,
         guests=booking.guests,
+        room_id=booking.room_id,
+        vehicle_id=booking.vehicle_id,
         subtotal=booking.subtotal,
         platform_fee=booking.platform_fee,
         total=booking.total,

@@ -249,6 +249,14 @@ def review_kyc_endpoint(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="kyc_review",
+        entity_type="kyc",
+        entity_id=kyc_id,
+        details={"approved": data.approved, "notes": data.notes},
+    )
     return _kyc_out(kyc)
 
 
@@ -267,6 +275,7 @@ def process_due(
     user: Annotated[User, Depends(require_roles("admin"))],
 ):
     count = process_due_escrows(db)
+    log_audit(db, admin_user_id=user.id, action="escrow_process_due", entity_type="escrow", entity_id="batch", details={"processed": count})
     return {"processed": count}
 
 
@@ -281,6 +290,7 @@ def escrow_dispute(
         escrow = dispute_escrow(db, escrow_id, reason)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    log_audit(db, admin_user_id=user.id, action="escrow_dispute", entity_type="escrow", entity_id=escrow_id, details={"reason": reason})
     return _escrow_out(db, escrow)
 
 
@@ -295,6 +305,7 @@ def escrow_resolve(
         escrow = resolve_dispute(db, escrow_id, action)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    log_audit(db, admin_user_id=user.id, action="escrow_resolve", entity_type="escrow", entity_id=escrow_id, details={"action": action})
     return _escrow_out(db, escrow)
 
 
@@ -334,6 +345,14 @@ def physical_vet(
     vendor.gold_badge = vetted
     db.commit()
     db.refresh(vendor)
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="vendor_physical_vet",
+        entity_type="vendor",
+        entity_id=vendor_id,
+        details={"vetted": vetted},
+    )
     return vendor_out(vendor)
 
 
@@ -353,7 +372,7 @@ def admin_upsert_advisory(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(require_roles("admin"))],
 ):
-    return upsert_advisory(
+    row = upsert_advisory(
         db,
         region=data.region,
         message=data.message,
@@ -361,6 +380,15 @@ def admin_upsert_advisory(
         active=data.active,
         admin_override=data.admin_override,
     )
+    log_audit(
+        db,
+        admin_user_id=user.id,
+        action="advisory_upsert",
+        entity_type="advisory",
+        entity_id=row.id,
+        details={"region": data.region, "severity": data.severity, "active": data.active},
+    )
+    return row
 
 
 @router.get("/sos", response_model=list[SosOut])
@@ -429,11 +457,30 @@ def admin_update_booking(
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     changes = {}
-    for field in ("destination", "nights", "guests", "status", "traveler_name"):
+    for field in (
+        "destination",
+        "nights",
+        "guests",
+        "status",
+        "traveler_name",
+        "phone",
+        "email",
+        "check_in",
+        "room_id",
+        "vehicle_id",
+    ):
         val = getattr(data, field)
         if val is not None:
-            changes[field] = val
-            setattr(booking, field, val)
+            if field == "room_id":
+                from app.db.models import Room
+                if not db.get(Room, val):
+                    raise HTTPException(status_code=400, detail="Room not found")
+            if field == "vehicle_id":
+                from app.db.models import Vehicle
+                if not db.get(Vehicle, val):
+                    raise HTTPException(status_code=400, detail="Vehicle not found")
+            changes[field] = val if field != "email" else str(val)
+            setattr(booking, field, val if field != "email" else str(val))
     db.commit()
     db.refresh(booking)
     log_audit(db, admin_user_id=user.id, action="booking_edit", entity_type="booking", entity_id=reference, details=changes)
